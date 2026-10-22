@@ -1066,11 +1066,19 @@ name = "opsteam-core"
 version = "0.0.0"
 source = { editable = "packages/core" }
 dependencies = [
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "python-ulid" },
     { name = "rfc8785" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "rfc8785", specifier = ">=0.1.4" }]
+requires-dist = [
+    { name = "pydantic", specifier = ">=2.14.1" },
+    { name = "pydantic-settings", specifier = ">=2.16.1" },
+    { name = "python-ulid", specifier = ">=4.0.1" },
+    { name = "rfc8785", specifier = ">=0.1.4" },
+]
 
 [[package]]
 name = "opsteam-db"
@@ -1422,6 +1430,21 @@ wheels = [
 ]
 
 [[package]]
+name = "pydantic-settings"
+version = "2.16.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "python-dotenv" },
+    { name = "typing-extensions" },
+    { name = "typing-inspection" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/05/ca/7817b4bf0c4b15c6a6ab8cdf4cb96c268335a8ca2f525de93b6ebe4c7d28/pydantic_settings-2.16.1.tar.gz", hash = "sha256:aff602a1886338c2df3d1e958e2193a8dc33cec75b91f202e83fd98484b4b0da", size = 303436, upload-time = "2026-10-20T11:37:19.024Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3c/74/fdf926afe145d8629c4b2ff57f4ea1d64ed7abc4d84d97463b2517a2547e/pydantic_settings-2.16.1-py3-none-any.whl", hash = "sha256:30f5313340da4e8f1b440d1910b92a5bc3ccbb6b4ba70ec2b8395bc921f418f5", size = 80771, upload-time = "2026-10-20T11:37:17.298Z" },
+]
+
+[[package]]
 name = "pygments"
 version = "2.21.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1456,6 +1479,24 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f3/ee/cf608372c88ce2c136ee13c69ab6f667dbc0d0c1176af188b4ddc8853e66/python_discovery-1.6.4.tar.gz", hash = "sha256:bc70d31f0ec5de11eda13d4d64c16e24b3506a65984684f2b6c98cb83b2ea9df", size = 89883, upload-time = "2026-10-19T01:45:14.855Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/60/91/1aa70d3dfcab0dbcf88a2cbc3bce7f7c69562287a90216e617eaa4937e25/python_discovery-1.6.4-py3-none-any.whl", hash = "sha256:530179cc51a1816d512b15635b3dc931295ae12efb183783ad31190a5d425d2b", size = 39385, upload-time = "2026-10-19T01:45:13.668Z" },
+]
+
+[[package]]
+name = "python-dotenv"
+version = "1.2.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/74/26/2fbeedb218a787a5eea551c7532cac4e009f83d689dd2faa0d0353473f86/python_dotenv-1.2.4.tar.gz", hash = "sha256:f0d53e69935a851c0dcc78f3ab7aaccd8cabef0b92382b576b824212902873c0", size = 60824, upload-time = "2026-10-01T05:36:10Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/60/d1/38f3a3405989a89ac18390803e70c6ad7c7760da4f9b83cbeca0c44a0c72/python_dotenv-1.2.4-py3-none-any.whl", hash = "sha256:42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc", size = 23266, upload-time = "2026-10-01T05:36:08.633Z" },
+]
+
+[[package]]
+name = "python-ulid"
+version = "4.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d6/41/65079023c81491a21799c0120bce5925366b6913596bf797806f19973290/python_ulid-4.0.1.tar.gz", hash = "sha256:bbeec02556190bb9dc3401faa7268696acbfbe7b6db9908c155dc3548629f20c", size = 101683, upload-time = "2026-07-20T15:21:41.256Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b4/15/8b39b36f55b6618ec4ca9b55134dcfd9c04cecbc72709f5d8e6bdebed9cd/python_ulid-4.0.1-py3-none-any.whl", hash = "sha256:6f1d69ceb97e99fe542df8476ebcd7a668284bf53ee14b3106bcc6a341a95ed9", size = 14609, upload-time = "2026-07-20T15:21:40.214Z" },
 ]
 
 [[package]]
