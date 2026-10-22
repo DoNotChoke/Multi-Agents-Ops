@@ -15,6 +15,12 @@ class InvalidId(OpsteamError, ValueError):
     code = "id.invalid"
 
 
+class NetguardBlocked(OpsteamError):
+    """An outbound URL was refused because it could reach a non-public address."""
+
+    code = "netguard.blocked"
+
+
 class RedactionFailed(OpsteamError):
     """Content could not be redacted, so it must not be stored, shown or sent to an LLM."""
 
