@@ -983,6 +983,7 @@ dev = [
     { name = "mypy" },
     { name = "pre-commit" },
     { name = "pytest" },
+    { name = "pyyaml" },
     { name = "rfc3339-validator" },
     { name = "ruff" },
 ]
@@ -1016,6 +1017,7 @@ dev = [
     { name = "mypy" },
     { name = "pre-commit", specifier = ">=4.7.0" },
     { name = "pytest" },
+    { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "rfc3339-validator", specifier = ">=0.1.4" },
     { name = "ruff" },
 ]

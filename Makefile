@@ -1,4 +1,4 @@
-.PHONY: setup codegen dev-up dev-down migrate lab-up lab-down lab-fault lab-heal \
+.PHONY: setup codegen dev-up dev-down dev-reset migrate lab-up lab-down lab-fault lab-heal \
 	lint test test-integration test-security test-e2e eval \
 	run-api run-worker run-ingest run-web run-runner
 
@@ -36,7 +36,19 @@ run-web:
 codegen:
 	bash contracts/codegen.sh
 
-dev-up dev-down:  ; $(call not_implemented,T-0.3)
+COMPOSE := docker compose -f deploy/compose/docker-compose.yml
+
+# LLM_OBS=1 also starts Langfuse and ClickHouse.
+dev-up:
+	@test -f deploy/compose/.env || cp deploy/compose/.env.example deploy/compose/.env
+	$(COMPOSE) $(if $(LLM_OBS),--profile llm-obs) up -d --wait
+
+dev-down:
+	$(COMPOSE) --profile llm-obs down
+
+# Also deletes the volumes (all local data).
+dev-reset:
+	$(COMPOSE) --profile llm-obs down -v
 lab-up lab-down lab-fault lab-heal: ; $(call not_implemented,T-0.4)
 eval:             ; $(call not_implemented,T-0.5)
 test-security:
