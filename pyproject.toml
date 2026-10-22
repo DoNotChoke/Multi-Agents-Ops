@@ -22,7 +22,13 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["import-linter", "mypy", "pytest", "ruff"]
+dev = [
+    "import-linter",
+    "mypy",
+    "pre-commit>=4.7.0",
+    "pytest",
+    "ruff",
+]
 
 [tool.uv]
 package = false

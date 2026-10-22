@@ -1,0 +1,30 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
+  # Local hooks reuse the project's pinned tools instead of separate pre-commit copies.
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+      - id: gofmt
+        name: gofmt
+        entry: gofmt -l -w
+        language: system
+        types: [go]
+      - id: prettier
+        name: prettier
+        entry: node web/node_modules/prettier/bin/prettier.cjs --write --ignore-unknown
+        language: system
+        files: ^web/
+        exclude: ^web/pnpm-lock\.yaml$
