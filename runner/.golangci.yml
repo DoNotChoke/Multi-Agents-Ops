@@ -8,6 +8,11 @@ linters:
     - gosec
     - revive            # includes context-as-argument (ctx is the first parameter)
     - noctx             # HTTP calls carry a context
+  exclusions:
+    rules:
+      # Tests read repo fixtures by path; G304 targets untrusted input.
+      - path: _test\.go
+        linters: [gosec]
 
 formatters:
   enable:

@@ -20,3 +20,14 @@ uv run datamodel-codegen \
   --formatters ruff-check ruff-format
 uv run ruff check --fix --quiet "$py_out"
 uv run ruff format --quiet "$py_out"
+
+# common.json only holds $defs; each other schema inlines what it references.
+ts_out=web/src/generated/contracts
+rm -rf "$ts_out" && mkdir -p "$ts_out"
+for schema in contracts/jsonschema/*.json; do
+  name=$(basename "$schema" .json)
+  [ "$name" = common ] && continue
+  web/node_modules/.bin/json2ts --cwd contracts/jsonschema -i "$schema" -o "$ts_out/$name.ts"
+done
+
+# Go: the Runner only needs TaskEnvelope, kept by hand in runner/internal/contracts (ADR-0015).

@@ -27,4 +27,4 @@ repos:
         entry: node web/node_modules/prettier/bin/prettier.cjs --write --ignore-unknown
         language: system
         files: ^web/
-        exclude: ^web/pnpm-lock\.yaml$
+        exclude: ^web/(pnpm-lock\.yaml|src/generated/)

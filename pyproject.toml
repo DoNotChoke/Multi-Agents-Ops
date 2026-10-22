@@ -23,6 +23,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "cryptography>=50.0.2",
     "datamodel-code-generator>=0.86.0",
     "hypothesis>=6.170.5",
     "import-linter",
