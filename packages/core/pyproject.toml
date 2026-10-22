@@ -2,7 +2,9 @@
 name = "opsteam-core"
 version = "0.0.0"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "rfc8785>=0.1.4",
+]
 
 [build-system]
 requires = ["hatchling"]

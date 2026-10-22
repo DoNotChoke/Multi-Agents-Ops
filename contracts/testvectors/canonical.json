@@ -1,0 +1,92 @@
+[
+  {
+    "name": "sort_keys_nested",
+    "input": "{\"b\":{\"z\":1,\"a\":2},\"a\":[3,{\"d\":4,\"c\":5}]}",
+    "canonical": "{\"a\":[3,{\"c\":5,\"d\":4}],\"b\":{\"a\":2,\"z\":1}}"
+  },
+  {
+    "name": "whitespace_removed",
+    "input": " { \"a\" : [ 1 , 2 ] } \n",
+    "canonical": "{\"a\":[1,2]}"
+  },
+  {
+    "name": "keys_sorted_by_utf16_code_units",
+    "input": "{\"\\ufb33\":4,\"\\ud83d\\ude00\":3,\"\\u00e9\":2,\"b\":1,\"a\":0}",
+    "canonical": "{\"a\":0,\"b\":1,\"\u00e9\":2,\"\ud83d\ude00\":3,\"\ufb33\":4}"
+  },
+  {
+    "name": "string_escapes",
+    "input": "{\"s\":\"q\\\"b\\\\s\\/\\u0001\\n\\t\\u007f\"}",
+    "canonical": "{\"s\":\"q\\\"b\\\\s/\\u0001\\n\\t\u007f\"}"
+  },
+  {
+    "name": "unicode_escape_decoded_to_utf8",
+    "input": "[\"\\u00e9\\u20ac\"]",
+    "canonical": "[\"\u00e9\u20ac\"]"
+  },
+  {
+    "name": "numbers_es6_format",
+    "input": "[1.0,-0.0,1e21,1e16,1e-7,0.1,5e-324,1.7976931348623157e308,9007199254740991,-9007199254740991,1.2345678901234568e20]",
+    "canonical": "[1,0,1e+21,10000000000000000,1e-7,0.1,5e-324,1.7976931348623157e+308,9007199254740991,-9007199254740991,123456789012345680000]"
+  },
+  {
+    "name": "literals",
+    "input": "[true,false,null]",
+    "canonical": "[true,false,null]"
+  },
+  {
+    "name": "empty_containers",
+    "input": "{\"b\":{},\"a\":[]}",
+    "canonical": "{\"a\":[],\"b\":{}}"
+  },
+  {
+    "name": "timestamp_strings_kept_verbatim",
+    "input": "{\"issued_at\":\"2026-10-22T06:00:00.000Z\",\"expires_at\":\"2026-10-22T06:01:00Z\"}",
+    "canonical": "{\"expires_at\":\"2026-10-22T06:01:00Z\",\"issued_at\":\"2026-10-22T06:00:00.000Z\"}"
+  },
+  {
+    "name": "rfc8785_appendix_sample",
+    "input": "{\"numbers\":[333333333.33333329,1E30,4.50,2e-3,0.000000000000000000000000001],\"string\":\"\\u20ac$\\u000F\\u000aA'\\u0042\\u0022\\u005c\\\\\\\"\\/\",\"literals\":[null,true,false]}",
+    "canonical": "{\"literals\":[null,true,false],\"numbers\":[333333333.3333333,1e+30,4.5,0.002,1e-27],\"string\":\"\u20ac$\\u000f\\nA'B\\\"\\\\\\\\\\\"/\"}"
+  },
+  {
+    "name": "reject_duplicate_key",
+    "input": "{\"a\":1,\"a\":2}",
+    "error": true
+  },
+  {
+    "name": "reject_nan",
+    "input": "{\"x\":NaN}",
+    "error": true
+  },
+  {
+    "name": "reject_infinity",
+    "input": "[Infinity]",
+    "error": true
+  },
+  {
+    "name": "reject_integer_2_pow_53",
+    "input": "[9007199254740992]",
+    "error": true
+  },
+  {
+    "name": "reject_negative_integer_beyond_safe",
+    "input": "[-9007199254740992]",
+    "error": true
+  },
+  {
+    "name": "reject_lone_surrogate",
+    "input": "[\"\\ud800\"]",
+    "error": true
+  },
+  {
+    "name": "reject_trailing_garbage",
+    "input": "{\"a\":1} x",
+    "error": true
+  },
+  {
+    "name": "reject_trailing_comma",
+    "input": "[1,]",
+    "error": true
+  }
+]

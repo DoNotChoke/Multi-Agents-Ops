@@ -24,6 +24,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "datamodel-code-generator>=0.86.0",
+    "hypothesis>=6.170.5",
     "import-linter",
     "jsonschema>=4.26.0",
     "mypy",
