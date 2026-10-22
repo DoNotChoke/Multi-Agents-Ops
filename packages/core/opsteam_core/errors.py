@@ -15,6 +15,12 @@ class InvalidId(OpsteamError, ValueError):
     code = "id.invalid"
 
 
+class RedactionFailed(OpsteamError):
+    """Content could not be redacted, so it must not be stored, shown or sent to an LLM."""
+
+    code = "redaction.failed"
+
+
 class UnknownRole(OpsteamError):
     """A membership carries a role that maps to no scopes."""
 

@@ -12,3 +12,7 @@ regexes = [
 description = "RFC 8032 §7.1 TEST 1 Ed25519 seed: published test data used by contracts/testvectors/ed25519.json"
 regexTarget = "secret"
 regexes = ['''^9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60$''']
+
+[[allowlists]]
+description = "Fake secrets the redaction tests must remove"
+paths = ['''^tests/security/redaction_corpus/''']

@@ -39,7 +39,9 @@ codegen:
 dev-up dev-down:  ; $(call not_implemented,T-0.3)
 lab-up lab-down lab-fault lab-heal: ; $(call not_implemented,T-0.4)
 eval:             ; $(call not_implemented,T-0.5)
-test-security:    ; $(call not_implemented,T-0.7)
+test-security:
+	uv run pytest tests/security
+
 migrate test-integration: ; $(call not_implemented,T-1.1)
 run-api:          ; $(call not_implemented,T-1.2)
 run-ingest:       ; $(call not_implemented,T-2.1)
