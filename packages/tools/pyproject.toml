@@ -1,0 +1,9 @@
+[project]
+name = "opsteam-tools"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = ["opsteam-core", "opsteam-contracts", "opsteam-db", "opsteam-evidence", "opsteam-policy"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -1,0 +1,32 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.import_linter_cache/
+.coverage
+htmlcov/
+dist/
+
+# Node
+node_modules/
+.next/
+
+# Secrets / local config (INV-05)
+.env
+.env.*
+!.env.example
+*.kubeconfig
+kubeconfig
+
+# IDE
+.idea/
+.vscode/
+
+# Local-only design docs and plans (not published)
+/docs/
+/tasks/
+/CLAUDE.md
+/README.md

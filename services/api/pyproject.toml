@@ -1,0 +1,9 @@
+[project]
+name = "opsteam-api"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = ["opsteam-core"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -1,0 +1,242 @@
+[project]
+name = "opsteam"
+version = "0.0.0"
+requires-python = ">=3.12"
+# The root is a virtual project; depending on every member makes `uv sync` install them all.
+dependencies = [
+    "opsteam-core",
+    "opsteam-contracts",
+    "opsteam-obs",
+    "opsteam-db",
+    "opsteam-evidence",
+    "opsteam-incidents",
+    "opsteam-llm",
+    "opsteam-policy",
+    "opsteam-notify",
+    "opsteam-tools",
+    "opsteam-agents",
+    "opsteam-api",
+    "opsteam-ingest",
+    "opsteam-worker",
+    "opsteam-executor",
+]
+
+[dependency-groups]
+dev = ["import-linter", "mypy", "pytest", "ruff"]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["packages/*", "services/*"]
+
+[tool.uv.sources]
+opsteam-core = { workspace = true }
+opsteam-contracts = { workspace = true }
+opsteam-obs = { workspace = true }
+opsteam-db = { workspace = true }
+opsteam-evidence = { workspace = true }
+opsteam-incidents = { workspace = true }
+opsteam-llm = { workspace = true }
+opsteam-policy = { workspace = true }
+opsteam-notify = { workspace = true }
+opsteam-tools = { workspace = true }
+opsteam-agents = { workspace = true }
+opsteam-api = { workspace = true }
+opsteam-ingest = { workspace = true }
+opsteam-worker = { workspace = true }
+opsteam-executor = { workspace = true }
+
+# ---------------------------------------------------------------- ruff
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# T20: no print (use structlog). BLE: no bare `except Exception`. S: bandit (incl. os.system, INV-03).
+select = ["E", "W", "F", "I", "UP", "B", "S", "BLE", "T20", "SIM", "RUF", "ASYNC"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101", "S603"]
+
+# ---------------------------------------------------------------- mypy
+[tool.mypy]
+strict = true
+python_version = "3.12"
+packages = [
+    "opsteam_core",
+    "opsteam_contracts",
+    "opsteam_obs",
+    "opsteam_db",
+    "opsteam_evidence",
+    "opsteam_incidents",
+    "opsteam_llm",
+    "opsteam_policy",
+    "opsteam_notify",
+    "opsteam_tools",
+    "opsteam_agents",
+    "opsteam_api",
+    "opsteam_ingest",
+    "opsteam_worker",
+    "opsteam_executor",
+]
+
+# ---------------------------------------------------------------- pytest
+[tool.pytest.ini_options]
+testpaths = ["packages", "services", "tests"]
+addopts = "--import-mode=importlib -q"
+
+# ---------------------------------------------------------------- import-linter
+# Encodes docs/03 §3. Each package may import only what its "Được import" column lists;
+# everything else opsteam_* is forbidden. opsteam_obs (logging/tracing) is allowed everywhere
+# except opsteam_core / opsteam_contracts.
+[tool.importlinter]
+root_packages = [
+    "opsteam_core",
+    "opsteam_contracts",
+    "opsteam_obs",
+    "opsteam_db",
+    "opsteam_evidence",
+    "opsteam_incidents",
+    "opsteam_llm",
+    "opsteam_policy",
+    "opsteam_notify",
+    "opsteam_tools",
+    "opsteam_agents",
+    "opsteam_api",
+    "opsteam_ingest",
+    "opsteam_worker",
+    "opsteam_executor",
+]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "opsteam_core imports no other opsteam package"
+type = "forbidden"
+source_modules = ["opsteam_core"]
+forbidden_modules = [
+    "opsteam_contracts", "opsteam_obs", "opsteam_db", "opsteam_evidence", "opsteam_incidents",
+    "opsteam_llm", "opsteam_policy", "opsteam_notify", "opsteam_tools", "opsteam_agents",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+name = "opsteam_contracts imports no other opsteam package"
+type = "forbidden"
+source_modules = ["opsteam_contracts"]
+forbidden_modules = [
+    "opsteam_core", "opsteam_obs", "opsteam_db", "opsteam_evidence", "opsteam_incidents",
+    "opsteam_llm", "opsteam_policy", "opsteam_notify", "opsteam_tools", "opsteam_agents",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+name = "opsteam_obs imports only core"
+type = "forbidden"
+source_modules = ["opsteam_obs"]
+forbidden_modules = [
+    "opsteam_contracts", "opsteam_db", "opsteam_evidence", "opsteam_incidents",
+    "opsteam_llm", "opsteam_policy", "opsteam_notify", "opsteam_tools", "opsteam_agents",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+name = "opsteam_db imports only core, contracts"
+type = "forbidden"
+source_modules = ["opsteam_db"]
+forbidden_modules = [
+    "opsteam_evidence", "opsteam_incidents", "opsteam_llm", "opsteam_policy", "opsteam_notify",
+    "opsteam_tools", "opsteam_agents",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+name = "opsteam_evidence imports only core, contracts, db"
+type = "forbidden"
+source_modules = ["opsteam_evidence"]
+forbidden_modules = [
+    "opsteam_incidents", "opsteam_llm", "opsteam_policy", "opsteam_notify",
+    "opsteam_tools", "opsteam_agents",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+name = "opsteam_incidents imports only core, contracts, db"
+type = "forbidden"
+source_modules = ["opsteam_incidents"]
+forbidden_modules = [
+    "opsteam_evidence", "opsteam_llm", "opsteam_policy", "opsteam_notify",
+    "opsteam_tools", "opsteam_agents",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+name = "opsteam_llm imports only core, contracts"
+type = "forbidden"
+source_modules = ["opsteam_llm"]
+forbidden_modules = [
+    "opsteam_db", "opsteam_evidence", "opsteam_incidents", "opsteam_policy", "opsteam_notify",
+    "opsteam_tools", "opsteam_agents",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+name = "opsteam_policy imports only core, contracts"
+type = "forbidden"
+source_modules = ["opsteam_policy"]
+forbidden_modules = [
+    "opsteam_db", "opsteam_evidence", "opsteam_incidents", "opsteam_llm", "opsteam_notify",
+    "opsteam_tools", "opsteam_agents",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+name = "opsteam_notify imports only core, contracts"
+type = "forbidden"
+source_modules = ["opsteam_notify"]
+forbidden_modules = [
+    "opsteam_db", "opsteam_evidence", "opsteam_incidents", "opsteam_llm", "opsteam_policy",
+    "opsteam_tools", "opsteam_agents",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+name = "opsteam_tools imports only core, contracts, db, evidence, policy"
+type = "forbidden"
+source_modules = ["opsteam_tools"]
+forbidden_modules = [
+    "opsteam_incidents", "opsteam_llm", "opsteam_notify", "opsteam_agents",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+name = "INV-03: opsteam_agents reaches tools only via executor_iface/registry"
+type = "forbidden"
+source_modules = ["opsteam_agents"]
+forbidden_modules = [
+    "opsteam_tools.connectors", "opsteam_tools.gateway",
+    "opsteam_db", "opsteam_evidence", "opsteam_incidents", "opsteam_policy", "opsteam_notify",
+    "opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor",
+]
+
+[[tool.importlinter.contracts]]
+# Indirect imports allowed: opsteam_llm adapters may legitimately use httpx.
+name = "INV-03: opsteam_agents imports no infra/IO client"
+type = "forbidden"
+source_modules = ["opsteam_agents"]
+forbidden_modules = ["boto3", "kubernetes", "subprocess", "httpx"]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
+name = "Executor has no path to agents/LLM (ADR-0009)"
+type = "forbidden"
+source_modules = ["opsteam_executor"]
+forbidden_modules = [
+    "opsteam_agents", "opsteam_llm",
+    "opsteam_evidence", "opsteam_incidents", "opsteam_notify", "opsteam_tools",
+]
+
+[[tool.importlinter.contracts]]
+name = "Services do not import each other"
+type = "independence"
+modules = ["opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor"]
