@@ -67,7 +67,7 @@ target-version = "py312"
 line-ending = "lf"
 
 [tool.ruff.lint]
-# T20: no print (use structlog). BLE: no bare `except Exception`. S: bandit (incl. os.system, INV-03).
+# T20: no print (use structlog). BLE: no bare `except Exception`. S: bandit (incl. os.system).
 select = ["E", "W", "F", "I", "UP", "B", "S", "BLE", "T20", "SIM", "RUF", "ASYNC"]
 
 [tool.ruff.lint.per-file-ignores]
@@ -101,7 +101,7 @@ testpaths = ["packages", "services", "tests"]
 addopts = "--import-mode=importlib -q"
 
 # ---------------------------------------------------------------- import-linter
-# Encodes docs/03 §3. Each package may import only what its "Được import" column lists;
+# Each package may import only the opsteam packages it is allowed to depend on;
 # everything else opsteam_* is forbidden. opsteam_obs (logging/tracing) is allowed everywhere
 # except opsteam_core / opsteam_contracts.
 [tool.importlinter]
@@ -224,7 +224,7 @@ forbidden_modules = [
 ]
 
 [[tool.importlinter.contracts]]
-name = "INV-03: opsteam_agents reaches tools only via executor_iface/registry"
+name = "opsteam_agents reaches tools only via executor_iface/registry"
 type = "forbidden"
 source_modules = ["opsteam_agents"]
 forbidden_modules = [
@@ -235,14 +235,14 @@ forbidden_modules = [
 
 [[tool.importlinter.contracts]]
 # Indirect imports allowed: opsteam_llm adapters may legitimately use httpx.
-name = "INV-03: opsteam_agents imports no infra/IO client"
+name = "opsteam_agents imports no infra/IO client"
 type = "forbidden"
 source_modules = ["opsteam_agents"]
 forbidden_modules = ["boto3", "kubernetes", "subprocess", "httpx"]
 allow_indirect_imports = true
 
 [[tool.importlinter.contracts]]
-name = "Executor has no path to agents/LLM (ADR-0009)"
+name = "Executor has no path to agents/LLM"
 type = "forbidden"
 source_modules = ["opsteam_executor"]
 forbidden_modules = [

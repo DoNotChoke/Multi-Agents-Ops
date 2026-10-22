@@ -27,7 +27,7 @@ func readJSON(t *testing.T, path string) map[string]any {
 	return v
 }
 
-// TestTaskEnvelopeMatchesSchema keeps the hand-written struct (ADR-0015) in lockstep with
+// TestTaskEnvelopeMatchesSchema keeps the hand-written struct in lockstep with
 // contracts/jsonschema/task_envelope.json: same field names, same required/optional split.
 func TestTaskEnvelopeMatchesSchema(t *testing.T) {
 	schema := readJSON(t, filepath.Join(contractsDir, "jsonschema", "task_envelope.json"))
@@ -83,7 +83,7 @@ func decodeStrict(data []byte) error {
 }
 
 // Conditional rules (approval iff kind=action) are not a decoding concern; envelope
-// verification enforces them (docs/07 §5.4), so invalid-* examples are not used here.
+// verification enforces them, so invalid-* examples are not used here.
 func TestTaskEnvelopeExamplesDecodeStrictly(t *testing.T) {
 	paths, err := filepath.Glob(filepath.Join(contractsDir, "examples", "task_envelope", "valid-*.json"))
 	if err != nil || len(paths) == 0 {

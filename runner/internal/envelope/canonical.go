@@ -17,10 +17,8 @@ const maxSafeInteger = 1<<53 - 1
 
 var errUnsafeInteger = errors.New("integer literal outside ±(2^53-1)")
 
-// Canonicalize returns the RFC 8785 (JCS) form of raw JSON exactly as received
-// (docs/04 §4, ADR-0014). It rejects duplicate keys, NaN and invalid text, and also
-// integer literals beyond ±(2^53-1): jcs would silently round them, so the signed bytes
-// would differ from the value the Runner decodes. The Python signer refuses them too.
+// Canonicalize returns the RFC 8785 form of raw JSON as received, rejecting duplicate keys,
+// NaN, invalid text and integers beyond ±(2^53-1), which jcs would otherwise round silently.
 func Canonicalize(raw []byte) ([]byte, error) {
 	if err := rejectUnsafeIntegers(raw); err != nil {
 		return nil, fmt.Errorf("canonicalize: %w", err)

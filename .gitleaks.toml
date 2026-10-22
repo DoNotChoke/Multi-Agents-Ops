@@ -2,7 +2,7 @@
 useDefault = true
 
 [[allowlists]]
-description = "opsteam identifiers (<prefix>_<ULID>, docs/04 §2) are not secrets"
+description = "opsteam identifiers (<prefix>_<ULID>) are not secrets"
 regexTarget = "secret"
 regexes = [
   '''^(tnt|usr|int|svc|rule|evt|inc|tsk|tc|run|ev|fnd|hyp|plan|apr|aud|rnr|llm)_[0-9A-HJKMNP-TV-Z]{26}$''',

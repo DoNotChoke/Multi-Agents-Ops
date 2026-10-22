@@ -1,5 +1,5 @@
 // Package contracts is the Go side of contracts/jsonschema that the Runner needs.
-// Hand-written, not generated (ADR-0015): contracts_test.go fails if it drifts from the schema.
+// Hand-written, not generated: contracts_test.go fails if it drifts from the schema.
 package contracts
 
 import "encoding/json"

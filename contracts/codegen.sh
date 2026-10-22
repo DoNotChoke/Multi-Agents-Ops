@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Regenerates code from contracts/ (INV-13). Run via `make codegen`; never edit the output by hand.
+# Regenerates code from contracts/. Run via `make codegen`; never edit the output by hand.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -30,4 +30,4 @@ for schema in contracts/jsonschema/*.json; do
   web/node_modules/.bin/json2ts --cwd contracts/jsonschema -i "$schema" -o "$ts_out/$name.ts"
 done
 
-# Go: the Runner only needs TaskEnvelope, kept by hand in runner/internal/contracts (ADR-0015).
+# Go: the Runner only needs TaskEnvelope, kept by hand in runner/internal/contracts.

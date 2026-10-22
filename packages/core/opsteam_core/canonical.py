@@ -1,4 +1,4 @@
-"""Canonical JSON (RFC 8785 / JCS) for every hash and signature (docs/04 §4, ADR-0014).
+"""Canonical JSON (RFC 8785) used for every hash and signature.
 
 Verifiers canonicalize the JSON text exactly as received (`canonicalize_text`), never a
 re-serialized model, so timestamps and numbers are hashed as they were sent.
@@ -19,7 +19,7 @@ def canonical_json(value: JsonValue) -> bytes:
     try:
         return rfc8785.dumps(value)
     except rfc8785.CanonicalizationError as exc:
-        # Fixed message: the library's message echoes the offending value (INV-05).
+        # Fixed message: the library's own message echoes the offending value.
         raise CanonicalizationError("value has no RFC 8785 canonical form") from exc
 
 

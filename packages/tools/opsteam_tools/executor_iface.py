@@ -1,1 +1,1 @@
-"""ToolExecutor Protocol: the only tool entry point visible to opsteam_agents (INV-03)."""
+"""ToolExecutor Protocol: the only way opsteam_agents can run a tool."""

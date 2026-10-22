@@ -1,4 +1,4 @@
-"""The import-linter contracts in pyproject.toml must reject real violations (docs/10 §3, INV-03).
+"""The import-linter contracts in pyproject.toml must reject real violations.
 
 Each case copies all opsteam_* packages to a temp dir, plants one forbidden import, and runs
 lint-imports with that copy first on PYTHONPATH so it shadows the editable installs.
@@ -20,8 +20,8 @@ PACKAGE_DIRS = sorted(
     if p.is_dir()
 )
 LINT_IMPORTS = shutil.which("lint-imports", path=str(Path(sys.executable).parent))
-AGENTS_TOOLS = "INV-03: opsteam_agents reaches tools"
-AGENTS_INFRA = "INV-03: opsteam_agents imports no infra"
+AGENTS_TOOLS = "opsteam_agents reaches tools"
+AGENTS_INFRA = "opsteam_agents imports no infra"
 
 
 def _lint_imports(
