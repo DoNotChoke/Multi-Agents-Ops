@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "evidence_id": "ev_01JBQ2Z8Y3K4M5N6P7Q8R9S0T3",
+  "tenant_id": "tnt_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "incident_id": "inc_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "source_type": "derived",
+  "tool": "evidence.compare",
+  "tool_call_id": "tc_01JBQ2Z8Y3K4M5N6P7Q8R9S0T3",
+  "source_query": { "left": "ev_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1", "right": "ev_01JBQ2Z8Y3K4M5N6P7Q8R9S0T2" },
+  "time_window": { "start_at": "2026-10-22T05:45:00Z", "end_at": "2026-10-22T06:00:00Z" },
+  "collected_at": "2026-10-22T06:01:00Z",
+  "summary": "latency increase starts 40s after the rollout of checkout v2",
+  "content_hash": "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+  "redaction_status": "none_needed",
+  "truncated": false,
+  "payload_reference": "tenants/tnt_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1/incidents/inc_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1/ev_01JBQ2Z8Y3K4M5N6P7Q8R9S0T3.json.zst"
+}

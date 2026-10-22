@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "task_id": "tsk_01JBQ2Z8Y3K4M5N6P7Q8R9S0T2",
+  "tenant_id": "tnt_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "runner_id": "rnr_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "kind": "action",
+  "tool": "k8s.rollout_undo",
+  "integration_ref": "k8s-prod",
+  "arguments": { "namespace": "shop", "name": "checkout" },
+  "resource_scope": { "namespaces": ["shop"], "services": ["checkout"], "datasources": [] },
+  "limits": { "max_bytes": 65536, "max_rows": 1, "max_series": 1, "timeout_ms": 30000, "max_window_seconds": 1 },
+  "idempotency_key": "apr_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "issued_at": "2026-10-22T06:10:00Z",
+  "expires_at": "2026-10-22T06:15:00Z",
+  "policy_version": "2026-10-22.1",
+  "key_id": "k-2026-10",
+  "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.opsteam.dev/task_envelope.json",
+  "title": "TaskEnvelope",
+  "$comment": "Signed SaaS -> Runner task (docs/04 §3.8, docs/07 §5.4). signature = Ed25519 over the canonical JSON (RFC 8785) of every other field, computed on the JSON as received. Never contains credentials: integration_ref points at Runner-local config.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "task_id", "tenant_id", "runner_id", "kind", "tool", "integration_ref", "arguments",
+    "resource_scope", "limits", "idempotency_key", "issued_at", "expires_at", "policy_version", "key_id",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": { "$ref": "common.json#/$defs/SchemaVersion" },
+    "task_id": { "$ref": "common.json#/$defs/TaskId" },
+    "tenant_id": { "$ref": "common.json#/$defs/TenantId" },
+    "runner_id": { "$ref": "common.json#/$defs/RunnerId" },
+    "kind": { "type": "string", "enum": ["query", "action"] },
+    "tool": { "$ref": "common.json#/$defs/ToolName" },
+    "integration_ref": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,62}$" },
+    "arguments": {
+      "type": "object",
+      "$comment": "Intentionally open; already validated against the tool's schema. The Runner re-validates against its local template."
+    },
+    "resource_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["namespaces", "services", "datasources"],
+      "properties": {
+        "namespaces": { "type": "array", "uniqueItems": true, "items": { "type": "string", "maxLength": 253 } },
+        "services": { "type": "array", "uniqueItems": true, "items": { "type": "string", "maxLength": 256 } },
+        "datasources": { "type": "array", "uniqueItems": true, "items": { "type": "string", "maxLength": 256 } }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_bytes", "max_rows", "max_series", "timeout_ms", "max_window_seconds"],
+      "properties": {
+        "max_bytes": { "type": "integer", "minimum": 1 },
+        "max_rows": { "type": "integer", "minimum": 1 },
+        "max_series": { "type": "integer", "minimum": 1 },
+        "timeout_ms": { "type": "integer", "minimum": 1 },
+        "max_window_seconds": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "idempotency_key": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "issued_at": { "$ref": "common.json#/$defs/UtcDateTime" },
+    "expires_at": { "$ref": "common.json#/$defs/UtcDateTime" },
+    "policy_version": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approval_id", "action_hash", "approver_id", "approved_at", "expires_at"],
+      "properties": {
+        "approval_id": { "$ref": "common.json#/$defs/ApprovalId" },
+        "action_hash": { "$ref": "common.json#/$defs/Sha256Digest" },
+        "approver_id": { "$ref": "common.json#/$defs/UserId" },
+        "approved_at": { "$ref": "common.json#/$defs/UtcDateTime" },
+        "expires_at": { "$ref": "common.json#/$defs/UtcDateTime" }
+      }
+    },
+    "key_id": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "signature": { "type": "string", "pattern": "^[A-Za-z0-9_-]{86}$", "$comment": "base64url, no padding, of the 64-byte Ed25519 signature" }
+  },
+  "if": { "properties": { "kind": { "const": "action" } } },
+  "then": { "required": ["approval"] },
+  "else": { "not": { "required": ["approval"] } }
+}

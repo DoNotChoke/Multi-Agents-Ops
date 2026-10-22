@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "event_id": "inc_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "tenant_id": "tnt_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "integration_id": "int_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "source_type": "alertmanager",
+  "fingerprint": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+  "status": "firing",
+  "severity_hint": "critical",
+  "service_ref": { "name": "checkout", "environment": "production" },
+  "title": "HighLatencyP95Checkout",
+  "labels": { "alertname": "HighLatencyP95Checkout", "service": "checkout" },
+  "annotations": { "summary": "p95 latency above 800ms" },
+  "starts_at": "2026-10-22T06:00:00Z",
+  "received_at": "2026-10-22T06:00:02Z",
+  "raw_payload_ref": "tenants/tnt_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1/events/evt_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1.json.zst"
+}

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.opsteam.dev/common.json",
+  "title": "Common",
+  "$comment": "Shared definitions. IDs are <prefix>_<ULID> (Crockford base32, upper case), see docs/04 §2.",
+  "$defs": {
+    "TenantId": { "type": "string", "pattern": "^tnt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "UserId": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "IntegrationId": { "type": "string", "pattern": "^int_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "ServiceId": { "type": "string", "pattern": "^svc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "EventId": { "type": "string", "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "IncidentId": { "type": "string", "pattern": "^inc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "TaskId": { "type": "string", "pattern": "^tsk_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "ToolCallId": { "type": "string", "pattern": "^tc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "AgentRunId": { "type": "string", "pattern": "^run_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "EvidenceId": { "type": "string", "pattern": "^ev_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "FindingId": { "type": "string", "pattern": "^fnd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "HypothesisId": { "type": "string", "pattern": "^hyp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "ApprovalId": { "type": "string", "pattern": "^apr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "RunnerId": { "type": "string", "pattern": "^rnr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "UtcDateTime": {
+      "$comment": "RFC 3339 date-time; producers emit UTC with a literal Z (docs/04 §1). No pattern: Pydantic cannot apply one to a datetime.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "Sha256Digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "ToolName": { "type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$", "maxLength": 64 },
+    "SchemaVersion": { "type": "integer", "const": 1 },
+    "TimeWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_at", "end_at"],
+      "properties": {
+        "start_at": { "$ref": "#/$defs/UtcDateTime" },
+        "end_at": { "$ref": "#/$defs/UtcDateTime" }
+      }
+    },
+    "Severity": { "type": "string", "enum": ["info", "low", "medium", "high", "critical"] },
+    "HypothesisCategory": {
+      "type": "string",
+      "enum": [
+        "deployment_regression",
+        "config_change",
+        "resource_exhaustion",
+        "dependency_failure",
+        "traffic_spike",
+        "infrastructure_failure",
+        "external_dependency",
+        "unknown"
+      ]
+    },
+    "AgentName": {
+      "$comment": "MVP agents (docs/06 §1). Extend when a new agent ships.",
+      "type": "string",
+      "enum": ["commander", "metrics", "logs", "infrastructure", "verifier"]
+    },
+    "BudgetUsed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["llm_calls", "tokens_in", "tokens_out", "tool_calls", "cost_usd", "duration_ms"],
+      "properties": {
+        "llm_calls": { "type": "integer", "minimum": 0 },
+        "tokens_in": { "type": "integer", "minimum": 0 },
+        "tokens_out": { "type": "integer", "minimum": 0 },
+        "tool_calls": { "type": "integer", "minimum": 0 },
+        "cost_usd": { "type": "number", "minimum": 0 },
+        "duration_ms": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

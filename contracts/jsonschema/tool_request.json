@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.opsteam.dev/tool_request.json",
+  "title": "ToolRequest",
+  "$comment": "Proposed by an agent (docs/04 §3.7). INV-01: never carries tenant_id, identity or quota; additionalProperties:false rejects them.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["tool", "integration_id", "resource", "arguments"],
+  "properties": {
+    "tool": { "$ref": "common.json#/$defs/ToolName" },
+    "integration_id": { "$ref": "common.json#/$defs/IntegrationId" },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["service", "environment"],
+      "properties": {
+        "service": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "environment": { "type": "string", "minLength": 1, "maxLength": 64 }
+      }
+    },
+    "arguments": {
+      "type": "object",
+      "$comment": "Intentionally open here; validated against the tool's ToolSpec argument schema in the Tool Gateway (T-1.5/T-1.6)."
+    }
+  }
+}

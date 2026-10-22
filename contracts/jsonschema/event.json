@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.opsteam.dev/event.json",
+  "title": "Event",
+  "$comment": "A normalized raw signal (docs/04 §3.2). labels/annotations are already redacted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "event_id", "tenant_id", "integration_id", "source_type", "fingerprint",
+    "status", "service_ref", "title", "labels", "annotations", "starts_at", "received_at"
+  ],
+  "properties": {
+    "schema_version": { "$ref": "common.json#/$defs/SchemaVersion" },
+    "event_id": { "$ref": "common.json#/$defs/EventId" },
+    "tenant_id": { "$ref": "common.json#/$defs/TenantId" },
+    "integration_id": { "$ref": "common.json#/$defs/IntegrationId" },
+    "source_type": { "type": "string", "enum": ["alertmanager", "loki_ruler", "k8s_watch", "probe", "user"] },
+    "fingerprint": { "type": "string", "pattern": "^[0-9a-f]{64}$", "$comment": "sha256 hex, docs/05 §4" },
+    "status": { "type": "string", "enum": ["firing", "resolved"] },
+    "severity_hint": { "type": ["string", "null"], "enum": ["info", "warning", "critical", null] },
+    "service_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "$comment": "OTel naming: service.name, deployment.environment.name. All optional: unmapped services still create incidents.",
+      "properties": {
+        "service_id": { "$ref": "common.json#/$defs/ServiceId" },
+        "name": { "type": "string", "maxLength": 256 },
+        "environment": { "type": "string", "maxLength": 64 }
+      }
+    },
+    "title": { "type": "string", "maxLength": 200 },
+    "labels": {
+      "type": "object",
+      "maxProperties": 50,
+      "additionalProperties": { "type": "string", "maxLength": 256 }
+    },
+    "annotations": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "starts_at": { "$ref": "common.json#/$defs/UtcDateTime" },
+    "ends_at": { "$ref": "common.json#/$defs/UtcDateTime" },
+    "received_at": { "$ref": "common.json#/$defs/UtcDateTime" },
+    "raw_payload_ref": { "type": "string", "maxLength": 512, "$comment": "object key of the redacted raw payload" }
+  }
+}

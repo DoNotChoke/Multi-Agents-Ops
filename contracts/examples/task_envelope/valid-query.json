@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "task_id": "tsk_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "tenant_id": "tnt_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "runner_id": "rnr_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "kind": "query",
+  "tool": "metrics.query_range",
+  "integration_ref": "prometheus-prod",
+  "arguments": { "query_template": "http_latency_p95", "window_seconds": 900, "step_seconds": 30 },
+  "resource_scope": { "namespaces": ["shop"], "services": ["checkout"], "datasources": ["prometheus-prod"] },
+  "limits": { "max_bytes": 1048576, "max_rows": 11000, "max_series": 20, "timeout_ms": 10000, "max_window_seconds": 21600 },
+  "idempotency_key": "tc_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "issued_at": "2026-10-22T06:00:00Z",
+  "expires_at": "2026-10-22T06:01:00Z",
+  "policy_version": "2026-10-22.1",
+  "key_id": "k-2026-10",
+  "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+}

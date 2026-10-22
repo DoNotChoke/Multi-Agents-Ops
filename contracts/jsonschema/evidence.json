@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.opsteam.dev/evidence.json",
+  "title": "Evidence",
+  "$comment": "Collected data with provenance (docs/04 §3.3). redaction_failed => payload never reaches the LLM.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "evidence_id", "tenant_id", "incident_id", "source_type", "tool", "tool_call_id",
+    "source_query", "time_window", "collected_at", "summary", "content_hash", "redaction_status",
+    "truncated", "payload_reference"
+  ],
+  "properties": {
+    "schema_version": { "$ref": "common.json#/$defs/SchemaVersion" },
+    "evidence_id": { "$ref": "common.json#/$defs/EvidenceId" },
+    "tenant_id": { "$ref": "common.json#/$defs/TenantId" },
+    "incident_id": { "$ref": "common.json#/$defs/IncidentId" },
+    "integration_id": { "$ref": "common.json#/$defs/IntegrationId" },
+    "source_type": {
+      "type": "string",
+      "enum": ["metrics", "logs", "traces", "k8s", "deployment", "audit", "probe", "derived"]
+    },
+    "tool": { "$ref": "common.json#/$defs/ToolName" },
+    "tool_call_id": { "$ref": "common.json#/$defs/ToolCallId" },
+    "source_query": {
+      "type": "object",
+      "$comment": "Intentionally open: template + args as validated by the tool's ToolSpec (T-1.5). Never contains secrets."
+    },
+    "time_window": { "$ref": "common.json#/$defs/TimeWindow" },
+    "observed_at": { "$ref": "common.json#/$defs/UtcDateTime" },
+    "collected_at": { "$ref": "common.json#/$defs/UtcDateTime" },
+    "summary": { "type": "string", "maxLength": 2000 },
+    "content_hash": { "$ref": "common.json#/$defs/Sha256Digest" },
+    "redaction_status": { "type": "string", "enum": ["none_needed", "redacted", "redaction_failed"] },
+    "truncated": { "type": "boolean" },
+    "payload_reference": { "type": "string", "maxLength": 512 },
+    "derived_from": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "common.json#/$defs/EvidenceId" }
+    }
+  },
+  "if": { "properties": { "source_type": { "const": "derived" } } },
+  "then": { "required": ["derived_from"] },
+  "else": { "required": ["integration_id"] }
+}

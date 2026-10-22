@@ -33,7 +33,9 @@ test:
 run-web:
 	pnpm -C web dev
 
-codegen:          ; $(call not_implemented,T-0.2)
+codegen:
+	bash contracts/codegen.sh
+
 dev-up dev-down:  ; $(call not_implemented,T-0.3)
 lab-up lab-down lab-fault lab-heal: ; $(call not_implemented,T-0.4)
 eval:             ; $(call not_implemented,T-0.5)

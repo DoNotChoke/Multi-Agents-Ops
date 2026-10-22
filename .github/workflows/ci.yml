@@ -33,6 +33,8 @@ jobs:
           cache: pnpm
           cache-dependency-path: web/pnpm-lock.yaml
       - run: make setup
+      - name: codegen-check (INV-13)
+        run: make codegen && git diff --exit-code
       - run: make lint
       - run: make test
 

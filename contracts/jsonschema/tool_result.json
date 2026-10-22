@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.opsteam.dev/tool_result.json",
+  "title": "ToolResult",
+  "$comment": "Tool Gateway answer to an agent (docs/04 §3.7). summary/data are untrusted (INV-04) and get wrapped before entering a prompt.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tool_call_id", "status", "evidence_ids", "usage"],
+  "properties": {
+    "schema_version": { "$ref": "common.json#/$defs/SchemaVersion" },
+    "tool_call_id": { "$ref": "common.json#/$defs/ToolCallId" },
+    "status": { "type": "string", "enum": ["ok", "denied", "error", "timeout", "limit_exceeded"] },
+    "evidence_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "common.json#/$defs/EvidenceId" }
+    },
+    "summary": { "type": "string", "maxLength": 2000 },
+    "data": {
+      "type": "object",
+      "$comment": "Intentionally open: compressed, tool-specific payload (stats, top-k patterns, exemplars). Must state truncation.",
+      "required": ["truncated"],
+      "properties": { "truncated": { "type": "boolean" } },
+      "additionalProperties": true
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$", "maxLength": 128 },
+        "message": { "type": "string", "maxLength": 1000, "$comment": "Never contains secrets (INV-05)." }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_ms", "bytes", "rows", "series"],
+      "properties": {
+        "duration_ms": { "type": "integer", "minimum": 0 },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "rows": { "type": "integer", "minimum": 0 },
+        "series": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

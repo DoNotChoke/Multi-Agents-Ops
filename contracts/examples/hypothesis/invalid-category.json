@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "hypothesis_id": "hyp_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "incident_id": "inc_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "agent": "metrics",
+  "description": "Database dependency is slow",
+  "category": "cosmic_rays",
+  "entities": ["checkout", "postgres"],
+  "evidence_ids": ["ev_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1"],
+  "counterevidence_ids": [],
+  "assessment": "proposed",
+  "confidence": null,
+  "missing_data": ["database tracing"]
+}

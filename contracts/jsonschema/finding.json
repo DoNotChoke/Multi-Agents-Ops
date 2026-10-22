@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.opsteam.dev/finding.json",
+  "title": "Finding",
+  "$comment": "An evidence-backed claim (docs/04 §3.4). INV-07: evidence_ids must exist in the same tenant and incident; checked by opsteam_evidence on save.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "finding_id", "incident_id", "agent", "claim", "severity", "evidence_ids", "time_window", "created_at"],
+  "properties": {
+    "schema_version": { "$ref": "common.json#/$defs/SchemaVersion" },
+    "finding_id": { "$ref": "common.json#/$defs/FindingId" },
+    "incident_id": { "$ref": "common.json#/$defs/IncidentId" },
+    "agent": { "$ref": "common.json#/$defs/AgentName" },
+    "claim": { "type": "string", "minLength": 1, "maxLength": 1000 },
+    "severity": { "$ref": "common.json#/$defs/Severity" },
+    "evidence_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "common.json#/$defs/EvidenceId" }
+    },
+    "time_window": { "$ref": "common.json#/$defs/TimeWindow" },
+    "created_at": { "$ref": "common.json#/$defs/UtcDateTime" }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "tool": "metrics.query_range",
+  "integration_id": "int_01JBQ2Z8Y3K4M5N6P7Q8R9S0T1",
+  "resource": { "service": "checkout", "environment": "production" },
+  "arguments": { "query_template": "http_latency_p95", "window_seconds": 900, "step_seconds": 30 }
+}

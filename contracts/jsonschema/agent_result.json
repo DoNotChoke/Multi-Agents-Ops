@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.opsteam.dev/agent_result.json",
+  "title": "AgentResult",
+  "$comment": "Specialist output to the orchestrator (docs/04 §3.6). Drafts carry no IDs; the orchestrator assigns them on save.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "run_id", "incident_id", "agent", "status", "findings", "hypotheses",
+    "missing_data", "budget_used", "stop_reason"
+  ],
+  "properties": {
+    "schema_version": { "$ref": "common.json#/$defs/SchemaVersion" },
+    "run_id": { "$ref": "common.json#/$defs/AgentRunId" },
+    "incident_id": { "$ref": "common.json#/$defs/IncidentId" },
+    "agent": { "$ref": "common.json#/$defs/AgentName" },
+    "status": { "type": "string", "enum": ["completed", "partial", "failed", "budget_exhausted"] },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/FindingDraft" } },
+    "hypotheses": { "type": "array", "items": { "$ref": "#/$defs/HypothesisDraft" } },
+    "missing_data": { "type": "array", "items": { "type": "string", "maxLength": 256 } },
+    "budget_used": { "$ref": "common.json#/$defs/BudgetUsed" },
+    "stop_reason": { "type": "string", "enum": ["done", "budget", "deadline", "error", "no_data"] }
+  },
+  "$defs": {
+    "FindingDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim", "severity", "evidence_ids", "time_window"],
+      "properties": {
+        "claim": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "severity": { "$ref": "common.json#/$defs/Severity" },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.json#/$defs/EvidenceId" }
+        },
+        "time_window": { "$ref": "common.json#/$defs/TimeWindow" }
+      }
+    },
+    "HypothesisDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "category", "entities", "evidence_ids", "counterevidence_ids"],
+      "properties": {
+        "description": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "category": { "$ref": "common.json#/$defs/HypothesisCategory" },
+        "entities": { "type": "array", "items": { "type": "string", "maxLength": 256 } },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.json#/$defs/EvidenceId" }
+        },
+        "counterevidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.json#/$defs/EvidenceId" }
+        }
+      }
+    }
+  }
+}

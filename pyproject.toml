@@ -23,10 +23,13 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "datamodel-code-generator>=0.86.0",
     "import-linter",
+    "jsonschema>=4.26.0",
     "mypy",
     "pre-commit>=4.7.0",
     "pytest",
+    "rfc3339-validator>=0.1.4",
     "ruff",
 ]
 
@@ -57,6 +60,9 @@ opsteam-executor = { workspace = true }
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.format]
+line-ending = "lf"
 
 [tool.ruff.lint]
 # T20: no print (use structlog). BLE: no bare `except Exception`. S: bandit (incl. os.system, INV-03).

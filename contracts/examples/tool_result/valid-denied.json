@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "tool_call_id": "tc_01JBQ2Z8Y3K4M5N6P7Q8R9S0T2",
+  "status": "denied",
+  "evidence_ids": [],
+  "error": { "code": "policy.tool_not_allowed_for_agent", "message": "tool not allowed for this agent" },
+  "usage": { "duration_ms": 3, "bytes": 0, "rows": 0, "series": 0 }
+}
