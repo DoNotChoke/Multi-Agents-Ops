@@ -3,6 +3,7 @@
 setup:
 	uv sync
 	go -C runner mod download
+	pnpm -C web install --frozen-lockfile
 
 lint:
 	uv run ruff check .
@@ -10,7 +11,10 @@ lint:
 	uv run mypy
 	uv run lint-imports
 	cd runner && golangci-lint run ./...
+	pnpm -C web lint
+	pnpm -C web typecheck
 
 test:
 	uv run pytest
 	go -C runner test ./...
+	pnpm -C web test
