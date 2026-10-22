@@ -1,0 +1,15 @@
+version: "2"
+
+linters:
+  default: standard
+  enable:
+    - errorlint         # errors wrapped with %w and compared with errors.Is/As
+    - gochecknoglobals  # no global state
+    - gosec
+    - revive            # includes context-as-argument (ctx is the first parameter)
+    - noctx             # HTTP calls carry a context
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
