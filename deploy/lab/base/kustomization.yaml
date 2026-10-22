@@ -1,0 +1,8 @@
+# Healthy baseline of the demo shop; `make lab-heal` re-applies it after a fault.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: shop
+resources:
+  - namespace.yaml
+  - postgres.yaml
+  - shop.yaml

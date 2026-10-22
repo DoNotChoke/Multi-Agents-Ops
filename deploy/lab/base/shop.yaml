@@ -1,0 +1,150 @@
+# frontend -> checkout (Postgres) -> payment, driven by loadgen. Pod labels `service` and
+# `version` become Prometheus labels; fault knobs are the env vars read by demo-app.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: checkout-config
+data:
+  REQUIRED_CONFIG: "enabled"
+  DB_MAX_CONNS: "10"
+  DB_QUERY_MS: "40"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { service: frontend }
+  template:
+    metadata:
+      labels: { service: frontend, version: v1 }
+      annotations: { prometheus.io/scrape: "true", prometheus.io/port: "8080" }
+    spec:
+      containers:
+        - name: app
+          image: opsteam-lab/demo-app:dev
+          imagePullPolicy: Never
+          env:
+            - { name: ROLE, value: frontend }
+            - { name: VERSION, value: v1 }
+            - { name: CHECKOUT_URL, value: "http://checkout:8080" }
+          ports: [{ containerPort: 8080 }]
+          readinessProbe: { httpGet: { path: /readyz, port: 8080 }, periodSeconds: 5 }
+          livenessProbe: { httpGet: { path: /healthz, port: 8080 }, periodSeconds: 10 }
+          resources:
+            requests: { cpu: 50m, memory: 32Mi }
+            limits: { memory: 128Mi }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { service: checkout }
+  template:
+    metadata:
+      labels: { service: checkout, version: v1 }
+      annotations: { prometheus.io/scrape: "true", prometheus.io/port: "8080" }
+    spec:
+      containers:
+        - name: app
+          image: opsteam-lab/demo-app:dev
+          imagePullPolicy: Never
+          envFrom:
+            - configMapRef: { name: checkout-config }
+          env:
+            - { name: ROLE, value: checkout }
+            - { name: VERSION, value: v1 }
+            - { name: PAYMENT_URL, value: "http://payment:8080" }
+            - name: DATABASE_URL
+              valueFrom: { secretKeyRef: { name: postgres, key: DATABASE_URL } }
+          ports: [{ containerPort: 8080 }]
+          readinessProbe: { httpGet: { path: /readyz, port: 8080 }, periodSeconds: 5 }
+          livenessProbe: { httpGet: { path: /healthz, port: 8080 }, periodSeconds: 10 }
+          resources:
+            requests: { cpu: 50m, memory: 32Mi }
+            limits: { memory: 128Mi }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { service: payment }
+  template:
+    metadata:
+      labels: { service: payment, version: v1 }
+      annotations: { prometheus.io/scrape: "true", prometheus.io/port: "8080" }
+    spec:
+      containers:
+        - name: app
+          image: opsteam-lab/demo-app:dev
+          imagePullPolicy: Never
+          env:
+            - { name: ROLE, value: payment }
+            - { name: VERSION, value: v1 }
+            - { name: EXTRA_LATENCY_MS, value: "0" }
+            - { name: LEAK_MB_PER_SEC, value: "0" }
+          ports: [{ containerPort: 8080 }]
+          readinessProbe: { httpGet: { path: /readyz, port: 8080 }, periodSeconds: 5 }
+          livenessProbe: { httpGet: { path: /healthz, port: 8080 }, periodSeconds: 10 }
+          resources:
+            requests: { cpu: 50m, memory: 32Mi }
+            limits: { memory: 128Mi }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgen
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { service: loadgen }
+  template:
+    metadata:
+      labels: { service: loadgen, version: v1 }
+    spec:
+      containers:
+        - name: app
+          image: opsteam-lab/demo-app:dev
+          imagePullPolicy: Never
+          env:
+            - { name: ROLE, value: loadgen }
+            - { name: VERSION, value: v1 }
+            - { name: FRONTEND_URL, value: "http://frontend:8080" }
+            - { name: RPS, value: "30" }
+          resources:
+            requests: { cpu: 20m, memory: 16Mi }
+            limits: { memory: 64Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: NodePort
+  selector: { service: frontend }
+  ports:
+    - { port: 8080, nodePort: 30080 }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkout
+spec:
+  selector: { service: checkout }
+  ports: [{ port: 8080 }]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+spec:
+  selector: { service: payment }
+  ports: [{ port: 8080 }]

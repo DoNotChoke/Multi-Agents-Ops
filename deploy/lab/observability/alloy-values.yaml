@@ -1,0 +1,47 @@
+# grafana/alloy chart, pinned in lab.sh: tails shop pod logs through the Kubernetes API into Loki.
+controller:
+  type: deployment
+  replicas: 1
+
+alloy:
+  configMap:
+    content: |
+      discovery.kubernetes "pods" {
+        role = "pod"
+        namespaces { names = ["shop"] }
+      }
+
+      discovery.relabel "shop" {
+        targets = discovery.kubernetes.pods.targets
+        rule {
+          source_labels = ["__meta_kubernetes_namespace"]
+          target_label  = "namespace"
+        }
+        rule {
+          source_labels = ["__meta_kubernetes_pod_name"]
+          target_label  = "pod"
+        }
+        rule {
+          source_labels = ["__meta_kubernetes_pod_container_name"]
+          target_label  = "container"
+        }
+        rule {
+          source_labels = ["__meta_kubernetes_pod_label_service"]
+          target_label  = "service"
+        }
+        rule {
+          source_labels = ["__meta_kubernetes_pod_label_version"]
+          target_label  = "version"
+        }
+      }
+
+      loki.source.kubernetes "shop" {
+        targets    = discovery.relabel.shop.output
+        forward_to = [loki.write.lab.receiver]
+      }
+
+      loki.write "lab" {
+        endpoint {
+          url = "http://loki-gateway.monitoring.svc/loki/api/v1/push"
+        }
+      }

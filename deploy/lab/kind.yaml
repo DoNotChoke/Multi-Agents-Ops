@@ -1,0 +1,11 @@
+# Single-node lab cluster; NodePorts are published on 127.0.0.1 only.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: opsteam-lab
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - { containerPort: 30080, hostPort: 30080, listenAddress: 127.0.0.1 } # shop frontend
+      - { containerPort: 30090, hostPort: 30090, listenAddress: 127.0.0.1 } # Prometheus
+      - { containerPort: 30093, hostPort: 30093, listenAddress: 127.0.0.1 } # Alertmanager
+      - { containerPort: 30100, hostPort: 30100, listenAddress: 127.0.0.1 } # Loki gateway

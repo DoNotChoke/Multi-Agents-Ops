@@ -1,0 +1,77 @@
+# prometheus-community/prometheus chart, pinned in lab.sh. Lab-sized: no persistence,
+# no node-exporter/pushgateway; kube-state-metrics feeds the restart/OOM alerts.
+server:
+  global:
+    scrape_interval: 15s
+    evaluation_interval: 15s
+  retention: 1d
+  persistentVolume:
+    enabled: false
+  service:
+    type: NodePort
+    nodePort: 30090
+    servicePort: 9090
+
+alertmanager:
+  persistence:
+    enabled: false
+  service:
+    type: NodePort
+    nodePort: 30093
+  config:
+    route:
+      receiver: "null"
+      group_by: [alertname, namespace, service]
+      group_wait: 10s
+      group_interval: 1m
+      repeat_interval: 1h
+    # TODO(T-2.1): send to the Event Gateway webhook once it exists.
+    receivers:
+      - name: "null"
+
+prometheus-node-exporter:
+  enabled: false
+prometheus-pushgateway:
+  enabled: false
+
+serverFiles:
+  alerting_rules.yml:
+    groups:
+      - name: shop
+        rules:
+          - alert: HighLatencyP95
+            expr: |
+              histogram_quantile(0.95,
+                sum by (namespace, service, le) (rate(http_request_duration_seconds_bucket{namespace="shop"}[2m]))
+              ) > 0.5
+            for: 2m
+            labels: { severity: warning }
+            annotations:
+              summary: "p95 latency of {{ $labels.service }} is {{ $value | humanizeDuration }}"
+          - alert: HighErrorRate
+            expr: |
+              sum by (namespace, service) (rate(http_requests_total{namespace="shop", code=~"5.."}[2m]))
+                / sum by (namespace, service) (rate(http_requests_total{namespace="shop"}[2m])) > 0.05
+            for: 2m
+            labels: { severity: critical }
+            annotations:
+              summary: "{{ $labels.service }} returns 5xx for {{ $value | humanizePercentage }} of requests"
+          - alert: PodRestarting
+            expr: increase(kube_pod_container_status_restarts_total{namespace="shop"}[10m]) > 2
+            labels: { severity: warning }
+            annotations:
+              summary: "{{ $labels.pod }} restarted {{ $value | humanize }} times in 10m"
+          - alert: PodCrashLooping
+            expr: max_over_time(kube_pod_container_status_waiting_reason{namespace="shop", reason="CrashLoopBackOff"}[5m]) >= 1
+            for: 1m
+            labels: { severity: critical }
+            annotations:
+              summary: "{{ $labels.pod }} is in CrashLoopBackOff"
+          - alert: ContainerOOMKilled
+            expr: |
+              (kube_pod_container_status_last_terminated_reason{namespace="shop", reason="OOMKilled"} == 1)
+                and on (namespace, pod, container)
+              increase(kube_pod_container_status_restarts_total{namespace="shop"}[10m]) > 0
+            labels: { severity: warning }
+            annotations:
+              summary: "{{ $labels.container }} in {{ $labels.pod }} was OOM-killed"

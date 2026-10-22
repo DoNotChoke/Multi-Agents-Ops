@@ -12,6 +12,7 @@ setup:
 	if [ -n "$$missing" ]; then echo "missing tools:$$missing" >&2; exit 1; fi
 	uv sync
 	go -C runner mod download
+	go -C deploy/lab/demo-app mod download
 	pnpm -C web install --frozen-lockfile
 	uv run pre-commit install
 
@@ -21,6 +22,7 @@ lint:
 	uv run mypy
 	uv run lint-imports
 	cd runner && golangci-lint run ./...
+	cd deploy/lab/demo-app && golangci-lint run ./...
 	pnpm -C web lint
 	pnpm -C web format:check
 	pnpm -C web typecheck
@@ -28,6 +30,7 @@ lint:
 test:
 	uv run pytest
 	go -C runner test ./...
+	go -C deploy/lab/demo-app test ./...
 	pnpm -C web test
 
 run-web:
@@ -49,7 +52,13 @@ dev-down:
 # Also deletes the volumes (all local data).
 dev-reset:
 	$(COMPOSE) --profile llm-obs down -v
-lab-up lab-down lab-fault lab-heal: ; $(call not_implemented,T-0.4)
+lab-up:
+	bash deploy/lab/lab.sh up
+
+lab-down:
+	bash deploy/lab/lab.sh down
+
+lab-fault lab-heal: ; $(call not_implemented,T-0.4)
 eval:             ; $(call not_implemented,T-0.5)
 test-security:
 	uv run pytest tests/security
