@@ -4,7 +4,7 @@ from opsteam_api import devseed
 from opsteam_api.main import create_app
 from opsteam_core.context import Principal, RequestContext
 from opsteam_core.ids import new_id
-from opsteam_db import create_engine, identify, tenant_session
+from opsteam_db import audit, create_engine, identify, tenant_session
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.pool import NullPool
@@ -115,3 +115,56 @@ async def test_dev_seed_is_idempotent(app_engine: AsyncEngine) -> None:
         await devseed.seed(app_engine, ISSUER)
     admin = await identify(app_engine, ISSUER, "00000000-0000-4000-8000-000000000004", None)
     assert admin.memberships == {devseed.DEV_TENANT: ("admin",)}
+
+
+# Expected status per role; every new endpoint gets a row here.
+SCOPE_TABLE = {
+    "/api/v1/tenant": {
+        "viewer": 200,
+        "responder": 200,
+        "approver": 200,
+        "admin": 200,
+        "owner": 200,
+    },
+    "/api/v1/audit": {"viewer": 403, "responder": 403, "approver": 403, "admin": 200, "owner": 200},
+}
+
+
+@pytest.mark.parametrize(
+    ("path", "role"), [(p, r) for p, roles in SCOPE_TABLE.items() for r in roles]
+)
+async def test_scope_table(app_engine: AsyncEngine, path: str, role: str) -> None:
+    subject = new_id("usr")
+    tenant = await _member(app_engine, subject, [role])
+    with _client(app_engine) as client:
+        resp = client.get(path, headers=_auth(subject, tenant))
+    assert resp.status_code == SCOPE_TABLE[path][role]
+    if resp.status_code == 403:
+        assert resp.json()["code"] == "authz.forbidden"
+
+
+async def test_audit_pages_newest_first_without_gaps(app_engine: AsyncEngine) -> None:
+    subject = new_id("usr")
+    tenant = await _member(app_engine, subject, ["admin"])
+    ctx = RequestContext(
+        tenant_id=tenant,
+        principal=Principal(type="system", id="test"),
+        roles=(),
+        scopes=frozenset(),
+    )
+    async with tenant_session(app_engine, ctx) as s:
+        for i in range(5):
+            await audit.record(s, ctx, "test.event", {"type": "n", "id": str(i)}, "allowed")
+        await audit.record(s, ctx, "other.event", {"type": "n", "id": "x"}, "denied")
+    seen, cursor = [], None
+    with _client(app_engine) as client:
+        while True:
+            params = {"limit": 2, "action": "test.event"} | ({"cursor": cursor} if cursor else {})
+            body = client.get("/api/v1/audit", headers=_auth(subject, tenant), params=params).json()
+            seen += [item["resource"]["id"] for item in body["items"]]
+            cursor = body["next_cursor"]
+            if cursor is None:
+                break
+        bad = client.get("/api/v1/audit", headers=_auth(subject, tenant), params={"cursor": "1;--"})
+    assert seen == ["4", "3", "2", "1", "0"]
+    assert (bad.status_code, bad.json()["code"]) == (422, "request.invalid")

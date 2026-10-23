@@ -8,6 +8,7 @@ from opsteam_db import create_engine, tenant_session
 def test_public_surface_has_no_raw_session_factory() -> None:
     assert set(opsteam_db.__all__) == {
         "Identity",
+        "audit",
         "create_engine",
         "identify",
         "ping",
