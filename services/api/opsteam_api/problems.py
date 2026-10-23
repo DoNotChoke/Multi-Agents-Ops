@@ -12,7 +12,14 @@ from starlette.exceptions import HTTPException
 MEDIA_TYPE = "application/problem+json"
 
 # Unlisted OpsteamError codes are client errors (400).
-STATUS_BY_CODE = {"id.invalid": 422, "netguard.blocked": 422}
+STATUS_BY_CODE = {
+    "auth.invalid_token": 401,
+    "authz.forbidden": 403,
+    "authz.unknown_role": 403,
+    "id.invalid": 422,
+    "netguard.blocked": 422,
+    "tenant.not_found": 404,
+}
 
 
 def problem_body(status: int, code: str, request_id: str, **extra: Any) -> dict[str, Any]:
@@ -24,7 +31,8 @@ def problem_body(status: int, code: str, request_id: str, **extra: Any) -> dict[
 
 def _problem(request: Request, status: int, code: str, **extra: Any) -> JSONResponse:
     body = problem_body(status, code, request.state.request_id, **extra)
-    return JSONResponse(body, status_code=status, media_type=MEDIA_TYPE)
+    headers = {"WWW-Authenticate": "Bearer"} if status == 401 else None
+    return JSONResponse(body, status_code=status, media_type=MEDIA_TYPE, headers=headers)
 
 
 def install(app: FastAPI) -> None:

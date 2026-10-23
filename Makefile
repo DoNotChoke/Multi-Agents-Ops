@@ -1,4 +1,4 @@
-.PHONY: setup codegen dev-up dev-down dev-reset migrate lab-up lab-down lab-fault lab-heal lab-verify \
+.PHONY: setup codegen dev-up dev-down dev-reset dev-seed migrate lab-up lab-down lab-fault lab-heal lab-verify \
 	lint test test-integration test-security test-e2e eval \
 	run-api run-worker run-ingest run-web run-runner
 
@@ -95,10 +95,17 @@ test-integration:
 test-security:
 	uv run pytest tests/security -m ""
 
-run-api: export OPSTEAM_ENV ?= dev
-run-api: export OPSTEAM_DATABASE_URL ?= $(call DB_URL,opsteam_app,$(OPSTEAM_APP_DB_PASSWORD))
+# Fake dev settings for the local API process; the token issuer is the compose Keycloak.
+run-api dev-seed: export OPSTEAM_ENV ?= dev
+run-api dev-seed: export OPSTEAM_DATABASE_URL ?= $(call DB_URL,opsteam_app,$(OPSTEAM_APP_DB_PASSWORD))
+run-api dev-seed: export OPSTEAM_OIDC_ISSUER ?= http://localhost:8080/realms/opsteam
+run-api dev-seed: export OPSTEAM_OIDC_JWKS_URL ?= http://localhost:8080/realms/opsteam/protocol/openid-connect/certs
 run-api:
 	uv run uvicorn --factory opsteam_api.main:create_app --host 127.0.0.1 --port 8000
+
+# Dev tenant acme-dev with the four realm users; needs `make dev-up migrate`.
+dev-seed:
+	uv run python -m opsteam_api.devseed
 
 run-ingest:       ; $(call not_implemented,T-2.1)
 test-e2e:         ; $(call not_implemented,T-2.7)

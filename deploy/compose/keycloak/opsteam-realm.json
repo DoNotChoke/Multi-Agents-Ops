@@ -14,27 +14,71 @@
       "directAccessGrantsEnabled": false,
       "redirectUris": ["http://localhost:3000/*"],
       "webOrigins": ["http://localhost:3000"],
-      "attributes": { "pkce.code.challenge.method": "S256" }
+      "attributes": { "pkce.code.challenge.method": "S256" },
+      "protocolMappers": [
+        {
+          "name": "api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": { "included.custom.audience": "opsteam-api", "access.token.claim": "true" }
+        }
+      ]
+    },
+    {
+      "clientId": "opsteam-cli-dev",
+      "description": "Dev realm only: password grant so curl and scripts can get an API token.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "protocolMappers": [
+        {
+          "name": "api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": { "included.custom.audience": "opsteam-api", "access.token.claim": "true" }
+        }
+      ]
     }
   ],
   "users": [
     {
+      "id": "00000000-0000-4000-8000-000000000001",
       "username": "dev-viewer",
+      "firstName": "Dev",
+      "lastName": "Viewer",
       "email": "dev-viewer@example.com",
       "emailVerified": true,
       "enabled": true,
       "credentials": [{ "type": "password", "value": "${KEYCLOAK_DEV_USER_PASSWORD}" }]
     },
     {
+      "id": "00000000-0000-4000-8000-000000000002",
       "username": "dev-responder",
+      "firstName": "Dev",
+      "lastName": "Responder",
       "email": "dev-responder@example.com",
       "emailVerified": true,
       "enabled": true,
       "credentials": [{ "type": "password", "value": "${KEYCLOAK_DEV_USER_PASSWORD}" }]
     },
     {
+      "id": "00000000-0000-4000-8000-000000000003",
       "username": "dev-approver",
+      "firstName": "Dev",
+      "lastName": "Approver",
       "email": "dev-approver@example.com",
+      "emailVerified": true,
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "${KEYCLOAK_DEV_USER_PASSWORD}" }]
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000004",
+      "username": "dev-admin",
+      "firstName": "Dev",
+      "lastName": "Admin",
+      "email": "dev-admin@example.com",
       "emailVerified": true,
       "enabled": true,
       "credentials": [{ "type": "password", "value": "${KEYCLOAK_DEV_USER_PASSWORD}" }]

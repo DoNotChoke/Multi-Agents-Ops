@@ -12,7 +12,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from opsteam_api import problems
+from opsteam_api.auth import TokenVerifier, jwks_verifier
 from opsteam_api.edge import MAX_BODY_BYTES, EdgeMiddleware
+from opsteam_api.routers import identity
 from opsteam_api.settings import ApiSettings
 
 __all__ = ["MAX_BODY_BYTES", "create_app"]
@@ -20,24 +22,29 @@ __all__ = ["MAX_BODY_BYTES", "create_app"]
 READY_TIMEOUT_S = 2.0
 
 
-def create_app(engine: AsyncEngine | None = None) -> FastAPI:
-    """Build the API; without `engine` it is created from ApiSettings at startup and owned here."""
+def create_app(engine: AsyncEngine | None = None, verifier: TokenVerifier | None = None) -> FastAPI:
+    """Build the API; whatever is not injected is created from ApiSettings at startup."""
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-        if engine is not None:
-            app.state.engine = engine
-            yield
-            return
-        settings = ApiSettings()  # type: ignore[call-arg]  # values come from the environment
-        configure_logging(settings.log_level)
-        app.state.engine = create_engine(settings.database_url.get_secret_value())
+        app.state.engine, app.state.verifier = engine, verifier
+        if engine is None or verifier is None:
+            settings = ApiSettings()  # type: ignore[call-arg]  # values come from the environment
+            configure_logging(settings.log_level)
+            if engine is None:
+                app.state.engine = create_engine(settings.database_url.get_secret_value())
+            if verifier is None:
+                app.state.verifier = jwks_verifier(
+                    settings.oidc_issuer, settings.oidc_audience, settings.oidc_jwks_url
+                )
         yield
-        await app.state.engine.dispose()
+        if engine is None:
+            await app.state.engine.dispose()
 
     app = FastAPI(title="opsteam", version="0.1.0", lifespan=lifespan)
     problems.install(app)
     app.add_middleware(EdgeMiddleware)
+    app.include_router(identity.router)
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz() -> dict[str, str]:

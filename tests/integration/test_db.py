@@ -3,7 +3,7 @@ from alembic import command
 from alembic.config import Config
 from opsteam_core.context import Principal, RequestContext
 from opsteam_core.ids import new_id
-from opsteam_db import create_engine, tenant_session
+from opsteam_db import create_engine, identify, tenant_session
 from sqlalchemy import URL, text
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -77,7 +77,7 @@ async def test_membership_lookup_returns_only_that_users_tenants(app_engine: Asy
     async with app_engine.begin() as conn:
         for u in (user, other):
             await conn.execute(
-                text("insert into users (user_id, oidc_issuer, oidc_subject) values (:u, 'i', :u)"),
+                text("select app_user_for('i', :u, null, :u)"),
                 {"u": u},
             )
     for tenant, members in ((a, (user, other)), (b, (user,))):
@@ -97,3 +97,42 @@ async def test_membership_lookup_returns_only_that_users_tenants(app_engine: Asy
         )
         assert (await conn.execute(lookup, {"u": other})).all() == [(a, ["viewer"])]
         assert await conn.scalar(text("select count(*) from memberships")) == 0
+
+
+async def test_identify_creates_a_user_once_per_issuer_and_subject(app_engine: AsyncEngine) -> None:
+    subject = new_id("usr")  # any unique string
+    first = await identify(app_engine, "https://idp.test", subject, None)
+    again = await identify(app_engine, "https://idp.test", subject, None)
+    other_issuer = await identify(app_engine, "https://other.test", subject, None)
+    assert first.user_id == again.user_id != other_issuer.user_id
+    assert first.memberships == {}
+
+
+async def test_app_cannot_write_users_directly(app_engine: AsyncEngine) -> None:
+    with pytest.raises(DBAPIError, match="permission denied"):
+        async with app_engine.begin() as conn:
+            await conn.execute(
+                text(
+                    "insert into users (user_id, oidc_issuer, oidc_subject) values (:u, 'i', 's')"
+                ),
+                {"u": new_id("usr")},
+            )
+
+
+async def test_tenant_sees_only_its_members_in_users(app_engine: AsyncEngine) -> None:
+    a, b = new_id("tnt"), new_id("tnt")
+    in_a = await identify(app_engine, "https://idp.test", new_id("usr"), None)
+    in_b = await identify(app_engine, "https://idp.test", new_id("usr"), None)
+    for tenant, user in ((a, in_a.user_id), (b, in_b.user_id)):
+        async with tenant_session(app_engine, _ctx(tenant)) as session:
+            await session.execute(
+                text("insert into tenants (tenant_id, name) values (:t, 'x')"), {"t": tenant}
+            )
+            await session.execute(
+                text("insert into memberships (tenant_id, user_id, roles) values (:t, :u, :r)"),
+                {"t": tenant, "u": user, "r": ["viewer"]},
+            )
+    async with tenant_session(app_engine, _ctx(a)) as session:
+        seen = (await session.scalars(text("select user_id from users"))).all()
+    assert seen == [in_a.user_id]
+    assert (await identify(app_engine, "https://idp.test", "x", None)).memberships == {}

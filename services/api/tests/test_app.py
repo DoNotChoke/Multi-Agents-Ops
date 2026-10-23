@@ -10,6 +10,8 @@ from opsteam_core.errors import InvalidId
 from opsteam_db import create_engine
 from pydantic import BaseModel
 
+from tests.jwt_helpers import Signer, verifier
+
 PROBLEM = "application/problem+json"
 
 
@@ -20,7 +22,10 @@ class Body(BaseModel):
 
 def _app() -> FastAPI:
     # Port 1 refuses connections, so readiness fails without a database.
-    app = create_app(engine=create_engine("postgresql+asyncpg://x:y@127.0.0.1:1/none"))
+    app = create_app(
+        engine=create_engine("postgresql+asyncpg://x:y@127.0.0.1:1/none"),
+        verifier=verifier(Signer()),
+    )
 
     @app.get("/boom")
     async def boom() -> None:

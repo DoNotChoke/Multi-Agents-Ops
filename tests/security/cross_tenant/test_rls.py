@@ -36,7 +36,7 @@ async def _tenants(s: AsyncSession, t: str) -> Row:
 async def _memberships(s: AsyncSession, t: str) -> Row:
     user = new_id("usr")
     await s.execute(
-        text("insert into users (user_id, oidc_issuer, oidc_subject) values (:u, 'test', :u)"),
+        text("select app_user_for('test', :u, null, :u)"),
         {"u": user},
     )
     return (
