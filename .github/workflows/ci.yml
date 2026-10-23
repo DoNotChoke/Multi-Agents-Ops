@@ -39,6 +39,40 @@ jobs:
       - run: make test
       - run: make eval
 
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.6-alpine
+        env:
+          POSTGRES_USER: opsteam
+          POSTGRES_PASSWORD: dev-only-postgres
+          POSTGRES_DB: opsteam
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U opsteam -d opsteam"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      OPSTEAM_APP_DB_PASSWORD: dev-only-app-db
+      OPSTEAM_MIGRATOR_DB_PASSWORD: dev-only-migrator-db
+      OPSTEAM_SYSTEM_DB_PASSWORD: dev-only-system-db
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - name: create roles
+        env:
+          PGPASSWORD: dev-only-postgres
+        run: >-
+          psql -h 127.0.0.1 -U opsteam -d opsteam
+          -v app_password="$OPSTEAM_APP_DB_PASSWORD"
+          -v migrator_password="$OPSTEAM_MIGRATOR_DB_PASSWORD"
+          -v system_password="$OPSTEAM_SYSTEM_DB_PASSWORD"
+          -f packages/db/opsteam_db/sql/roles.sql
+      - run: uv sync
+      - run: make test-integration
+
   scan:
     runs-on: ubuntu-latest
     steps:

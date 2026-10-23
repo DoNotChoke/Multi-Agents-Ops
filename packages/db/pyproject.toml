@@ -2,7 +2,13 @@
 name = "opsteam-db"
 version = "0.0.0"
 requires-python = ">=3.12"
-dependencies = ["opsteam-core", "opsteam-contracts"]
+dependencies = [
+    "opsteam-core",
+    "opsteam-contracts",
+    "sqlalchemy[asyncio]>=2.1.6",
+    "asyncpg>=0.32.0",
+    "alembic>=1.20.1",
+]
 
 [build-system]
 requires = ["hatchling"]

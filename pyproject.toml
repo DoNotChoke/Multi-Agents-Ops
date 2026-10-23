@@ -31,6 +31,7 @@ dev = [
     "mypy",
     "pre-commit>=4.7.0",
     "pytest",
+    "pytest-asyncio>=1.4.0",
     "pyyaml>=6.0.3",
     "rfc3339-validator>=0.1.4",
     "ruff",
@@ -100,7 +101,10 @@ packages = [
 # ---------------------------------------------------------------- pytest
 [tool.pytest.ini_options]
 testpaths = ["packages", "services", "tests"]
-addopts = "--import-mode=importlib -q"
+addopts = "--import-mode=importlib -q -m 'not integration'"
+markers = ["integration: needs `make dev-up`; run with `make test-integration`"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 # Lets tests import repo-level tools such as evals/.
 pythonpath = ["."]
 
