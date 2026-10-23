@@ -25,6 +25,7 @@ dependencies = [
 dev = [
     "cryptography>=50.0.2",
     "datamodel-code-generator>=0.86.0",
+    "httpx>=0.28.1",
     "hypothesis>=6.170.5",
     "import-linter",
     "jsonschema>=4.26.0",

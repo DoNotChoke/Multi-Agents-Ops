@@ -14,6 +14,12 @@ def create_engine(url: str | URL, **kwargs: Any) -> AsyncEngine:
     return create_async_engine(url, pool_pre_ping=True, **kwargs)
 
 
+async def ping(engine: AsyncEngine) -> None:
+    """Raise if the database cannot answer a trivial query; reads no tenant data."""
+    async with engine.connect() as conn:
+        await conn.execute(text("select 1"))
+
+
 @asynccontextmanager
 async def tenant_session(engine: AsyncEngine, ctx: RequestContext) -> AsyncIterator[AsyncSession]:
     """Open a transaction that RLS limits to ctx's tenant; commits on exit, rolls back on error."""

@@ -31,3 +31,6 @@ for schema in contracts/jsonschema/*.json; do
 done
 
 # Go: the Runner only needs TaskEnvelope, kept by hand in runner/internal/contracts.
+
+# OpenAPI from FastAPI; the web client is generated from this file.
+uv run python -m opsteam_api.openapi contracts/openapi/openapi.json

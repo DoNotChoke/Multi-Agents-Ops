@@ -95,7 +95,11 @@ test-integration:
 test-security:
 	uv run pytest tests/security -m ""
 
-run-api:          ; $(call not_implemented,T-1.2)
+run-api: export OPSTEAM_ENV ?= dev
+run-api: export OPSTEAM_DATABASE_URL ?= $(call DB_URL,opsteam_app,$(OPSTEAM_APP_DB_PASSWORD))
+run-api:
+	uv run uvicorn --factory opsteam_api.main:create_app --host 127.0.0.1 --port 8000
+
 run-ingest:       ; $(call not_implemented,T-2.1)
 test-e2e:         ; $(call not_implemented,T-2.7)
 run-worker:       ; $(call not_implemented,T-3.6)
