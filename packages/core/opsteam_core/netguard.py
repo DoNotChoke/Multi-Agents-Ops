@@ -29,7 +29,6 @@ class SystemResolver:
         return [str(info[4][0]) for info in infos]
 
 
-# TODO(T-1.5): connectors must connect only to `ips` (keeping SNI) and refuse redirects.
 @dataclass(frozen=True)
 class CheckedTarget:
     """A URL that passed every check, with the vetted IPs the client must connect to."""
