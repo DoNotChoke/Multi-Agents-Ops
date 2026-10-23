@@ -1,0 +1,21 @@
+id: payment-slow-dependency
+schema_version: 1
+description: payment answers 900 ms slower; checkout and frontend inherit the latency.
+setup:
+  lab_fault: dependency_slow
+  warmup_seconds: 120
+  fault_duration_seconds: 300
+expected_detection:
+  alerts:
+    - { alertname: HighLatencyP95, service: checkout }
+    - { alertname: HighLatencyP95, service: frontend }
+  max_time_to_detect_seconds: 300 # measured 160-170 s
+ground_truth:
+  benign: false
+  must_abstain: false
+  root_cause:
+    category: dependency_failure
+    entities: [payment]
+    onset_at_offset_seconds: 0
+    description: payment adds 900 ms per request (EXTRA_LATENCY_MS=900); callers only wait on it.
+  required_evidence_sources: [metrics]

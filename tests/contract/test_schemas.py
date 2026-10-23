@@ -30,6 +30,8 @@ SCHEMA_ONLY = {
     "invalid-derived-without-sources.json",
     "invalid-action-without-approval.json",
     "invalid-query-with-approval.json",
+    "invalid-incident-without-root-cause.json",
+    "invalid-alerts-without-deadline.json",
 }
 MUTATIONS = [
     (path, mutation)

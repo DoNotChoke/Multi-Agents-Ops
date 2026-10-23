@@ -1,0 +1,8 @@
+{
+  "id": "frontend-harmless-release",
+  "schema_version": 1,
+  "description": "A frontend release with no behaviour change.",
+  "setup": { "lab_fault": "benign_noise", "warmup_seconds": 60, "fault_duration_seconds": 300 },
+  "expected_detection": { "alerts": [] },
+  "ground_truth": { "benign": true, "must_abstain": false, "required_evidence_sources": [] }
+}

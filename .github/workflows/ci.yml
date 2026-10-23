@@ -37,6 +37,7 @@ jobs:
         run: make codegen && git diff --exit-code
       - run: make lint
       - run: make test
+      - run: make eval
 
   scan:
     runs-on: ubuntu-latest

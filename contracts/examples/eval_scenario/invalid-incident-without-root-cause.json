@@ -1,0 +1,8 @@
+{
+  "id": "checkout-db-pool-after-release",
+  "schema_version": 1,
+  "description": "A real incident must name its root cause.",
+  "setup": { "lab_fault": "bad_release_db_pool", "warmup_seconds": 120, "fault_duration_seconds": 300 },
+  "expected_detection": { "alerts": [{ "alertname": "HighLatencyP95", "service": "checkout" }], "max_time_to_detect_seconds": 300 },
+  "ground_truth": { "benign": false, "must_abstain": false, "required_evidence_sources": ["metrics"] }
+}

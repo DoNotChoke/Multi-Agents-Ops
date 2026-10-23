@@ -101,6 +101,8 @@ packages = [
 [tool.pytest.ini_options]
 testpaths = ["packages", "services", "tests"]
 addopts = "--import-mode=importlib -q"
+# Lets tests import repo-level tools such as evals/.
+pythonpath = ["."]
 
 # ---------------------------------------------------------------- import-linter
 # Each package may import only the opsteam packages it is allowed to depend on;

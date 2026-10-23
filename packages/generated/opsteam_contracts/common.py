@@ -14,6 +14,9 @@ type Common = Annotated[Any, Field(title="Common")]
 type EvidenceId = Annotated[str, Field(pattern="^ev_[0-9A-HJKMNP-TV-Z]{26}$")]
 
 
+type ToolName = Annotated[str, Field(max_length=64, pattern="^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$")]
+
+
 class TimeWindow(BaseModel):
     model_config = ConfigDict(
         extra="forbid",

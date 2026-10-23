@@ -1,0 +1,22 @@
+id: checkout-crashloop-missing-config
+schema_version: 1
+description: A config change removes REQUIRED_CONFIG; every checkout pod exits at start and frontend returns 502.
+setup:
+  lab_fault: crashloop_config
+  warmup_seconds: 120
+  fault_duration_seconds: 300
+expected_detection:
+  alerts:
+    - { alertname: PodCrashLooping, service: checkout }
+    - { alertname: HighErrorRate, service: frontend }
+  max_time_to_detect_seconds: 240 # measured 80-150 s
+ground_truth:
+  benign: false
+  must_abstain: false
+  root_cause:
+    category: config_change
+    entities: [checkout]
+    onset_at_offset_seconds: 0
+    description: ConfigMap checkout-config lost REQUIRED_CONFIG and was rolled out with Recreate.
+  required_evidence_sources: [k8s, logs]
+  acceptable_actions: [k8s.rollout_undo]

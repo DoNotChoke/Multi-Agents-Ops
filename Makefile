@@ -67,7 +67,11 @@ lab-heal:
 # Runs every fault (or FAULT=<name>) and checks its alerts fire, then heals; needs `make lab-up`.
 lab-verify:
 	uv run python deploy/lab/verify_fault.py $(FAULT)
-eval:             ; $(call not_implemented,T-0.5)
+
+# Validates every scenario and writes evals/reports/<timestamp>/; needs no cluster.
+eval:
+	uv run python -m evals.run
+
 test-security:
 	uv run pytest tests/security
 

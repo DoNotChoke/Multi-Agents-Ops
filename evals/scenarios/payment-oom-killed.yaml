@@ -1,0 +1,21 @@
+id: payment-oom-killed
+schema_version: 1
+description: payment leaks memory under a 64 Mi limit and is OOM-killed repeatedly.
+setup:
+  lab_fault: oom_killed_service
+  warmup_seconds: 120
+  fault_duration_seconds: 300
+expected_detection:
+  alerts:
+    - { alertname: ContainerOOMKilled, service: payment }
+    - { alertname: PodRestarting, service: payment }
+  max_time_to_detect_seconds: 180 # measured 30-50 s
+ground_truth:
+  benign: false
+  must_abstain: false
+  root_cause:
+    category: resource_exhaustion
+    entities: [payment]
+    onset_at_offset_seconds: 0
+    description: payment grows 8 MiB/s (LEAK_MB_PER_SEC=8) and hits its 64 Mi memory limit within seconds.
+  required_evidence_sources: [k8s, metrics]

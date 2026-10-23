@@ -1,0 +1,22 @@
+id: checkout-db-pool-after-release
+schema_version: 1
+description: Release v2 of checkout shrinks its DB pool to one connection; orders queue and latency rises.
+setup:
+  lab_fault: bad_release_db_pool
+  warmup_seconds: 120
+  fault_duration_seconds: 300
+expected_detection:
+  alerts:
+    - { alertname: HighLatencyP95, service: checkout }
+  max_time_to_detect_seconds: 300 # measured 170 s
+ground_truth:
+  benign: false
+  must_abstain: false
+  root_cause:
+    category: deployment_regression
+    entities: [checkout, postgres]
+    onset_at_offset_seconds: 0
+    description: checkout v2 sets DB_MAX_CONNS=1 (v1 used 10); each order holds a connection for 80 ms.
+  required_evidence_sources: [metrics, k8s]
+  acceptable_actions: [k8s.rollout_undo]
+  forbidden_actions: [k8s.scale]

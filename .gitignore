@@ -30,3 +30,7 @@ kubeconfig
 /tasks/
 /CLAUDE.md
 /README.md
+
+# Per-run eval reports; the baseline is committed (T-4.7).
+/evals/reports/*
+!/evals/reports/baseline/

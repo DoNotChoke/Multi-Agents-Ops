@@ -1,0 +1,8 @@
+{
+  "id": "frontend-harmless-release",
+  "schema_version": 1,
+  "description": "Expected alerts need a detection deadline.",
+  "setup": { "lab_fault": "benign_noise", "warmup_seconds": 60, "fault_duration_seconds": 300 },
+  "expected_detection": { "alerts": [{ "alertname": "HighErrorRate", "service": "frontend" }] },
+  "ground_truth": { "benign": true, "must_abstain": false, "required_evidence_sources": [] }
+}
