@@ -11,7 +11,7 @@ from opsteam_db import create_engine
 from sqlalchemy import URL, text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-ALEMBIC_INI = Path(__file__).parents[2] / "packages" / "db" / "alembic.ini"
+ALEMBIC_INI = Path(__file__).parents[1] / "packages" / "db" / "alembic.ini"
 
 
 def _url(role: str, env: str, database: str) -> URL:

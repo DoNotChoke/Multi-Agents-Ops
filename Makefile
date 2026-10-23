@@ -77,14 +77,11 @@ lab-verify:
 eval:
 	uv run python -m evals.run $(if $(LAB),--lab) $(if $(RECORD),--record) $(SCENARIO)
 
-test-security:
-	uv run pytest tests/security
-
 # Fake dev credentials come from the compose env file; CI sets the same variables directly.
 -include deploy/compose/.env
 DB_URL = postgresql+asyncpg://$(1):$(2)@127.0.0.1:5432/opsteam
-migrate test-integration: export OPSTEAM_APP_DB_PASSWORD := $(OPSTEAM_APP_DB_PASSWORD)
-migrate test-integration: export OPSTEAM_MIGRATOR_DB_PASSWORD := $(OPSTEAM_MIGRATOR_DB_PASSWORD)
+migrate test-integration test-security: export OPSTEAM_APP_DB_PASSWORD := $(OPSTEAM_APP_DB_PASSWORD)
+migrate test-integration test-security: export OPSTEAM_MIGRATOR_DB_PASSWORD := $(OPSTEAM_MIGRATOR_DB_PASSWORD)
 migrate: export OPSTEAM_MIGRATOR_DATABASE_URL ?= $(call DB_URL,opsteam_migrator,$(OPSTEAM_MIGRATOR_DB_PASSWORD))
 
 migrate:
@@ -93,6 +90,10 @@ migrate:
 # Needs `make dev-up`; each run migrates a throwaway database.
 test-integration:
 	uv run pytest -m integration
+
+# Includes the DB-backed cross-tenant tests, so it needs `make dev-up`.
+test-security:
+	uv run pytest tests/security -m ""
 
 run-api:          ; $(call not_implemented,T-1.2)
 run-ingest:       ; $(call not_implemented,T-2.1)

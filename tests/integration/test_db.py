@@ -69,3 +69,31 @@ async def test_rls_blocks_writing_another_tenants_row(app_engine: AsyncEngine) -
 def test_engine_url_password_is_hidden(migrated: URL) -> None:
     assert migrated.password is not None
     assert migrated.password not in repr(create_engine(migrated))
+
+
+async def test_membership_lookup_returns_only_that_users_tenants(app_engine: AsyncEngine) -> None:
+    a, b = new_id("tnt"), new_id("tnt")
+    user, other = new_id("usr"), new_id("usr")
+    async with app_engine.begin() as conn:
+        for u in (user, other):
+            await conn.execute(
+                text("insert into users (user_id, oidc_issuer, oidc_subject) values (:u, 'i', :u)"),
+                {"u": u},
+            )
+    for tenant, members in ((a, (user, other)), (b, (user,))):
+        async with tenant_session(app_engine, _ctx(tenant)) as session:
+            await session.execute(
+                text("insert into tenants (tenant_id, name) values (:t, 'x')"), {"t": tenant}
+            )
+            for u in members:
+                await session.execute(
+                    text("insert into memberships (tenant_id, user_id, roles) values (:t, :u, :r)"),
+                    {"t": tenant, "u": u, "r": ["viewer"]},
+                )
+    async with app_engine.connect() as conn:
+        lookup = text("select tenant_id, roles from app_memberships_for(:u)")
+        assert sorted((await conn.execute(lookup, {"u": user})).all()) == sorted(
+            [(a, ["viewer"]), (b, ["viewer"])]
+        )
+        assert (await conn.execute(lookup, {"u": other})).all() == [(a, ["viewer"])]
+        assert await conn.scalar(text("select count(*) from memberships")) == 0
