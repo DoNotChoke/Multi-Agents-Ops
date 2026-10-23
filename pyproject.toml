@@ -102,8 +102,11 @@ packages = [
 # ---------------------------------------------------------------- pytest
 [tool.pytest.ini_options]
 testpaths = ["packages", "services", "tests"]
-addopts = "--import-mode=importlib -q -m 'not integration'"
-markers = ["integration: needs `make dev-up`; run with `make test-integration`"]
+addopts = "--import-mode=importlib -q -m 'not integration and not lab'"
+markers = [
+    "integration: needs `make dev-up`; run with `make test-integration`",
+    "lab: needs `make lab-up`; run with `uv run pytest -m lab`",
+]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 # Lets tests import repo-level tools such as evals/.

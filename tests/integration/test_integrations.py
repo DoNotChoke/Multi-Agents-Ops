@@ -1,12 +1,14 @@
+from collections.abc import Callable
 from typing import Any
 
+import httpx
 import pytest
 from opsteam_core.ids import new_id
 from opsteam_db import audit, tenant_session
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from tests.api_helpers import api_client, auth, member, system_ctx
+from tests.api_helpers import api_client, auth, fake_prometheus, member, system_ctx
 
 pytestmark = pytest.mark.integration
 
@@ -20,9 +22,16 @@ async def _who(engine: AsyncEngine, role: str = "admin") -> tuple[str, str]:
     return await member(engine, subject, [role]), subject
 
 
-def _call(engine: AsyncEngine, method: str, path: str, who: tuple[str, str], **kw: Any) -> Any:
+def _call(
+    engine: AsyncEngine,
+    method: str,
+    path: str,
+    who: tuple[str, str],
+    prometheus: Callable[[httpx.Request], httpx.Response] = fake_prometheus,
+    **kw: Any,
+) -> Any:
     tenant, subject = who
-    with api_client(engine, dev_allow=frozenset({"127.0.0.1:30090"})) as client:
+    with api_client(engine, frozenset({"127.0.0.1:30090"}), prometheus) as client:
         return client.request(method, f"/api/v1{path}", headers=auth(subject, tenant), **kw)
 
 
@@ -107,16 +116,47 @@ async def test_delete_removes_the_secret(app_engine: AsyncEngine) -> None:
     assert actions == ["integration.created", "integration.deleted"]
 
 
-async def test_test_endpoint_reports_checks(app_engine: AsyncEngine) -> None:
+async def test_test_endpoint_calls_prometheus_with_the_stored_token(
+    app_engine: AsyncEngine,
+) -> None:
     who = await _who(app_engine)
     body = _body(credentials=FAKE_TOKEN)
     iid = _call(app_engine, "POST", "/integrations", who, json=body).json()["integration_id"]
-    resp = _call(app_engine, "POST", f"/integrations/{iid}/test", who)
-    assert resp.status_code == 200
+    seen: list[httpx.Request] = []
+
+    def prometheus(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return fake_prometheus(request)
+
+    resp = _call(app_engine, "POST", f"/integrations/{iid}/test", who, prometheus)
     report = resp.json()
-    assert report["ok"] is True
-    assert {c["name"] for c in report["checks"]} == {"endpoint_allowed", "credentials_readable"}
+    assert (resp.status_code, report["ok"]) == (200, True), resp.text
+    checks = {c["name"]: c["detail"] for c in report["checks"]}
+    assert checks["reachable"] == "Prometheus 3.15.1"
+    assert checks["query_up"] == "2 scrape targets"
+    assert [r.url.path for r in seen] == ["/api/v1/status/buildinfo", "/api/v1/query"]
+    assert all(r.headers["authorization"] == f"Bearer {FAKE_TOKEN}" for r in seen)
+    assert {r.url.host for r in seen} == {"93.184.216.34"}
     assert FAKE_TOKEN not in resp.text
+
+
+async def test_unreachable_prometheus_fails_the_test(app_engine: AsyncEngine) -> None:
+    who = await _who(app_engine)
+    iid = _call(app_engine, "POST", "/integrations", who, json=_body()).json()["integration_id"]
+
+    def down(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("refused", request=request)
+
+    report = _call(app_engine, "POST", f"/integrations/{iid}/test", who, down).json()
+    assert report["ok"] is False
+    assert {"name": "reachable", "ok": False, "detail": "prometheus could not be reached"} in (
+        report["checks"]
+    )
+    async with tenant_session(app_engine, system_ctx(who[0])) as s:
+        outcome = await s.scalar(
+            text("select outcome from audit_events where action = 'integration.tested'")
+        )
+    assert outcome == "failed"
 
 
 async def test_permissions_and_isolation(app_engine: AsyncEngine) -> None:

@@ -2,7 +2,9 @@
 
 import base64
 import os
+from collections.abc import Callable
 
+import httpx
 from fastapi.testclient import TestClient
 from opsteam_api.main import create_app
 from opsteam_core.context import Principal, RequestContext
@@ -53,11 +55,28 @@ async def member(
     return tenant
 
 
-def api_client(engine: AsyncEngine, dev_allow: frozenset[str] = frozenset()) -> TestClient:
+def fake_prometheus(request: httpx.Request) -> httpx.Response:
+    """A healthy Prometheus with two scrape targets."""
+    if request.url.path.endswith("/status/buildinfo"):
+        return httpx.Response(200, json={"status": "success", "data": {"version": "3.15.1"}})
+    result = [{"metric": {"job": j}, "value": [0, "1"]} for j in ("shop", "node")]
+    return httpx.Response(200, json={"status": "success", "data": {"result": result}})
+
+
+def api_client(
+    engine: AsyncEngine,
+    dev_allow: frozenset[str] = frozenset(),
+    prometheus: Callable[[httpx.Request], httpx.Response] = fake_prometheus,
+) -> TestClient:
     # TestClient runs the app on its own event loop, so it must not share pooled connections.
     own = create_engine(engine.url, poolclass=NullPool)
-    secrets = DbSecretStore(own, SECRETS_KEY)
-    app = create_app(engine=own, verifier=verifier(SIGNER), secrets=secrets, dev_allow=dev_allow)
+    app = create_app(
+        engine=own,
+        verifier=verifier(SIGNER),
+        secrets=DbSecretStore(own, SECRETS_KEY),
+        dev_allow=dev_allow,
+        http_transport=httpx.MockTransport(prometheus),
+    )
     return TestClient(app)
 
 

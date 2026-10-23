@@ -4,6 +4,7 @@ import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
+import httpx
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from opsteam_core.logging import configure_logging
@@ -28,13 +29,17 @@ def create_app(
     verifier: TokenVerifier | None = None,
     secrets: SecretStore | None = None,
     dev_allow: frozenset[str] = frozenset(),
+    http_transport: httpx.AsyncBaseTransport | None = None,
 ) -> FastAPI:
-    """Build the API; whatever is not injected is created from ApiSettings at startup."""
+    """Build the API; whatever is not injected is created from ApiSettings at startup.
+
+    `http_transport` replaces the network for outbound calls to customer systems in tests.
+    """
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.engine, app.state.verifier, app.state.secrets = engine, verifier, secrets
-        app.state.dev_allow = dev_allow
+        app.state.dev_allow, app.state.http_transport = dev_allow, http_transport
         if engine is None or verifier is None or secrets is None:
             settings = ApiSettings()  # type: ignore[call-arg]  # values come from the environment
             configure_logging(settings.log_level)

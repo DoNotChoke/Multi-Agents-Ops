@@ -1314,6 +1314,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "opsteam-core" },
     { name = "opsteam-db" },
+    { name = "opsteam-tools" },
     { name = "pyjwt", extra = ["crypto"] },
     { name = "uvicorn" },
 ]
@@ -1323,6 +1324,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.161.1" },
     { name = "opsteam-core", editable = "packages/core" },
     { name = "opsteam-db", editable = "packages/db" },
+    { name = "opsteam-tools", editable = "packages/tools" },
     { name = "pyjwt", extras = ["crypto"], specifier = ">=2.15.1" },
     { name = "uvicorn", specifier = ">=0.54.0" },
 ]
@@ -1507,6 +1509,7 @@ name = "opsteam-tools"
 version = "0.0.0"
 source = { editable = "packages/tools" }
 dependencies = [
+    { name = "httpx" },
     { name = "opsteam-contracts" },
     { name = "opsteam-core" },
     { name = "opsteam-db" },
@@ -1516,6 +1519,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "opsteam-contracts", editable = "packages/generated" },
     { name = "opsteam-core", editable = "packages/core" },
     { name = "opsteam-db", editable = "packages/db" },

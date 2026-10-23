@@ -12,6 +12,11 @@ from opsteam_core.ids import new_id
 from opsteam_core.netguard import check_url
 from opsteam_db import audit, tenant_session
 from opsteam_db.secrets import SecretNotFound, SecretUnreadable
+from opsteam_tools.connectors.prometheus import (
+    PROMETHEUS_PORTS,
+    ConnectorError,
+    PrometheusConnector,
+)
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
@@ -24,8 +29,6 @@ Name = Annotated[str, Field(pattern=r"^[A-Za-z0-9_.\-]{1,100}$")]
 IntegrationId = Annotated[str, Path(pattern=r"^int_[0-9A-HJKMNP-TV-Z]{26}$")]
 Reader = Annotated[RequestContext, Depends(require_scope("catalog:read"))]
 Writer = Annotated[RequestContext, Depends(require_scope("integration:write"))]
-# Prometheus listens on 9090 by default; anything else must sit behind 80/443.
-PROMETHEUS_PORTS = frozenset({9090})
 
 _SELECT = """
     select integration_id, type, name, mode, status, endpoint, config, last_tested_at,
@@ -241,7 +244,6 @@ async def delete_integration(
 async def test_integration(
     request: Request, ctx: Writer, integration_id: IntegrationId
 ) -> TestReport:
-    # TODO(T-1.5): add a live read-only call (buildinfo, `up`) once the Prometheus connector exists.
     async with tenant_session(request.app.state.engine, ctx) as session:
         row = (
             await session.execute(
@@ -254,22 +256,20 @@ async def test_integration(
         ).one_or_none()
     if row is None:
         raise IntegrationNotFound("integration not found")
-    checks = []
-    try:
-        await _vet(request, row.endpoint)
-        checks.append(Check(name="endpoint_allowed", ok=True, detail="endpoint passes SSRF checks"))
-    except NetguardBlocked as exc:
-        checks.append(Check(name="endpoint_allowed", ok=False, detail=str(exc)))
+    checks = [await _endpoint_check(request, row.endpoint)]
+    token: SecretStr | None = None
     if row.credentials_ref is None:
         checks.append(Check(name="credentials_readable", ok=True, detail="no credentials"))
     else:
         try:
-            await request.app.state.secrets.get(ctx, row.credentials_ref)
+            token = await request.app.state.secrets.get(ctx, row.credentials_ref)
             checks.append(Check(name="credentials_readable", ok=True, detail="credentials stored"))
         except (SecretNotFound, SecretUnreadable):
             checks.append(
                 Check(name="credentials_readable", ok=False, detail="credentials unreadable")
             )
+    if all(c.ok for c in checks):
+        checks += await _live_checks(request, row.endpoint, token)
     report = TestReport(ok=all(c.ok for c in checks), checks=checks)
     async with tenant_session(request.app.state.engine, ctx) as session:
         await session.execute(
@@ -281,3 +281,33 @@ async def test_integration(
             session, ctx, "integration.tested", _ref(integration_id, row.name), outcome
         )
     return report
+
+
+async def _endpoint_check(request: Request, endpoint: str) -> Check:
+    try:
+        await _vet(request, endpoint)
+    except NetguardBlocked as exc:
+        return Check(name="endpoint_allowed", ok=False, detail=str(exc))
+    return Check(name="endpoint_allowed", ok=True, detail="endpoint passes SSRF checks")
+
+
+async def _live_checks(request: Request, endpoint: str, token: SecretStr | None) -> list[Check]:
+    """Two read-only calls: build info, then `up` to see how many targets are scraped."""
+    prometheus = PrometheusConnector(
+        endpoint,
+        token,
+        dev_allow=request.app.state.dev_allow,
+        transport=request.app.state.http_transport,
+    )
+    try:
+        info = await prometheus.build_info()
+        targets = await prometheus.query("up")
+    except (ConnectorError, NetguardBlocked) as exc:
+        return [Check(name="reachable", ok=False, detail=str(exc))]
+    # Untrusted strings from the customer's server: short, and only shown as text.
+    version = str(info.get("version", "unknown"))[:40] if isinstance(info, dict) else "unknown"
+    count = len(targets.get("result", [])) if isinstance(targets, dict) else 0
+    return [
+        Check(name="reachable", ok=True, detail=f"Prometheus {version}"),
+        Check(name="query_up", ok=count > 0, detail=f"{count} scrape targets"),
+    ]
