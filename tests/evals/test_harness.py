@@ -128,3 +128,10 @@ def test_report_marks_detection_not_run_without_lab(tmp_path: Path) -> None:
     out = write_report([VALID], tmp_path)
     data = json.loads((out / "report.json").read_text(encoding="utf-8"))
     assert data["results"][0]["detection"] == {"status": "not_run"}
+
+
+def test_report_md_header_matches_rows_and_uses_lf(tmp_path: Path) -> None:
+    out = write_report([VALID], tmp_path)
+    md = (out / "report.md").read_bytes()
+    assert b"| Scenario | Lab fault | Detection | Investigation |" in md
+    assert b"\r\n" not in md and b"\r\n" not in (out / "report.json").read_bytes()

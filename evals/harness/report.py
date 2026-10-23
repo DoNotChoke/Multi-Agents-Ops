@@ -57,7 +57,10 @@ def write_report(
         "scenario_count": len(results),
         "results": results,
     }
-    (out / "report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    # newline="\n": the same bytes on every OS.
+    (out / "report.json").write_text(
+        json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     rows = "\n".join(
         f"| {r['id']} | {r['lab_fault']} | {r['detection']['status']} | {r['status']} |"
         for r in results
@@ -65,8 +68,10 @@ def write_report(
     (out / "report.md").write_text(
         f"# Eval report\n\n- generated_at: {report['generated_at']}\n"
         f"- git_sha: {report['git_sha']}\n- scenarios: {len(results)}\n\n"
-        "| Scenario | Lab fault | Status | Reason |\n"
+        f"Investigation: {SKIP_REASON}.\n\n"
+        "| Scenario | Lab fault | Detection | Investigation |\n"
         f"| --- | --- | --- | --- |\n{rows}\n",
         encoding="utf-8",
+        newline="\n",
     )
     return out

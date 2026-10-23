@@ -117,5 +117,6 @@ def write(doc: dict[str, Any], root: Path = REPLAY_DIR) -> Path:
     """Save a replay document as <root>/<scenario_id>/replay.json and return the path."""
     path = root / doc["scenario_id"] / "replay.json"
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    text = json.dumps(doc, indent=1, sort_keys=True) + "\n"
+    path.write_text(text, encoding="utf-8", newline="\n")  # same bytes on every OS
     return path

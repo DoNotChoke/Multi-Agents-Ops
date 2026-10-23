@@ -49,3 +49,7 @@ def test_write_puts_replay_under_the_scenario_id(tmp_path: Path) -> None:
     path = write(_record(), tmp_path)
     assert path == tmp_path / SCENARIO["id"] / "replay.json"
     assert json.loads(path.read_text(encoding="utf-8"))["scenario_id"] == SCENARIO["id"]
+
+
+def test_write_uses_lf_line_endings(tmp_path: Path) -> None:
+    assert b"\r\n" not in write(_record(), tmp_path).read_bytes()
