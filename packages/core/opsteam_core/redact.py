@@ -27,12 +27,23 @@ def _token_like(m: re.Match[str]) -> bool:
     return any(c.isdigit() or c in "._~+/=-" for c in m.group("value"))
 
 
-def _luhn(m: re.Match[str]) -> bool:
-    digits = [int(d) for d in re.sub(r"\D", "", m.group(0))]
+def _luhn_ok(digits: list[int]) -> bool:
     total = sum(
         d if i % 2 == 0 else (d * 2 - 9 if d > 4 else d * 2) for i, d in enumerate(reversed(digits))
     )
     return 13 <= len(digits) <= 19 and total % 10 == 0
+
+
+def _pan_length(m: re.Match[str]) -> int:
+    """Return the length of the longest Luhn-valid prefix of the match, or 0 if there is none."""
+    # The match is greedy, so digits that follow a card ("... 0004 0") must not hide it.
+    text, digits, best = m.group(0), [], 0
+    for i, c in enumerate(text):
+        if c.isdigit():
+            digits.append(int(c))
+            if _luhn_ok(digits):
+                best = i + 1
+    return best
 
 
 @dataclass(frozen=True)
@@ -40,6 +51,8 @@ class _Rule:
     kind: str
     pattern: re.Pattern[str]
     accept: Callable[[re.Match[str]], bool] | None = None
+    # When set, only the first N characters of the match are the secret; 0 means no secret.
+    secret_length: Callable[[re.Match[str]], int] | None = None
 
 
 # Order matters: specific formats first, generic key=value and PII last.
@@ -82,7 +95,10 @@ _RULES = (
         ),
     ),
     _Rule("email", re.compile(r"(?<![\w.%+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")),
-    _Rule("pan", re.compile(r"(?<![\d-])[3-6](?:[ -]?\d){12,18}(?!\d)"), _luhn),
+    # Not after "." either: the fraction of a float ("5.4111...") is not a card number.
+    _Rule(
+        "pan", re.compile(r"(?<![\d.-])[3-6](?:[ -]?\d){12,18}(?!\d)"), secret_length=_pan_length
+    ),
 )
 
 
@@ -93,6 +109,12 @@ def _apply(rule: _Rule, text: str) -> tuple[str, int]:
         nonlocal hits
         if rule.accept is not None and not rule.accept(m):
             return m.group(0)
+        if rule.secret_length is not None:
+            n = rule.secret_length(m)
+            if n == 0:
+                return m.group(0)
+            hits += 1
+            return f"[REDACTED:{rule.kind}]" + m.group(0)[n:]
         hits += 1
         return (m.groupdict().get("keep") or "") + f"[REDACTED:{rule.kind}]"
 

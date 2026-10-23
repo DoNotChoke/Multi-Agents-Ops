@@ -67,3 +67,18 @@ def test_redact_value_fails_closed_on_pathological_nesting() -> None:
         deep = [deep]
     with pytest.raises(RedactionFailed):
         redact_value(deep)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "pan=5500-0000-0000-0004 0",
+        "card 4111 1111 1111 1111 22 items",
+        "4111111111111111 7",
+    ],
+)
+def test_card_number_followed_by_digits_is_still_redacted(text: str) -> None:
+    result = redact(text)
+    assert "0000-0004" not in result.text and "1111 1111" not in result.text
+    assert "4111111111111111" not in result.text
+    assert result.counts == {"pan": 1}
