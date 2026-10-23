@@ -89,6 +89,14 @@ async def _audit_events(s: AsyncSession, t: str) -> Row:
     )
 
 
+async def _secrets(s: AsyncSession, t: str) -> Row:
+    return (
+        "insert into secrets (credentials_ref, tenant_id, ciphertext)"
+        " values (:id, :t, decode('00', 'hex'))",
+        {"id": new_id("sec"), "t": t},
+    )
+
+
 FACTORIES: dict[str, Factory] = {
     "tenants": _tenants,
     "memberships": _memberships,
@@ -97,6 +105,7 @@ FACTORIES: dict[str, Factory] = {
     "service_dependencies": _service_dependencies,
     "runners": _runners,
     "audit_events": _audit_events,
+    "secrets": _secrets,
 }
 
 

@@ -9,7 +9,7 @@ from opsteam_core.errors import InvalidId
 
 type IdPrefix = Literal[
     "tnt", "usr", "int", "svc", "rule", "evt", "inc", "tsk", "tc",
-    "run", "ev", "fnd", "hyp", "plan", "apr", "aud", "rnr", "llm",
+    "run", "ev", "fnd", "hyp", "plan", "apr", "aud", "rnr", "llm", "sec",
 ]  # fmt: skip
 
 _ULID = re.compile(r"[0-9A-HJKMNP-TV-Z]{26}")

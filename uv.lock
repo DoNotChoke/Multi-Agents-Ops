@@ -1366,6 +1366,7 @@ source = { editable = "packages/db" }
 dependencies = [
     { name = "alembic" },
     { name = "asyncpg" },
+    { name = "cryptography" },
     { name = "opsteam-contracts" },
     { name = "opsteam-core" },
     { name = "sqlalchemy", extra = ["asyncio"] },
@@ -1375,6 +1376,7 @@ dependencies = [
 requires-dist = [
     { name = "alembic", specifier = ">=1.20.1" },
     { name = "asyncpg", specifier = ">=0.32.0" },
+    { name = "cryptography", specifier = ">=50.0.2" },
     { name = "opsteam-contracts", editable = "packages/generated" },
     { name = "opsteam-core", editable = "packages/core" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.1.6" },
