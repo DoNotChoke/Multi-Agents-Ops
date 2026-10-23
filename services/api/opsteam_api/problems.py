@@ -21,6 +21,9 @@ STATUS_BY_CODE = {
     "member.last_owner": 409,
     "member.not_found": 404,
     "netguard.blocked": 422,
+    "service.exists": 409,
+    "service.not_found": 404,
+    "service.self_dependency": 422,
     "tenant.not_found": 404,
     "user.not_found": 404,
 }

@@ -80,16 +80,13 @@ async def test_dev_seed_is_idempotent(app_engine: AsyncEngine) -> None:
     assert admin.memberships == {devseed.DEV_TENANT: ("admin",)}
 
 
+EVERYONE = dict.fromkeys(["viewer", "responder", "approver", "admin", "owner"], 200)
 ADMINS_ONLY = {"viewer": 403, "responder": 403, "approver": 403, "admin": 200, "owner": 200}
 # Expected status per role; every new endpoint gets a row here.
 SCOPE_TABLE = {
-    "/api/v1/tenant": {
-        "viewer": 200,
-        "responder": 200,
-        "approver": 200,
-        "admin": 200,
-        "owner": 200,
-    },
+    "/api/v1/tenant": EVERYONE,
+    "/api/v1/services": EVERYONE,
+    "/api/v1/services/topology": EVERYONE,
     "/api/v1/audit": ADMINS_ONLY,
     "/api/v1/members": ADMINS_ONLY,
 }
