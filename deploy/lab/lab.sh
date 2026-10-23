@@ -31,9 +31,25 @@ up() {
   chart alloy https://grafana.github.io/helm-charts alloy "$ALLOY_CHART" alloy-values.yaml
   kubectl --context "$CTX" apply -k base
   # Pods built from a new local image keep the same tag, so restart them to pick it up.
-  kubectl --context "$CTX" -n shop rollout restart deployment
+  kubectl --context "$CTX" -n shop rollout restart deployment frontend checkout payment loadgen
   kubectl --context "$CTX" -n shop rollout status deployment --timeout 5m
   echo "lab ready: frontend http://127.0.0.1:30080  prometheus http://127.0.0.1:30090  alertmanager http://127.0.0.1:30093  loki http://127.0.0.1:30100"
+}
+
+fault() {
+  need kubectl
+  if [ -z "${1:-}" ] || [ ! -f "faults/$1/kustomization.yaml" ]; then
+    echo "unknown fault '${1:-}'; one of: $(ls faults | tr '\n' ' ')" >&2
+    exit 2
+  fi
+  kubectl --context "$CTX" apply -k "faults/$1"
+}
+
+# The baseline is the healthy state, so healing any fault is re-applying it.
+heal() {
+  need kubectl
+  kubectl --context "$CTX" apply -k base
+  kubectl --context "$CTX" -n shop rollout status deployment --timeout 5m
 }
 
 down() {
@@ -44,5 +60,7 @@ down() {
 case "${1:-}" in
   up) up ;;
   down) down ;;
-  *) echo "usage: $0 up|down" >&2; exit 2 ;;
+  fault) fault "${2:-}" ;;
+  heal) heal ;;
+  *) echo "usage: $0 up|down|fault <name>|heal" >&2; exit 2 ;;
 esac

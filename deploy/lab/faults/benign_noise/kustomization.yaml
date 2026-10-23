@@ -1,0 +1,20 @@
+# A harmless frontend release (v1.1, same behaviour): a real deploy event that must not
+# raise any alert, used to measure false positives.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: [../../base]
+patches:
+  - target: { kind: Deployment, name: frontend }
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata: { name: frontend }
+      spec:
+        template:
+          metadata:
+            labels: { version: v1.1 }
+          spec:
+            containers:
+              - name: app
+                env:
+                  - { name: VERSION, value: v1.1 }

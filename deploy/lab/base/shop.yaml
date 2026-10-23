@@ -7,7 +7,8 @@ metadata:
 data:
   REQUIRED_CONFIG: "enabled"
   DB_MAX_CONNS: "10"
-  DB_QUERY_MS: "40"
+  # 80 ms per order: 15 rps per pod fits a pool of 10 but overloads a pool of 1.
+  DB_QUERY_MS: "80"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -43,6 +44,10 @@ metadata:
   name: checkout
 spec:
   replicas: 2
+  # Spelled out so the crashloop fault can switch to Recreate and heal can switch back.
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: { maxSurge: 25%, maxUnavailable: 25% }
   selector:
     matchLabels: { service: checkout }
   template:

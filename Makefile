@@ -1,4 +1,4 @@
-.PHONY: setup codegen dev-up dev-down dev-reset migrate lab-up lab-down lab-fault lab-heal \
+.PHONY: setup codegen dev-up dev-down dev-reset migrate lab-up lab-down lab-fault lab-heal lab-verify \
 	lint test test-integration test-security test-e2e eval \
 	run-api run-worker run-ingest run-web run-runner
 
@@ -58,7 +58,15 @@ lab-up:
 lab-down:
 	bash deploy/lab/lab.sh down
 
-lab-fault lab-heal: ; $(call not_implemented,T-0.4)
+lab-fault:
+	bash deploy/lab/lab.sh fault $(FAULT)
+
+lab-heal:
+	bash deploy/lab/lab.sh heal
+
+# Runs every fault (or FAULT=<name>) and checks its alerts fire, then heals; needs `make lab-up`.
+lab-verify:
+	uv run python deploy/lab/verify_fault.py $(FAULT)
 eval:             ; $(call not_implemented,T-0.5)
 test-security:
 	uv run pytest tests/security

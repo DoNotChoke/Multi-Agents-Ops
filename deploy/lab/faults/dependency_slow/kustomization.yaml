@@ -1,0 +1,17 @@
+# payment answers 900 ms slower; checkout and frontend inherit the latency.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: [../../base]
+patches:
+  - target: { kind: Deployment, name: payment }
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata: { name: payment }
+      spec:
+        template:
+          spec:
+            containers:
+              - name: app
+                env:
+                  - { name: EXTRA_LATENCY_MS, value: "900" }

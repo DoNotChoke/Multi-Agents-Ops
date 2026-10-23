@@ -9,6 +9,19 @@ stringData:
   POSTGRES_PASSWORD: dev-only-lab-postgres
   DATABASE_URL: postgres://shop:dev-only-lab-postgres@postgres:5432/shop?sslmode=disable
 ---
+# The data dir is an emptyDir, so the schema is recreated on every Postgres start.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+data:
+  01-orders.sql: |
+    CREATE TABLE IF NOT EXISTS orders (
+      id bigserial PRIMARY KEY,
+      amount int NOT NULL,
+      created_at timestamptz NOT NULL DEFAULT now()
+    );
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -40,9 +53,12 @@ spec:
             limits: { memory: 256Mi }
           volumeMounts:
             - { name: data, mountPath: /var/lib/postgresql }
+            - { name: init, mountPath: /docker-entrypoint-initdb.d, readOnly: true }
       volumes:
         - name: data
           emptyDir: {}
+        - name: init
+          configMap: { name: postgres-init }
 ---
 apiVersion: v1
 kind: Service

@@ -26,6 +26,8 @@ import (
 const (
 	traceHeader        = "X-Trace-Id"
 	paymentBaseLatency = 20 * time.Millisecond
+	queryTimeout       = 2 * time.Second
+	pingTimeout        = 500 * time.Millisecond
 )
 
 type config struct {
@@ -107,11 +109,18 @@ type pgStore struct {
 
 // PlaceOrder holds a pooled connection for the configured query time, so a small pool queues requests.
 func (s pgStore) PlaceOrder(ctx context.Context, amount int) error {
+	// The timeout also drops half-open connections left behind when the Postgres pod is replaced.
+	ctx, cancel := context.WithTimeout(ctx, queryTimeout)
+	defer cancel()
 	_, err := s.pool.Exec(ctx, "INSERT INTO orders (amount) SELECT $1 FROM pg_sleep($2)", amount, s.query.Seconds())
 	return err
 }
 
-func (s pgStore) Ping(ctx context.Context) error { return s.pool.Ping(ctx) }
+func (s pgStore) Ping(ctx context.Context) error {
+	ctx, cancel := context.WithTimeout(ctx, pingTimeout)
+	defer cancel()
+	return s.pool.Ping(ctx)
+}
 
 type server struct {
 	cfg      config
@@ -281,6 +290,22 @@ func loadgen(ctx context.Context, s *server) {
 	}
 }
 
+// retry calls fn every wait until it succeeds or timeout passes, then returns its last error.
+func retry(ctx context.Context, timeout, wait time.Duration, fn func(context.Context) error) error {
+	deadline := time.Now().Add(timeout)
+	for {
+		err := fn(ctx)
+		if err == nil || time.Now().Add(wait).After(deadline) {
+			return err
+		}
+		select {
+		case <-ctx.Done():
+			return err
+		case <-time.After(wait):
+		}
+	}
+}
+
 func openStore(ctx context.Context, cfg config, reg *prometheus.Registry) (pgStore, error) {
 	pc, err := pgxpool.ParseConfig(cfg.databaseURL)
 	if err != nil {
@@ -291,7 +316,12 @@ func openStore(ctx context.Context, cfg config, reg *prometheus.Registry) (pgSto
 	if err != nil {
 		return pgStore{}, fmt.Errorf("open pool: %w", err)
 	}
-	if _, err := pool.Exec(ctx, "CREATE TABLE IF NOT EXISTS orders (id bigserial PRIMARY KEY, amount int NOT NULL, created_at timestamptz NOT NULL DEFAULT now())"); err != nil {
+	// Postgres or cluster DNS may still be starting (e.g. after the lab resumes), so wait a bit.
+	err = retry(ctx, time.Minute, 2*time.Second, func(ctx context.Context) error {
+		_, err := pool.Exec(ctx, "CREATE TABLE IF NOT EXISTS orders (id bigserial PRIMARY KEY, amount int NOT NULL, created_at timestamptz NOT NULL DEFAULT now())")
+		return err
+	})
+	if err != nil {
 		return pgStore{}, fmt.Errorf("create table: %w", err)
 	}
 	reg.MustRegister(

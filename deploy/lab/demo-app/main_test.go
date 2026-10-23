@@ -135,3 +135,26 @@ func TestMetricsEndpointExposesHistogram(t *testing.T) {
 		t.Fatal("histogram missing from /metrics")
 	}
 }
+
+func TestRetryUntilSuccess(t *testing.T) {
+	calls := 0
+	err := retry(t.Context(), time.Second, time.Millisecond, func(context.Context) error {
+		calls++
+		if calls < 3 {
+			return errors.New("not yet")
+		}
+		return nil
+	})
+	if err != nil || calls != 3 {
+		t.Fatalf("err = %v, calls = %d", err, calls)
+	}
+}
+
+func TestRetryGivesUpAfterTimeout(t *testing.T) {
+	err := retry(t.Context(), 20*time.Millisecond, 5*time.Millisecond, func(context.Context) error {
+		return errors.New("db down")
+	})
+	if err == nil || !strings.Contains(err.Error(), "db down") {
+		t.Fatalf("err = %v, want the last error", err)
+	}
+}

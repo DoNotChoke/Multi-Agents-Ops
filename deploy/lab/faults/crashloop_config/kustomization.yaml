@@ -1,0 +1,25 @@
+# A config change drops REQUIRED_CONFIG and is rolled out with Recreate: every checkout pod
+# exits at start, so frontend fails instead of quietly falling back to old pods.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: [../../base]
+patches:
+  - target: { kind: ConfigMap, name: checkout-config }
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata: { name: checkout-config }
+      data:
+        REQUIRED_CONFIG: null
+  - target: { kind: Deployment, name: checkout }
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata: { name: checkout }
+      spec:
+        strategy:
+          type: Recreate
+          rollingUpdate: null
+        template:
+          metadata:
+            annotations: { lab.opsteam/config-revision: "2" }

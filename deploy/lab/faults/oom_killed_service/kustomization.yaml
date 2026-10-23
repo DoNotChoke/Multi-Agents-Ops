@@ -1,0 +1,19 @@
+# payment leaks 8 MiB/s under a 64 MiB limit, so it is OOM-killed within seconds of every start.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: [../../base]
+patches:
+  - target: { kind: Deployment, name: payment }
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata: { name: payment }
+      spec:
+        template:
+          spec:
+            containers:
+              - name: app
+                env:
+                  - { name: LEAK_MB_PER_SEC, value: "8" }
+                resources:
+                  limits: { memory: 64Mi }

@@ -1,0 +1,20 @@
+# Release v2 of checkout ships with a DB pool of one connection; requests queue behind it.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: [../../base]
+patches:
+  - target: { kind: Deployment, name: checkout }
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata: { name: checkout }
+      spec:
+        template:
+          metadata:
+            labels: { version: v2 }
+          spec:
+            containers:
+              - name: app
+                env:
+                  - { name: VERSION, value: v2 }
+                  - { name: DB_MAX_CONNS, value: "1" }
