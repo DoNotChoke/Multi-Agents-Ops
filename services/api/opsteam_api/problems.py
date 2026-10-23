@@ -17,6 +17,8 @@ STATUS_BY_CODE = {
     "authz.forbidden": 403,
     "authz.unknown_role": 403,
     "id.invalid": 422,
+    "integration.exists": 409,
+    "integration.not_found": 404,
     "member.exists": 409,
     "member.last_owner": 409,
     "member.not_found": 404,

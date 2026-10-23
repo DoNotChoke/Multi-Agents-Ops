@@ -100,6 +100,9 @@ run-api dev-seed: export OPSTEAM_ENV ?= dev
 run-api dev-seed: export OPSTEAM_DATABASE_URL ?= $(call DB_URL,opsteam_app,$(OPSTEAM_APP_DB_PASSWORD))
 run-api dev-seed: export OPSTEAM_OIDC_ISSUER ?= http://localhost:8080/realms/opsteam
 run-api dev-seed: export OPSTEAM_OIDC_JWKS_URL ?= http://localhost:8080/realms/opsteam/protocol/openid-connect/certs
+# Fake 32-byte key built at run time; the lab Prometheus is the only SSRF exception.
+run-api dev-seed: export OPSTEAM_SECRETS_KEY ?= $(shell printf 'dev-only-secrets-key-32-bytes!!!' | base64)
+run-api dev-seed: export OPSTEAM_NETGUARD_DEV_ALLOW ?= ["127.0.0.1:30090"]
 run-api:
 	uv run uvicorn --factory opsteam_api.main:create_app --host 127.0.0.1 --port 8000
 

@@ -46,11 +46,15 @@ async def check_url(
     allow_http: bool = False,
     extra_ports: frozenset[int] = frozenset(),
     resolver: Resolver | None = None,
+    dev_allow: frozenset[str] = frozenset(),
 ) -> CheckedTarget:
-    """Return the vetted target for `url` or raise NetguardBlocked; DNS is resolved only once."""
+    """Return the vetted target for `url` or raise NetguardBlocked; DNS is resolved only once.
+
+    `dev_allow` admits exact "ip:port" pairs without address checks; Settings fills it only in dev.
+    """
     parts = urlsplit(url)
     scheme = parts.scheme.lower()
-    if scheme != "https" and not (allow_http and scheme == "http"):
+    if scheme not in ("http", "https"):
         raise NetguardBlocked("scheme not allowed")
     if parts.username is not None or parts.password is not None:
         raise NetguardBlocked("credentials in URL")
@@ -61,6 +65,10 @@ async def check_url(
         port = parts.port or (443 if scheme == "https" else 80)
     except ValueError as exc:
         raise NetguardBlocked("invalid port") from exc
+    if f"{host}:{port}" in dev_allow and _is_ip(host):
+        return CheckedTarget(scheme, host, port, (host,))
+    if scheme != "https" and not allow_http:
+        raise NetguardBlocked("scheme not allowed")
     if port not in DEFAULT_PORTS | extra_ports:
         raise NetguardBlocked("port not allowed")
 

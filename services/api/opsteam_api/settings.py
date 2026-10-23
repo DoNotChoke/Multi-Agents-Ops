@@ -11,3 +11,5 @@ class ApiSettings(Settings):
     oidc_issuer: str
     oidc_jwks_url: str
     oidc_audience: str = "opsteam-api"
+    # 32 bytes, base64; encrypts integration credentials in the dev SecretStore.
+    secrets_key: SecretStr

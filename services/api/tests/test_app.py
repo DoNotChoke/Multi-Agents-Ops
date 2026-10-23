@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from opsteam_api.main import MAX_BODY_BYTES, create_app
 from opsteam_core.errors import InvalidId
 from opsteam_db import create_engine
+from opsteam_db.secrets import FakeSecretStore
 from pydantic import BaseModel
 
 from tests.jwt_helpers import Signer, verifier
@@ -25,6 +26,7 @@ def _app() -> FastAPI:
     app = create_app(
         engine=create_engine("postgresql+asyncpg://x:y@127.0.0.1:1/none"),
         verifier=verifier(Signer()),
+        secrets=FakeSecretStore(),
     )
 
     @app.get("/boom")

@@ -87,6 +87,7 @@ SCOPE_TABLE = {
     "/api/v1/tenant": EVERYONE,
     "/api/v1/services": EVERYONE,
     "/api/v1/services/topology": EVERYONE,
+    "/api/v1/integrations": EVERYONE,
     "/api/v1/audit": ADMINS_ONLY,
     "/api/v1/members": ADMINS_ONLY,
 }

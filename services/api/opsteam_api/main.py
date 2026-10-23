@@ -8,13 +8,14 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from opsteam_core.logging import configure_logging
 from opsteam_db import create_engine, ping
+from opsteam_db.secrets import DbSecretStore, SecretStore
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from opsteam_api import problems
 from opsteam_api.auth import TokenVerifier, jwks_verifier
 from opsteam_api.edge import MAX_BODY_BYTES, EdgeMiddleware
-from opsteam_api.routers import audit, identity, members, services
+from opsteam_api.routers import audit, identity, integrations, members, services
 from opsteam_api.settings import ApiSettings
 
 __all__ = ["MAX_BODY_BYTES", "create_app"]
@@ -22,21 +23,30 @@ __all__ = ["MAX_BODY_BYTES", "create_app"]
 READY_TIMEOUT_S = 2.0
 
 
-def create_app(engine: AsyncEngine | None = None, verifier: TokenVerifier | None = None) -> FastAPI:
+def create_app(
+    engine: AsyncEngine | None = None,
+    verifier: TokenVerifier | None = None,
+    secrets: SecretStore | None = None,
+    dev_allow: frozenset[str] = frozenset(),
+) -> FastAPI:
     """Build the API; whatever is not injected is created from ApiSettings at startup."""
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-        app.state.engine, app.state.verifier = engine, verifier
-        if engine is None or verifier is None:
+        app.state.engine, app.state.verifier, app.state.secrets = engine, verifier, secrets
+        app.state.dev_allow = dev_allow
+        if engine is None or verifier is None or secrets is None:
             settings = ApiSettings()  # type: ignore[call-arg]  # values come from the environment
             configure_logging(settings.log_level)
+            app.state.dev_allow = settings.netguard_dev_allow
             if engine is None:
                 app.state.engine = create_engine(settings.database_url.get_secret_value())
             if verifier is None:
                 app.state.verifier = jwks_verifier(
                     settings.oidc_issuer, settings.oidc_audience, settings.oidc_jwks_url
                 )
+            if secrets is None:
+                app.state.secrets = DbSecretStore(app.state.engine, settings.secrets_key)
         yield
         if engine is None:
             await app.state.engine.dispose()
@@ -48,6 +58,7 @@ def create_app(engine: AsyncEngine | None = None, verifier: TokenVerifier | None
     app.include_router(audit.router)
     app.include_router(members.router)
     app.include_router(services.router)
+    app.include_router(integrations.router)
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz() -> dict[str, str]:

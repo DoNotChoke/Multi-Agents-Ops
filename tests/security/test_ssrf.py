@@ -100,3 +100,27 @@ def test_ip_literal_skips_dns() -> None:
     before = RESOLVER.calls
     assert _check(f"https://{PUBLIC_IP}/").ips == (PUBLIC_IP,)
     assert RESOLVER.calls == before
+
+
+DEV_ALLOW = frozenset({"127.0.0.1:30090"})
+
+
+def test_dev_allow_admits_exactly_the_listed_ip_and_port() -> None:
+    target = _check("http://127.0.0.1:30090/api/v1/query", dev_allow=DEV_ALLOW)
+    assert (target.host, target.port, target.ips) == ("127.0.0.1", 30090, ("127.0.0.1",))
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://127.0.0.1:30091",  # other port
+        "http://127.0.0.2:30090",  # other host
+        "http://localhost:30090",  # names are not matched, only IP literals
+        "http://user:pw@127.0.0.1:30090",  # credentials still refused
+        "ftp://127.0.0.1:30090",  # scheme still checked
+        "http://169.254.169.254",
+    ],
+)
+def test_dev_allow_does_not_widen(url: str) -> None:
+    with pytest.raises(NetguardBlocked):
+        _check(url, dev_allow=DEV_ALLOW)
