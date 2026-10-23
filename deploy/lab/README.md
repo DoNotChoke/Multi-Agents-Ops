@@ -8,7 +8,7 @@ real Kubernetes changes into incidents with a known root cause.
 make lab-up                     # create/refresh the cluster (~5 min from scratch)
 make lab-fault FAULT=<name>     # break something
 make lab-heal                   # re-apply the healthy baseline
-make lab-verify [FAULT=<name>]  # apply each fault, wait for its alerts, heal, wait for quiet
+make lab-verify [SCENARIO=<id>] # = make eval LAB=1: run each eval scenario's fault, time its alerts, heal
 make lab-down                   # delete the cluster
 ```
 
@@ -51,9 +51,10 @@ Alertmanager routes everything to a `null` receiver until the Event Gateway exis
 ## Faults (`faults/<name>/`)
 
 Each fault is a kustomize overlay on `base/`; healing re-applies `base/`.
-"Max time" is the deadline `lab-verify` allows; "measured" is one run on a 12-thread laptop.
+Expected alerts and deadlines live in `evals/scenarios/*.yaml` (the single source used by
+`lab-verify`); "measured" is one run on a 12-thread laptop.
 
-| Fault | Change | Expected alerts (max 8 min) | Measured to alert | Quiet after heal | Ground truth |
+| Fault | Change | Expected alerts | Measured to alert | Quiet after heal | Ground truth |
 | --- | --- | --- | --- | --- | --- |
 | `bad_release_db_pool` | checkout rolled to `version: v2` with `DB_MAX_CONNS=1`; 15 rps × 80 ms per pod overloads one connection | `HighLatencyP95` checkout | 170 s | ~2.5 min | `deployment_regression`; checkout, postgres |
 | `oom_killed_service` | payment `LEAK_MB_PER_SEC=8` under a 64 Mi limit | `ContainerOOMKilled` + `PodRestarting` payment | 30 s / 50 s | ~9.5 min | `resource_exhaustion`; payment |
@@ -64,7 +65,7 @@ Each fault is a kustomize overlay on `base/`; healing re-applies `base/`.
 Other alerts may fire alongside the expected ones (e.g. `HighErrorRate` during `oom_killed_service`);
 `lab-verify` only requires the expected set, except for `benign_noise`, which must stay silent.
 
-Ground truth fields map to `evals/scenarios/*.yaml` (`root_cause.category`, `entities`).
+Ground truth is in the matching `evals/scenarios/*.yaml` (`root_cause.category`, `entities`).
 
 ## Notes
 

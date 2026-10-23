@@ -114,3 +114,17 @@ def test_report_has_git_sha_and_one_entry_per_scenario(tmp_path: Path) -> None:
     assert data["results"][0]["id"] == VALID["id"]
     assert data["results"][0]["status"] == "skipped"
     assert VALID["id"] in (out / "report.md").read_text(encoding="utf-8")
+
+
+def test_report_carries_lab_detection_results(tmp_path: Path) -> None:
+    detection = {"status": "detected", "time_to_detect_seconds": {"HighLatencyP95/checkout": 170}}
+    out = write_report([VALID], tmp_path, detections={VALID["id"]: detection})
+    data = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert data["results"][0]["detection"] == detection
+    assert "detected" in (out / "report.md").read_text(encoding="utf-8")
+
+
+def test_report_marks_detection_not_run_without_lab(tmp_path: Path) -> None:
+    out = write_report([VALID], tmp_path)
+    data = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert data["results"][0]["detection"] == {"status": "not_run"}

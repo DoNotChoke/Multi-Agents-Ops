@@ -64,13 +64,14 @@ lab-fault:
 lab-heal:
 	bash deploy/lab/lab.sh heal
 
-# Runs every fault (or FAULT=<name>) and checks its alerts fire, then heals; needs `make lab-up`.
+# Same as `make eval LAB=1`: every scenario's fault on the lab, alerts timed, then healed.
 lab-verify:
-	uv run python deploy/lab/verify_fault.py $(FAULT)
+	uv run python -m evals.run --lab $(SCENARIO)
 
-# Validates every scenario and writes evals/reports/<timestamp>/; needs no cluster.
+# Validates scenarios and writes evals/reports/<timestamp>/ without a cluster.
+# LAB=1 applies each fault on the kind lab; RECORD=1 also saves evals/replay/<id>/; SCENARIO=<ids>.
 eval:
-	uv run python -m evals.run
+	uv run python -m evals.run $(if $(LAB),--lab) $(if $(RECORD),--record) $(SCENARIO)
 
 test-security:
 	uv run pytest tests/security

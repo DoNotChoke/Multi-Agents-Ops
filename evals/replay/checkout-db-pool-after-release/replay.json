@@ -1,0 +1,5148 @@
+{
+ "k8s_events": [
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:54Z",
+   "last_at": "2026-10-23T03:51:54Z",
+   "message": "Successfully assigned shop/checkout-57c848fbc5-7bdwq to opsteam-lab-control-plane",
+   "object": "Pod/checkout-57c848fbc5-7bdwq",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-57c848fbc5-7bdwq",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Container created",
+   "object": "Pod/checkout-57c848fbc5-7bdwq",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Container started",
+   "object": "Pod/checkout-57c848fbc5-7bdwq",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:32Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-57c848fbc5-7bdwq",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-57c848fbc5-cjdct",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Successfully assigned shop/checkout-57c848fbc5-gx9rf to opsteam-lab-control-plane",
+   "object": "Pod/checkout-57c848fbc5-gx9rf",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:56Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-57c848fbc5-gx9rf",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:56Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Container created",
+   "object": "Pod/checkout-57c848fbc5-gx9rf",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:56Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Container started",
+   "object": "Pod/checkout-57c848fbc5-gx9rf",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-57c848fbc5-gx9rf",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:57Z",
+   "last_at": "2026-10-23T03:46:57Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-57c848fbc5-qb62x",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Deleted pod: checkout-57c848fbc5-cjdct",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:57Z",
+   "last_at": "2026-10-23T03:46:57Z",
+   "message": "Deleted pod: checkout-57c848fbc5-qb62x",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:54Z",
+   "last_at": "2026-10-23T03:51:54Z",
+   "message": "Created pod: checkout-57c848fbc5-7bdwq",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Created pod: checkout-57c848fbc5-gx9rf",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Deleted pod: checkout-57c848fbc5-gx9rf",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:32Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Deleted pod: checkout-57c848fbc5-7bdwq",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Successfully assigned shop/checkout-65599d9544-2bgl9 to opsteam-lab-control-plane",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Container created",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Container started",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 25,
+   "first_at": "2026-10-23T03:47:02Z",
+   "last_at": "2026-10-23T03:48:57Z",
+   "message": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Unhealthy",
+   "type": "Warning"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:30Z",
+   "last_at": "2026-10-23T04:02:30Z",
+   "message": "Successfully assigned shop/checkout-65599d9544-6gg6d to opsteam-lab-control-plane",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Container created",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Container started",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 25,
+   "first_at": "2026-10-23T04:02:37Z",
+   "last_at": "2026-10-23T04:04:28Z",
+   "message": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Unhealthy",
+   "type": "Warning"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Successfully assigned shop/checkout-65599d9544-br895 to opsteam-lab-control-plane",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:32Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:32Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Container created",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:32Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Container started",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 25,
+   "first_at": "2026-10-23T04:02:38Z",
+   "last_at": "2026-10-23T04:04:32Z",
+   "message": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Unhealthy",
+   "type": "Warning"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:54Z",
+   "last_at": "2026-10-23T03:46:54Z",
+   "message": "Successfully assigned shop/checkout-65599d9544-tjpzd to opsteam-lab-control-plane",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:55Z",
+   "last_at": "2026-10-23T03:46:55Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:55Z",
+   "last_at": "2026-10-23T03:46:55Z",
+   "message": "Container created",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:55Z",
+   "last_at": "2026-10-23T03:46:55Z",
+   "message": "Container started",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 25,
+   "first_at": "2026-10-23T03:47:01Z",
+   "last_at": "2026-10-23T03:48:52Z",
+   "message": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Unhealthy",
+   "type": "Warning"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:56Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:54Z",
+   "last_at": "2026-10-23T03:46:54Z",
+   "message": "Created pod: checkout-65599d9544-tjpzd",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Created pod: checkout-65599d9544-2bgl9",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Deleted pod: checkout-65599d9544-2bgl9",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:56Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Deleted pod: checkout-65599d9544-tjpzd",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:30Z",
+   "last_at": "2026-10-23T04:02:30Z",
+   "message": "Created pod: checkout-65599d9544-6gg6d",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Created pod: checkout-65599d9544-br895",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 4,
+   "first_at": "2026-10-23T02:25:28Z",
+   "last_at": "2026-10-23T03:51:54Z",
+   "message": "Scaled up replica set checkout-57c848fbc5 from 0 to 1",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 4,
+   "first_at": "2026-10-23T02:25:29Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Scaled up replica set checkout-57c848fbc5 from 1 to 2",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:37:16Z",
+   "last_at": "2026-10-23T04:02:30Z",
+   "message": "Scaled up replica set checkout-65599d9544 from 0 to 1",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:37:17Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Scaled down replica set checkout-57c848fbc5 from 2 to 1",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:37:17Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Scaled up replica set checkout-65599d9544 from 1 to 2",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:37:18Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Scaled down replica set checkout-57c848fbc5 from 1 to 0",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 2,
+   "first_at": "2026-10-23T02:40:08Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Scaled down replica set checkout-65599d9544 from 2 to 1",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 2,
+   "first_at": "2026-10-23T02:40:09Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Scaled down replica set checkout-65599d9544 from 1 to 0",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:10Z",
+   "last_at": "2026-10-23T03:54:10Z",
+   "message": "Stopping container app",
+   "object": "Pod/payment-5bcbc9bb7c-b7shj",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:11Z",
+   "last_at": "2026-10-23T03:54:11Z",
+   "message": "Readiness probe failed: Get \"http://10.244.0.55:8080/readyz\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+   "object": "Pod/payment-5bcbc9bb7c-b7shj",
+   "reason": "Unhealthy",
+   "type": "Warning"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Stopping container app",
+   "object": "Pod/payment-5bcbc9bb7c-vtsdb",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:09Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Successfully assigned shop/payment-5bcbc9bb7c-xv8lj to opsteam-lab-control-plane",
+   "object": "Pod/payment-5bcbc9bb7c-xv8lj",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/payment-5bcbc9bb7c-xv8lj",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Container created",
+   "object": "Pod/payment-5bcbc9bb7c-xv8lj",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Container started",
+   "object": "Pod/payment-5bcbc9bb7c-xv8lj",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:08Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Successfully assigned shop/payment-5bcbc9bb7c-zdgsj to opsteam-lab-control-plane",
+   "object": "Pod/payment-5bcbc9bb7c-zdgsj",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:08Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/payment-5bcbc9bb7c-zdgsj",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:08Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Container created",
+   "object": "Pod/payment-5bcbc9bb7c-zdgsj",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:08Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Container started",
+   "object": "Pod/payment-5bcbc9bb7c-zdgsj",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Deleted pod: payment-5bcbc9bb7c-vtsdb",
+   "object": "ReplicaSet/payment-5bcbc9bb7c",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:10Z",
+   "last_at": "2026-10-23T03:54:10Z",
+   "message": "Deleted pod: payment-5bcbc9bb7c-b7shj",
+   "object": "ReplicaSet/payment-5bcbc9bb7c",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:08Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Created pod: payment-5bcbc9bb7c-zdgsj",
+   "object": "ReplicaSet/payment-5bcbc9bb7c",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:09Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Created pod: payment-5bcbc9bb7c-xv8lj",
+   "object": "ReplicaSet/payment-5bcbc9bb7c",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:07Z",
+   "last_at": "2026-10-23T03:54:07Z",
+   "message": "Successfully assigned shop/payment-5c6689b66d-2kh8z to opsteam-lab-control-plane",
+   "object": "Pod/payment-5c6689b66d-2kh8z",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:08Z",
+   "last_at": "2026-10-23T03:54:08Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/payment-5c6689b66d-2kh8z",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:08Z",
+   "last_at": "2026-10-23T03:54:08Z",
+   "message": "Container created",
+   "object": "Pod/payment-5c6689b66d-2kh8z",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:08Z",
+   "last_at": "2026-10-23T03:54:08Z",
+   "message": "Container started",
+   "object": "Pod/payment-5c6689b66d-2kh8z",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:09Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Stopping container app",
+   "object": "Pod/payment-5c6689b66d-2kh8z",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Successfully assigned shop/payment-5c6689b66d-d872f to opsteam-lab-control-plane",
+   "object": "Pod/payment-5c6689b66d-d872f",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/payment-5c6689b66d-d872f",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Container created",
+   "object": "Pod/payment-5c6689b66d-d872f",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Container started",
+   "object": "Pod/payment-5c6689b66d-d872f",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Stopping container app",
+   "object": "Pod/payment-5c6689b66d-d872f",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:07Z",
+   "last_at": "2026-10-23T03:54:07Z",
+   "message": "Created pod: payment-5c6689b66d-2kh8z",
+   "object": "ReplicaSet/payment-5c6689b66d",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Created pod: payment-5c6689b66d-d872f",
+   "object": "ReplicaSet/payment-5c6689b66d",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:09Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Deleted pod: payment-5c6689b66d-2kh8z",
+   "object": "ReplicaSet/payment-5c6689b66d",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Deleted pod: payment-5c6689b66d-d872f",
+   "object": "ReplicaSet/payment-5c6689b66d",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 4,
+   "first_at": "2026-10-23T02:25:28Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Scaled up replica set payment-5bcbc9bb7c from 0 to 1",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 4,
+   "first_at": "2026-10-23T02:25:29Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Scaled up replica set payment-5bcbc9bb7c from 1 to 2",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 2,
+   "first_at": "2026-10-23T02:32:11Z",
+   "last_at": "2026-10-23T03:54:07Z",
+   "message": "Scaled up replica set payment-5c6689b66d from 0 to 1",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 2,
+   "first_at": "2026-10-23T02:53:18Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Scaled down replica set payment-5bcbc9bb7c from 2 to 1",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 2,
+   "first_at": "2026-10-23T02:53:21Z",
+   "last_at": "2026-10-23T03:54:10Z",
+   "message": "Scaled down replica set payment-5bcbc9bb7c from 1 to 0",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Scaled up replica set payment-5c6689b66d from 1 to 2",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:09Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Scaled down replica set payment-5c6689b66d from 2 to 1",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Scaled down replica set payment-5c6689b66d from 1 to 0",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  }
+ ],
+ "lab_fault": "bad_release_db_pool",
+ "logs": [
+  {
+   "limit": 200,
+   "logql": "{namespace=\"shop\"} |= \"\\\"level\\\":\\\"ERROR\\\"\"",
+   "query_id": "errors",
+   "result": [
+    {
+     "stream": {
+      "container": "app",
+      "detected_level": "error",
+      "instance": "shop/checkout-65599d9544-6gg6d:app",
+      "job": "loki.source.kubernetes.shop",
+      "namespace": "shop",
+      "pod": "checkout-65599d9544-6gg6d",
+      "service": "checkout",
+      "service_name": "checkout",
+      "version": "v2"
+     },
+     "values": [
+      [
+       "1792728448647612679",
+       "{\"time\":\"2026-10-23T04:07:28.647282736Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"76822108b3e743ff8f0071e643080595\"}\n"
+      ],
+      [
+       "1792728448647565930",
+       "{\"time\":\"2026-10-23T04:07:28.647248981Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"76822108b3e743ff8f0071e643080595\"}\n"
+      ],
+      [
+       "1792728448582002725",
+       "{\"time\":\"2026-10-23T04:07:28.58178248Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"c52ab997572411472665d76c12459ad9\"}\n"
+      ],
+      [
+       "1792728448581959414",
+       "{\"time\":\"2026-10-23T04:07:28.581735092Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"c52ab997572411472665d76c12459ad9\"}\n"
+      ],
+      [
+       "1792728448514579628",
+       "{\"time\":\"2026-10-23T04:07:28.51413602Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"df63d60a33704888b0b3ce33725c948d\"}\n"
+      ],
+      [
+       "1792728448514440383",
+       "{\"time\":\"2026-10-23T04:07:28.514079893Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"df63d60a33704888b0b3ce33725c948d\"}\n"
+      ],
+      [
+       "1792728448448290852",
+       "{\"time\":\"2026-10-23T04:07:28.448060368Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"8eb685c578e4e270b1d6a85109247cbc\"}\n"
+      ],
+      [
+       "1792728448448245849",
+       "{\"time\":\"2026-10-23T04:07:28.448022742Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"8eb685c578e4e270b1d6a85109247cbc\"}\n"
+      ],
+      [
+       "1792728448414521170",
+       "{\"time\":\"2026-10-23T04:07:28.414064486Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"4beccbdcbfbfdbc87f0c450685e213a5\"}\n"
+      ],
+      [
+       "1792728448414460630",
+       "{\"time\":\"2026-10-23T04:07:28.413991093Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"4beccbdcbfbfdbc87f0c450685e213a5\"}\n"
+      ],
+      [
+       "1792728448349446718",
+       "{\"time\":\"2026-10-23T04:07:28.349269963Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"5159e288d4b726131d6a0bda13259ab7\"}\n"
+      ],
+      [
+       "1792728448349409277",
+       "{\"time\":\"2026-10-23T04:07:28.349234194Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"5159e288d4b726131d6a0bda13259ab7\"}\n"
+      ],
+      [
+       "1792728448282321015",
+       "{\"time\":\"2026-10-23T04:07:28.281936204Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"8dfe82cb2acedf77767e6fc1985a1c90\"}\n"
+      ],
+      [
+       "1792728448282281061",
+       "{\"time\":\"2026-10-23T04:07:28.281898816Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"8dfe82cb2acedf77767e6fc1985a1c90\"}\n"
+      ],
+      [
+       "1792728448248778914",
+       "{\"time\":\"2026-10-23T04:07:28.248450596Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"cf0514968c4dada1b3740c8014ae5c38\"}\n"
+      ],
+      [
+       "1792728448248725711",
+       "{\"time\":\"2026-10-23T04:07:28.248321659Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"cf0514968c4dada1b3740c8014ae5c38\"}\n"
+      ],
+      [
+       "1792728448181379675",
+       "{\"time\":\"2026-10-23T04:07:28.181061039Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"45aa42b11c72de1bfceb3b0504de42e5\"}\n"
+      ],
+      [
+       "1792728448181307375",
+       "{\"time\":\"2026-10-23T04:07:28.181025244Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"45aa42b11c72de1bfceb3b0504de42e5\"}\n"
+      ],
+      [
+       "1792728448149282140",
+       "{\"time\":\"2026-10-23T04:07:28.148992747Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"2a7986e45f479bad619666d2413eebcb\"}\n"
+      ],
+      [
+       "1792728448149217173",
+       "{\"time\":\"2026-10-23T04:07:28.148876614Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"2a7986e45f479bad619666d2413eebcb\"}\n"
+      ],
+      [
+       "1792728448080839939",
+       "{\"time\":\"2026-10-23T04:07:28.080580754Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"f0679bc125df66e725e89589a3fb0b29\"}\n"
+      ],
+      [
+       "1792728448080783304",
+       "{\"time\":\"2026-10-23T04:07:28.08053933Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"f0679bc125df66e725e89589a3fb0b29\"}\n"
+      ],
+      [
+       "1792728448015584113",
+       "{\"time\":\"2026-10-23T04:07:28.01522228Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"976c96a2f11878ea8f01e810c3d0708c\"}\n"
+      ],
+      [
+       "1792728448015515889",
+       "{\"time\":\"2026-10-23T04:07:28.015133694Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"976c96a2f11878ea8f01e810c3d0708c\"}\n"
+      ],
+      [
+       "1792728447948118562",
+       "{\"time\":\"2026-10-23T04:07:27.947401622Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"4015d0fe04efcb670649d3d41f660058\"}\n"
+      ],
+      [
+       "1792728447948051618",
+       "{\"time\":\"2026-10-23T04:07:27.947268839Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"4015d0fe04efcb670649d3d41f660058\"}\n"
+      ],
+      [
+       "1792728447914885678",
+       "{\"time\":\"2026-10-23T04:07:27.914652443Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"ddc1de5aa6cda4306c87d96895205ffd\"}\n"
+      ],
+      [
+       "1792728447914837046",
+       "{\"time\":\"2026-10-23T04:07:27.914606169Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"ddc1de5aa6cda4306c87d96895205ffd\"}\n"
+      ],
+      [
+       "1792728447847438931",
+       "{\"time\":\"2026-10-23T04:07:27.847255943Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"8b575db8ece34e16c2af76d2bbc22647\"}\n"
+      ],
+      [
+       "1792728447847396063",
+       "{\"time\":\"2026-10-23T04:07:27.847224507Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"8b575db8ece34e16c2af76d2bbc22647\"}\n"
+      ],
+      [
+       "1792728447815819379",
+       "{\"time\":\"2026-10-23T04:07:27.815420875Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"3b00459d5a8cd52f95b8a2b473e324e0\"}\n"
+      ],
+      [
+       "1792728447815740456",
+       "{\"time\":\"2026-10-23T04:07:27.815348877Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"3b00459d5a8cd52f95b8a2b473e324e0\"}\n"
+      ],
+      [
+       "1792728447749208331",
+       "{\"time\":\"2026-10-23T04:07:27.748694054Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"7b5bd3305aa723c741c2c37a44707a15\"}\n"
+      ],
+      [
+       "1792728447749036936",
+       "{\"time\":\"2026-10-23T04:07:27.748632706Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"7b5bd3305aa723c741c2c37a44707a15\"}\n"
+      ],
+      [
+       "1792728447681113614",
+       "{\"time\":\"2026-10-23T04:07:27.680655449Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"d7687c4255e027fd5d1da2ae9932e869\"}\n"
+      ],
+      [
+       "1792728447680981747",
+       "{\"time\":\"2026-10-23T04:07:27.680613445Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"d7687c4255e027fd5d1da2ae9932e869\"}\n"
+      ],
+      [
+       "1792728447649299947",
+       "{\"time\":\"2026-10-23T04:07:27.649047096Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"15d00dfa53029696826f1163e207abbc\"}\n"
+      ],
+      [
+       "1792728447649239074",
+       "{\"time\":\"2026-10-23T04:07:27.649003338Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"15d00dfa53029696826f1163e207abbc\"}\n"
+      ],
+      [
+       "1792728447580810245",
+       "{\"time\":\"2026-10-23T04:07:27.580277016Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"6f8c13e341b34567e314f1cce4616279\"}\n"
+      ],
+      [
+       "1792728447580693666",
+       "{\"time\":\"2026-10-23T04:07:27.580181778Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"6f8c13e341b34567e314f1cce4616279\"}\n"
+      ],
+      [
+       "1792728447515638347",
+       "{\"time\":\"2026-10-23T04:07:27.515313758Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"c4eeab553f6bea568abdff759aeac9ee\"}\n"
+      ],
+      [
+       "1792728447515589386",
+       "{\"time\":\"2026-10-23T04:07:27.515230807Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"c4eeab553f6bea568abdff759aeac9ee\"}\n"
+      ],
+      [
+       "1792728447482523551",
+       "{\"time\":\"2026-10-23T04:07:27.481967002Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"90a01ed0b4faabdeefbfdcbefbec5e0e\"}\n"
+      ],
+      [
+       "1792728447482462330",
+       "{\"time\":\"2026-10-23T04:07:27.481915967Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"90a01ed0b4faabdeefbfdcbefbec5e0e\"}\n"
+      ],
+      [
+       "1792728447414563294",
+       "{\"time\":\"2026-10-23T04:07:27.414300206Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"c3f6868de31bbb090102ae8e54d5b1e8\"}\n"
+      ],
+      [
+       "1792728447414506600",
+       "{\"time\":\"2026-10-23T04:07:27.414249071Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"c3f6868de31bbb090102ae8e54d5b1e8\"}\n"
+      ],
+      [
+       "1792728447347270632",
+       "{\"time\":\"2026-10-23T04:07:27.347086248Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"ce8660a2863ab6946e6a44fc485f4b1a\"}\n"
+      ],
+      [
+       "1792728447347225874",
+       "{\"time\":\"2026-10-23T04:07:27.347016735Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"ce8660a2863ab6946e6a44fc485f4b1a\"}\n"
+      ],
+      [
+       "1792728447314132037",
+       "{\"time\":\"2026-10-23T04:07:27.313406216Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"b398939c701dad3e748a7fb5f1850b4f\"}\n"
+      ],
+      [
+       "1792728447314006798",
+       "{\"time\":\"2026-10-23T04:07:27.313345923Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"b398939c701dad3e748a7fb5f1850b4f\"}\n"
+      ],
+      [
+       "1792728447247864885",
+       "{\"time\":\"2026-10-23T04:07:27.247198932Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"a5ec96c644bcc98ff26b01c93fd72d0e\"}\n"
+      ],
+      [
+       "1792728447247754435",
+       "{\"time\":\"2026-10-23T04:07:27.247072631Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"a5ec96c644bcc98ff26b01c93fd72d0e\"}\n"
+      ],
+      [
+       "1792728447181866994",
+       "{\"time\":\"2026-10-23T04:07:27.181623662Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"1b133d84d85e6b352b480ffea8942aca\"}\n"
+      ],
+      [
+       "1792728447181811694",
+       "{\"time\":\"2026-10-23T04:07:27.181576135Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"1b133d84d85e6b352b480ffea8942aca\"}\n"
+      ],
+      [
+       "1792728447147326349",
+       "{\"time\":\"2026-10-23T04:07:27.146820984Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"bec85a84a419eea52c8153b2df7009a2\"}\n"
+      ],
+      [
+       "1792728447147248576",
+       "{\"time\":\"2026-10-23T04:07:27.146709544Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"bec85a84a419eea52c8153b2df7009a2\"}\n"
+      ],
+      [
+       "1792728447081837029",
+       "{\"time\":\"2026-10-23T04:07:27.081486657Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"61e174ccfcc75efa53518ea4055d01c8\"}\n"
+      ],
+      [
+       "1792728447081755481",
+       "{\"time\":\"2026-10-23T04:07:27.081420293Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"61e174ccfcc75efa53518ea4055d01c8\"}\n"
+      ],
+      [
+       "1792728447015229570",
+       "{\"time\":\"2026-10-23T04:07:27.014610716Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"0452d1f41375f4fcdeb78e393ba92523\"}\n"
+      ],
+      [
+       "1792728447015111237",
+       "{\"time\":\"2026-10-23T04:07:27.01443304Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"0452d1f41375f4fcdeb78e393ba92523\"}\n"
+      ],
+      [
+       "1792728446981430137",
+       "{\"time\":\"2026-10-23T04:07:26.98118626Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"86c2359c19a081d0b36cc0155ca34d66\"}\n"
+      ],
+      [
+       "1792728446981365679",
+       "{\"time\":\"2026-10-23T04:07:26.981131531Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"86c2359c19a081d0b36cc0155ca34d66\"}\n"
+      ],
+      [
+       "1792728446914995139",
+       "{\"time\":\"2026-10-23T04:07:26.914625848Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"e8fb9ce0df62f3ce278b5436d51f7097\"}\n"
+      ],
+      [
+       "1792728446914868898",
+       "{\"time\":\"2026-10-23T04:07:26.914513038Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"e8fb9ce0df62f3ce278b5436d51f7097\"}\n"
+      ],
+      [
+       "1792728446848111276",
+       "{\"time\":\"2026-10-23T04:07:26.847423643Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"9dd5a48b8578eefb32dae2f043e24010\"}\n"
+      ],
+      [
+       "1792728446847844232",
+       "{\"time\":\"2026-10-23T04:07:26.847392418Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"9dd5a48b8578eefb32dae2f043e24010\"}\n"
+      ],
+      [
+       "1792728446814474969",
+       "{\"time\":\"2026-10-23T04:07:26.814054127Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"bb1b1ec26cee554284cacd41738b967a\"}\n"
+      ],
+      [
+       "1792728446814379104",
+       "{\"time\":\"2026-10-23T04:07:26.813932738Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"bb1b1ec26cee554284cacd41738b967a\"}\n"
+      ],
+      [
+       "1792728446715101578",
+       "{\"time\":\"2026-10-23T04:07:26.714806072Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"01bcb6c963469f7f69e2d8f1fd9f7e7a\"}\n"
+      ],
+      [
+       "1792728446715033598",
+       "{\"time\":\"2026-10-23T04:07:26.714734539Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"01bcb6c963469f7f69e2d8f1fd9f7e7a\"}\n"
+      ],
+      [
+       "1792728446648275664",
+       "{\"time\":\"2026-10-23T04:07:26.648037023Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"854288857298784f2c893ea1bc76d3fe\"}\n"
+      ],
+      [
+       "1792728446648219992",
+       "{\"time\":\"2026-10-23T04:07:26.647998492Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"854288857298784f2c893ea1bc76d3fe\"}\n"
+      ],
+      [
+       "1792728446614622010",
+       "{\"time\":\"2026-10-23T04:07:26.614405941Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"d49ea84257a98082457dcbe42c0dc2e1\"}\n"
+      ],
+      [
+       "1792728446614575228",
+       "{\"time\":\"2026-10-23T04:07:26.614364853Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"d49ea84257a98082457dcbe42c0dc2e1\"}\n"
+      ]
+     ]
+    },
+    {
+     "stream": {
+      "container": "app",
+      "detected_level": "error",
+      "instance": "shop/checkout-65599d9544-br895:app",
+      "job": "loki.source.kubernetes.shop",
+      "namespace": "shop",
+      "pod": "checkout-65599d9544-br895",
+      "service": "checkout",
+      "service_name": "checkout",
+      "version": "v2"
+     },
+     "values": [
+      [
+       "1792728448615535259",
+       "{\"time\":\"2026-10-23T04:07:28.615059966Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"604911732b18738940215b494c513ce4\"}\n"
+      ],
+      [
+       "1792728448615411075",
+       "{\"time\":\"2026-10-23T04:07:28.614981898Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"604911732b18738940215b494c513ce4\"}\n"
+      ],
+      [
+       "1792728448115170549",
+       "{\"time\":\"2026-10-23T04:07:28.114765208Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"feb15531b1de0ce748ed54074498d801\"}\n"
+      ],
+      [
+       "1792728448115113158",
+       "{\"time\":\"2026-10-23T04:07:28.114712161Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"feb15531b1de0ce748ed54074498d801\"}\n"
+      ],
+      [
+       "1792728447780962571",
+       "{\"time\":\"2026-10-23T04:07:27.780561073Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"607ba806334885824371e9c762028ceb\"}\n"
+      ],
+      [
+       "1792728447780843080",
+       "{\"time\":\"2026-10-23T04:07:27.780482666Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"607ba806334885824371e9c762028ceb\"}\n"
+      ],
+      [
+       "1792728447715490559",
+       "{\"time\":\"2026-10-23T04:07:27.715158386Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2001,\"trace_id\":\"d71fbd668dd2b9f40e8cbe417a67828d\"}\n"
+      ],
+      [
+       "1792728447715415406",
+       "{\"time\":\"2026-10-23T04:07:27.715101643Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"d71fbd668dd2b9f40e8cbe417a67828d\"}\n"
+      ],
+      [
+       "1792728447615167073",
+       "{\"time\":\"2026-10-23T04:07:27.61497436Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"f501ed8a7b698ccfb433d7a802afab05\"}\n"
+      ],
+      [
+       "1792728447615121398",
+       "{\"time\":\"2026-10-23T04:07:27.614931243Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"f501ed8a7b698ccfb433d7a802afab05\"}\n"
+      ],
+      [
+       "1792728447447865457",
+       "{\"time\":\"2026-10-23T04:07:27.447676227Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"d25b257d5344916263f356e53b523f91\"}\n"
+      ],
+      [
+       "1792728447447819027",
+       "{\"time\":\"2026-10-23T04:07:27.447634478Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"d25b257d5344916263f356e53b523f91\"}\n"
+      ],
+      [
+       "1792728447381001582",
+       "{\"time\":\"2026-10-23T04:07:27.380394898Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"3602b98c4f2940f3db0e12e2675869dd\"}\n"
+      ],
+      [
+       "1792728447380860992",
+       "{\"time\":\"2026-10-23T04:07:27.380268685Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"3602b98c4f2940f3db0e12e2675869dd\"}\n"
+      ],
+      [
+       "1792728447281317582",
+       "{\"time\":\"2026-10-23T04:07:27.280902256Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"86ffe4d06106aa58d1c03d8adaad2a48\"}\n"
+      ],
+      [
+       "1792728447281264830",
+       "{\"time\":\"2026-10-23T04:07:27.280825765Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"86ffe4d06106aa58d1c03d8adaad2a48\"}\n"
+      ],
+      [
+       "1792728447114515045",
+       "{\"time\":\"2026-10-23T04:07:27.114217228Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"b308cbd98a9f810201d1bb6d6a8ab30b\"}\n"
+      ],
+      [
+       "1792728447114444832",
+       "{\"time\":\"2026-10-23T04:07:27.114129034Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"b308cbd98a9f810201d1bb6d6a8ab30b\"}\n"
+      ],
+      [
+       "1792728446948320115",
+       "{\"time\":\"2026-10-23T04:07:26.948069935Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"904407c1d81a60192ac7bcb01f2fe436\"}\n"
+      ],
+      [
+       "1792728446948263734",
+       "{\"time\":\"2026-10-23T04:07:26.948020582Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"904407c1d81a60192ac7bcb01f2fe436\"}\n"
+      ],
+      [
+       "1792728446781080353",
+       "{\"time\":\"2026-10-23T04:07:26.780841913Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"02b7d9f3c99d418757b0d8503bf07788\"}\n"
+      ],
+      [
+       "1792728446781023134",
+       "{\"time\":\"2026-10-23T04:07:26.780785384Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"02b7d9f3c99d418757b0d8503bf07788\"}\n"
+      ],
+      [
+       "1792728446748374170",
+       "{\"time\":\"2026-10-23T04:07:26.747907246Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"6d853a1b15d88f83e23095a16e4998ed\"}\n"
+      ],
+      [
+       "1792728446748250918",
+       "{\"time\":\"2026-10-23T04:07:26.74785601Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"6d853a1b15d88f83e23095a16e4998ed\"}\n"
+      ],
+      [
+       "1792728446681038274",
+       "{\"time\":\"2026-10-23T04:07:26.680482043Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"e4c5e75cf52c96378b47a5d0ffef8217\"}\n"
+      ],
+      [
+       "1792728446680907365",
+       "{\"time\":\"2026-10-23T04:07:26.680427251Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"e4c5e75cf52c96378b47a5d0ffef8217\"}\n"
+      ]
+     ]
+    },
+    {
+     "stream": {
+      "container": "app",
+      "detected_level": "error",
+      "instance": "shop/frontend-5cdb9cc587-r9gnj:app",
+      "job": "loki.source.kubernetes.shop",
+      "namespace": "shop",
+      "pod": "frontend-5cdb9cc587-r9gnj",
+      "service": "frontend",
+      "service_name": "frontend",
+      "version": "v1"
+     },
+     "values": [
+      [
+       "1792728448582697392",
+       "{\"time\":\"2026-10-23T04:07:28.581990168Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"c52ab997572411472665d76c12459ad9\"}\n"
+      ],
+      [
+       "1792728448582581501",
+       "{\"time\":\"2026-10-23T04:07:28.581955739Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"c52ab997572411472665d76c12459ad9\"}\n"
+      ],
+      [
+       "1792728448515023192",
+       "{\"time\":\"2026-10-23T04:07:28.514535785Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"df63d60a33704888b0b3ce33725c948d\"}\n"
+      ],
+      [
+       "1792728448514950447",
+       "{\"time\":\"2026-10-23T04:07:28.514436018Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"df63d60a33704888b0b3ce33725c948d\"}\n"
+      ],
+      [
+       "1792728448448446955",
+       "{\"time\":\"2026-10-23T04:07:28.448295377Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"8eb685c578e4e270b1d6a85109247cbc\"}\n"
+      ],
+      [
+       "1792728448448429482",
+       "{\"time\":\"2026-10-23T04:07:28.44825982Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"8eb685c578e4e270b1d6a85109247cbc\"}\n"
+      ],
+      [
+       "1792728448349664315",
+       "{\"time\":\"2026-10-23T04:07:28.349463675Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"5159e288d4b726131d6a0bda13259ab7\"}\n"
+      ],
+      [
+       "1792728448349584312",
+       "{\"time\":\"2026-10-23T04:07:28.349435011Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"5159e288d4b726131d6a0bda13259ab7\"}\n"
+      ],
+      [
+       "1792728448249202305",
+       "{\"time\":\"2026-10-23T04:07:28.248698381Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"cf0514968c4dada1b3740c8014ae5c38\"}\n"
+      ],
+      [
+       "1792728448249175746",
+       "{\"time\":\"2026-10-23T04:07:28.248664533Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"cf0514968c4dada1b3740c8014ae5c38\"}\n"
+      ],
+      [
+       "1792728448181507330",
+       "{\"time\":\"2026-10-23T04:07:28.181338024Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"45aa42b11c72de1bfceb3b0504de42e5\"}\n"
+      ],
+      [
+       "1792728448181477757",
+       "{\"time\":\"2026-10-23T04:07:28.181285679Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"45aa42b11c72de1bfceb3b0504de42e5\"}\n"
+      ],
+      [
+       "1792728448081128305",
+       "{\"time\":\"2026-10-23T04:07:28.080984732Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"f0679bc125df66e725e89589a3fb0b29\"}\n"
+      ],
+      [
+       "1792728448081091797",
+       "{\"time\":\"2026-10-23T04:07:28.080879813Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"f0679bc125df66e725e89589a3fb0b29\"}\n"
+      ],
+      [
+       "1792728447781563671",
+       "{\"time\":\"2026-10-23T04:07:27.780963703Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"607ba806334885824371e9c762028ceb\"}\n"
+      ],
+      [
+       "1792728447781435528",
+       "{\"time\":\"2026-10-23T04:07:27.780883221Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"607ba806334885824371e9c762028ceb\"}\n"
+      ],
+      [
+       "1792728447716672933",
+       "{\"time\":\"2026-10-23T04:07:27.715869716Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2002,\"trace_id\":\"d71fbd668dd2b9f40e8cbe417a67828d\"}\n"
+      ],
+      [
+       "1792728447716208808",
+       "{\"time\":\"2026-10-23T04:07:27.71567484Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"d71fbd668dd2b9f40e8cbe417a67828d\"}\n"
+      ],
+      [
+       "1792728447516435259",
+       "{\"time\":\"2026-10-23T04:07:27.515838064Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2002,\"trace_id\":\"c4eeab553f6bea568abdff759aeac9ee\"}\n"
+      ],
+      [
+       "1792728447516334665",
+       "{\"time\":\"2026-10-23T04:07:27.515764396Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"c4eeab553f6bea568abdff759aeac9ee\"}\n"
+      ],
+      [
+       "1792728447482521588",
+       "{\"time\":\"2026-10-23T04:07:27.482283638Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"90a01ed0b4faabdeefbfdcbefbec5e0e\"}\n"
+      ],
+      [
+       "1792728447482484578",
+       "{\"time\":\"2026-10-23T04:07:27.482243733Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"90a01ed0b4faabdeefbfdcbefbec5e0e\"}\n"
+      ],
+      [
+       "1792728447414930884",
+       "{\"time\":\"2026-10-23T04:07:27.414547745Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"c3f6868de31bbb090102ae8e54d5b1e8\"}\n"
+      ],
+      [
+       "1792728447414887634",
+       "{\"time\":\"2026-10-23T04:07:27.414499751Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"c3f6868de31bbb090102ae8e54d5b1e8\"}\n"
+      ],
+      [
+       "1792728447347559481",
+       "{\"time\":\"2026-10-23T04:07:27.347305958Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"ce8660a2863ab6946e6a44fc485f4b1a\"}\n"
+      ],
+      [
+       "1792728447347479151",
+       "{\"time\":\"2026-10-23T04:07:27.347269726Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"ce8660a2863ab6946e6a44fc485f4b1a\"}\n"
+      ],
+      [
+       "1792728447281526647",
+       "{\"time\":\"2026-10-23T04:07:27.281223226Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"86ffe4d06106aa58d1c03d8adaad2a48\"}\n"
+      ],
+      [
+       "1792728447281455978",
+       "{\"time\":\"2026-10-23T04:07:27.281176776Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"86ffe4d06106aa58d1c03d8adaad2a48\"}\n"
+      ],
+      [
+       "1792728447114898216",
+       "{\"time\":\"2026-10-23T04:07:27.114458755Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"b308cbd98a9f810201d1bb6d6a8ab30b\"}\n"
+      ],
+      [
+       "1792728447114824625",
+       "{\"time\":\"2026-10-23T04:07:27.114431494Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"b308cbd98a9f810201d1bb6d6a8ab30b\"}\n"
+      ],
+      [
+       "1792728447082603560",
+       "{\"time\":\"2026-10-23T04:07:27.082014718Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"61e174ccfcc75efa53518ea4055d01c8\"}\n"
+      ],
+      [
+       "1792728447082485535",
+       "{\"time\":\"2026-10-23T04:07:27.081895031Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"61e174ccfcc75efa53518ea4055d01c8\"}\n"
+      ],
+      [
+       "1792728446982279081",
+       "{\"time\":\"2026-10-23T04:07:26.98162949Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"86c2359c19a081d0b36cc0155ca34d66\"}\n"
+      ],
+      [
+       "1792728446982079815",
+       "{\"time\":\"2026-10-23T04:07:26.981488427Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"86c2359c19a081d0b36cc0155ca34d66\"}\n"
+      ],
+      [
+       "1792728446848144862",
+       "{\"time\":\"2026-10-23T04:07:26.847664589Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"9dd5a48b8578eefb32dae2f043e24010\"}\n"
+      ],
+      [
+       "1792728446848078017",
+       "{\"time\":\"2026-10-23T04:07:26.847617644Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"9dd5a48b8578eefb32dae2f043e24010\"}\n"
+      ],
+      [
+       "1792728446815181134",
+       "{\"time\":\"2026-10-23T04:07:26.814571814Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"bb1b1ec26cee554284cacd41738b967a\"}\n"
+      ],
+      [
+       "1792728446815115791",
+       "{\"time\":\"2026-10-23T04:07:26.814388496Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"bb1b1ec26cee554284cacd41738b967a\"}\n"
+      ],
+      [
+       "1792728446781578606",
+       "{\"time\":\"2026-10-23T04:07:26.781092011Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"02b7d9f3c99d418757b0d8503bf07788\"}\n"
+      ],
+      [
+       "1792728446781434584",
+       "{\"time\":\"2026-10-23T04:07:26.781043812Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"02b7d9f3c99d418757b0d8503bf07788\"}\n"
+      ],
+      [
+       "1792728446748462913",
+       "{\"time\":\"2026-10-23T04:07:26.748355996Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"6d853a1b15d88f83e23095a16e4998ed\"}\n"
+      ],
+      [
+       "1792728446748451256",
+       "{\"time\":\"2026-10-23T04:07:26.748293355Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"6d853a1b15d88f83e23095a16e4998ed\"}\n"
+      ],
+      [
+       "1792728446648436975",
+       "{\"time\":\"2026-10-23T04:07:26.648277668Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"854288857298784f2c893ea1bc76d3fe\"}\n"
+      ],
+      [
+       "1792728446648416322",
+       "{\"time\":\"2026-10-23T04:07:26.648239907Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"854288857298784f2c893ea1bc76d3fe\"}\n"
+      ]
+     ]
+    },
+    {
+     "stream": {
+      "container": "app",
+      "detected_level": "error",
+      "instance": "shop/frontend-5cdb9cc587-xfkzt:app",
+      "job": "loki.source.kubernetes.shop",
+      "namespace": "shop",
+      "pod": "frontend-5cdb9cc587-xfkzt",
+      "service": "frontend",
+      "service_name": "frontend",
+      "version": "v1"
+     },
+     "values": [
+      [
+       "1792728448647612131",
+       "{\"time\":\"2026-10-23T04:07:28.647513157Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"76822108b3e743ff8f0071e643080595\"}\n"
+      ],
+      [
+       "1792728448647591610",
+       "{\"time\":\"2026-10-23T04:07:28.647488126Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"76822108b3e743ff8f0071e643080595\"}\n"
+      ],
+      [
+       "1792728448615833682",
+       "{\"time\":\"2026-10-23T04:07:28.61551967Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"604911732b18738940215b494c513ce4\"}\n"
+      ],
+      [
+       "1792728448615791663",
+       "{\"time\":\"2026-10-23T04:07:28.615473218Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"604911732b18738940215b494c513ce4\"}\n"
+      ],
+      [
+       "1792728448415162688",
+       "{\"time\":\"2026-10-23T04:07:28.414625054Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"4beccbdcbfbfdbc87f0c450685e213a5\"}\n"
+      ],
+      [
+       "1792728448415056608",
+       "{\"time\":\"2026-10-23T04:07:28.414563423Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"4beccbdcbfbfdbc87f0c450685e213a5\"}\n"
+      ],
+      [
+       "1792728448282349190",
+       "{\"time\":\"2026-10-23T04:07:28.282199685Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"8dfe82cb2acedf77767e6fc1985a1c90\"}\n"
+      ],
+      [
+       "1792728448282338747",
+       "{\"time\":\"2026-10-23T04:07:28.282142631Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"8dfe82cb2acedf77767e6fc1985a1c90\"}\n"
+      ],
+      [
+       "1792728448149357688",
+       "{\"time\":\"2026-10-23T04:07:28.149147496Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"2a7986e45f479bad619666d2413eebcb\"}\n"
+      ],
+      [
+       "1792728448149340804",
+       "{\"time\":\"2026-10-23T04:07:28.149120422Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"2a7986e45f479bad619666d2413eebcb\"}\n"
+      ],
+      [
+       "1792728448115371068",
+       "{\"time\":\"2026-10-23T04:07:28.115158072Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"feb15531b1de0ce748ed54074498d801\"}\n"
+      ],
+      [
+       "1792728448115336387",
+       "{\"time\":\"2026-10-23T04:07:28.115109404Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"feb15531b1de0ce748ed54074498d801\"}\n"
+      ],
+      [
+       "1792728448016237908",
+       "{\"time\":\"2026-10-23T04:07:28.015899541Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2002,\"trace_id\":\"976c96a2f11878ea8f01e810c3d0708c\"}\n"
+      ],
+      [
+       "1792728448016154525",
+       "{\"time\":\"2026-10-23T04:07:28.015817456Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"976c96a2f11878ea8f01e810c3d0708c\"}\n"
+      ],
+      [
+       "1792728447948166387",
+       "{\"time\":\"2026-10-23T04:07:27.947962018Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"4015d0fe04efcb670649d3d41f660058\"}\n"
+      ],
+      [
+       "1792728447948152339",
+       "{\"time\":\"2026-10-23T04:07:27.94789176Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"4015d0fe04efcb670649d3d41f660058\"}\n"
+      ],
+      [
+       "1792728447915236432",
+       "{\"time\":\"2026-10-23T04:07:27.91488322Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"ddc1de5aa6cda4306c87d96895205ffd\"}\n"
+      ],
+      [
+       "1792728447915211901",
+       "{\"time\":\"2026-10-23T04:07:27.914844501Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"ddc1de5aa6cda4306c87d96895205ffd\"}\n"
+      ],
+      [
+       "1792728447847639663",
+       "{\"time\":\"2026-10-23T04:07:27.847408917Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"8b575db8ece34e16c2af76d2bbc22647\"}\n"
+      ],
+      [
+       "1792728447847590432",
+       "{\"time\":\"2026-10-23T04:07:27.847380437Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"8b575db8ece34e16c2af76d2bbc22647\"}\n"
+      ],
+      [
+       "1792728447816135571",
+       "{\"time\":\"2026-10-23T04:07:27.815904281Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"3b00459d5a8cd52f95b8a2b473e324e0\"}\n"
+      ],
+      [
+       "1792728447816095754",
+       "{\"time\":\"2026-10-23T04:07:27.815855326Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"3b00459d5a8cd52f95b8a2b473e324e0\"}\n"
+      ],
+      [
+       "1792728447749528426",
+       "{\"time\":\"2026-10-23T04:07:27.749082708Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2002,\"trace_id\":\"7b5bd3305aa723c741c2c37a44707a15\"}\n"
+      ],
+      [
+       "1792728447749455679",
+       "{\"time\":\"2026-10-23T04:07:27.7489715Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"7b5bd3305aa723c741c2c37a44707a15\"}\n"
+      ],
+      [
+       "1792728447681332038",
+       "{\"time\":\"2026-10-23T04:07:27.680916054Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"d7687c4255e027fd5d1da2ae9932e869\"}\n"
+      ],
+      [
+       "1792728447681304569",
+       "{\"time\":\"2026-10-23T04:07:27.680871136Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"d7687c4255e027fd5d1da2ae9932e869\"}\n"
+      ],
+      [
+       "1792728447649328503",
+       "{\"time\":\"2026-10-23T04:07:27.649267831Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"15d00dfa53029696826f1163e207abbc\"}\n"
+      ],
+      [
+       "1792728447649318639",
+       "{\"time\":\"2026-10-23T04:07:27.649231163Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"15d00dfa53029696826f1163e207abbc\"}\n"
+      ],
+      [
+       "1792728447615321166",
+       "{\"time\":\"2026-10-23T04:07:27.615156362Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"f501ed8a7b698ccfb433d7a802afab05\"}\n"
+      ],
+      [
+       "1792728447615291402",
+       "{\"time\":\"2026-10-23T04:07:27.615127662Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"f501ed8a7b698ccfb433d7a802afab05\"}\n"
+      ],
+      [
+       "1792728447580902771",
+       "{\"time\":\"2026-10-23T04:07:27.580669926Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"6f8c13e341b34567e314f1cce4616279\"}\n"
+      ],
+      [
+       "1792728447580882913",
+       "{\"time\":\"2026-10-23T04:07:27.580587682Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"6f8c13e341b34567e314f1cce4616279\"}\n"
+      ],
+      [
+       "1792728447448073268",
+       "{\"time\":\"2026-10-23T04:07:27.447912389Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"d25b257d5344916263f356e53b523f91\"}\n"
+      ],
+      [
+       "1792728447448035157",
+       "{\"time\":\"2026-10-23T04:07:27.447879962Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"d25b257d5344916263f356e53b523f91\"}\n"
+      ],
+      [
+       "1792728447381215360",
+       "{\"time\":\"2026-10-23T04:07:27.380705522Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"3602b98c4f2940f3db0e12e2675869dd\"}\n"
+      ],
+      [
+       "1792728447381104737",
+       "{\"time\":\"2026-10-23T04:07:27.380624101Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"3602b98c4f2940f3db0e12e2675869dd\"}\n"
+      ],
+      [
+       "1792728447314962275",
+       "{\"time\":\"2026-10-23T04:07:27.314404993Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"b398939c701dad3e748a7fb5f1850b4f\"}\n"
+      ],
+      [
+       "1792728447314874400",
+       "{\"time\":\"2026-10-23T04:07:27.314117327Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"b398939c701dad3e748a7fb5f1850b4f\"}\n"
+      ],
+      [
+       "1792728447248573289",
+       "{\"time\":\"2026-10-23T04:07:27.248003589Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"a5ec96c644bcc98ff26b01c93fd72d0e\"}\n"
+      ],
+      [
+       "1792728447248509578",
+       "{\"time\":\"2026-10-23T04:07:27.247886543Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"a5ec96c644bcc98ff26b01c93fd72d0e\"}\n"
+      ],
+      [
+       "1792728447182209265",
+       "{\"time\":\"2026-10-23T04:07:27.181894345Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"1b133d84d85e6b352b480ffea8942aca\"}\n"
+      ],
+      [
+       "1792728447182130051",
+       "{\"time\":\"2026-10-23T04:07:27.181850088Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"1b133d84d85e6b352b480ffea8942aca\"}\n"
+      ],
+      [
+       "1792728447147731177",
+       "{\"time\":\"2026-10-23T04:07:27.14735542Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"bec85a84a419eea52c8153b2df7009a2\"}\n"
+      ],
+      [
+       "1792728447147687631",
+       "{\"time\":\"2026-10-23T04:07:27.147297491Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"bec85a84a419eea52c8153b2df7009a2\"}\n"
+      ],
+      [
+       "1792728447015472817",
+       "{\"time\":\"2026-10-23T04:07:27.015220023Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"0452d1f41375f4fcdeb78e393ba92523\"}\n"
+      ],
+      [
+       "1792728447015420463",
+       "{\"time\":\"2026-10-23T04:07:27.015108815Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"0452d1f41375f4fcdeb78e393ba92523\"}\n"
+      ],
+      [
+       "1792728446948987781",
+       "{\"time\":\"2026-10-23T04:07:26.94852211Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"904407c1d81a60192ac7bcb01f2fe436\"}\n"
+      ],
+      [
+       "1792728446948840915",
+       "{\"time\":\"2026-10-23T04:07:26.948480255Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"904407c1d81a60192ac7bcb01f2fe436\"}\n"
+      ],
+      [
+       "1792728446915487605",
+       "{\"time\":\"2026-10-23T04:07:26.915121123Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"e8fb9ce0df62f3ce278b5436d51f7097\"}\n"
+      ],
+      [
+       "1792728446915433063",
+       "{\"time\":\"2026-10-23T04:07:26.915051701Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"e8fb9ce0df62f3ce278b5436d51f7097\"}\n"
+      ],
+      [
+       "1792728446715397531",
+       "{\"time\":\"2026-10-23T04:07:26.715136529Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"01bcb6c963469f7f69e2d8f1fd9f7e7a\"}\n"
+      ],
+      [
+       "1792728446715316046",
+       "{\"time\":\"2026-10-23T04:07:26.715082437Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"01bcb6c963469f7f69e2d8f1fd9f7e7a\"}\n"
+      ],
+      [
+       "1792728446681172317",
+       "{\"time\":\"2026-10-23T04:07:26.680787286Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"e4c5e75cf52c96378b47a5d0ffef8217\"}\n"
+      ],
+      [
+       "1792728446681083166",
+       "{\"time\":\"2026-10-23T04:07:26.680742513Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"e4c5e75cf52c96378b47a5d0ffef8217\"}\n"
+      ],
+      [
+       "1792728446614887136",
+       "{\"time\":\"2026-10-23T04:07:26.614617425Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"d49ea84257a98082457dcbe42c0dc2e1\"}\n"
+      ],
+      [
+       "1792728446614843590",
+       "{\"time\":\"2026-10-23T04:07:26.614593867Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"d49ea84257a98082457dcbe42c0dc2e1\"}\n"
+      ]
+     ]
+    }
+   ]
+  }
+ ],
+ "metrics": [
+  {
+   "promql": "sum by (service, code) (rate(http_requests_total{namespace=\"shop\"}[1m]))",
+   "query_id": "request_rate",
+   "result": [
+    {
+     "metric": {
+      "code": "200",
+      "service": "checkout"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "29.999666674073907"
+      ],
+      [
+       1792728044.668,
+       "30.001000037038516"
+      ],
+      [
+       1792728059.668,
+       "30.001666762968725"
+      ],
+      [
+       1792728074.668,
+       "30.003333718564615"
+      ],
+      [
+       1792728089.668,
+       "30.00200014816"
+      ],
+      [
+       1792728104.668,
+       "30.002333518533497"
+      ],
+      [
+       1792728119.668,
+       "30.00066668148181"
+      ],
+      [
+       1792728134.668,
+       "30.002333518533497"
+      ],
+      [
+       1792728149.668,
+       "30.001000037038516"
+      ],
+      [
+       1792728164.668,
+       "21.811874697332236"
+      ],
+      [
+       1792728179.668,
+       "17.12502486915687"
+      ],
+      [
+       1792728194.668,
+       "3.302422029828881"
+      ],
+      [
+       1792728209.668,
+       "4.004688179096629"
+      ],
+      [
+       1792728224.668,
+       "2.711291863902038"
+      ],
+      [
+       1792728239.668,
+       "3.2668084012842256"
+      ],
+      [
+       1792728254.668,
+       "4.800417814324197"
+      ],
+      [
+       1792728269.668,
+       "5.666918529712432"
+      ],
+      [
+       1792728284.668,
+       "5.71150373093195"
+      ],
+      [
+       1792728299.668,
+       "4.866774817218161"
+      ],
+      [
+       1792728314.668,
+       "5.400480042670459"
+      ],
+      [
+       1792728329.668,
+       "6.000266678519045"
+      ],
+      [
+       1792728344.668,
+       "6.822828695884078"
+      ],
+      [
+       1792728359.668,
+       "7.289061238858826"
+      ],
+      [
+       1792728374.668,
+       "6.289447950928971"
+      ],
+      [
+       1792728389.668,
+       "5.244900780645478"
+      ],
+      [
+       1792728404.668,
+       "4.711617832960789"
+      ],
+      [
+       1792728419.668,
+       "5.466788150847797"
+      ],
+      [
+       1792728434.668,
+       "5.800257789235077"
+      ],
+      [
+       1792728449.668,
+       "5.889019755994577"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "code": "200",
+      "service": "frontend"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "29.99950025801896"
+      ],
+      [
+       1792728044.668,
+       "30.001833695096494"
+      ],
+      [
+       1792728059.668,
+       "30.00200013334223"
+      ],
+      [
+       1792728074.668,
+       "30.00316725070281"
+      ],
+      [
+       1792728089.668,
+       "30.001333392595228"
+      ],
+      [
+       1792728104.668,
+       "30.002166578985868"
+      ],
+      [
+       1792728119.668,
+       "30.001333392595228"
+      ],
+      [
+       1792728134.668,
+       "30.002166578985868"
+      ],
+      [
+       1792728149.668,
+       "30.00183320121446"
+      ],
+      [
+       1792728164.668,
+       "29.913105318132324"
+      ],
+      [
+       1792728179.668,
+       "25.51224498866616"
+      ],
+      [
+       1792728194.668,
+       "16.62333044425184"
+      ],
+      [
+       1792728209.668,
+       "7.622561002711231"
+      ],
+      [
+       1792728224.668,
+       "2.7113210042372753"
+      ],
+      [
+       1792728239.668,
+       "2.6001466752597793"
+      ],
+      [
+       1792728254.668,
+       "4.533682990487806"
+      ],
+      [
+       1792728269.668,
+       "5.466909640428463"
+      ],
+      [
+       1792728284.668,
+       "6.089216314634813"
+      ],
+      [
+       1792728299.668,
+       "5.000180253992063"
+      ],
+      [
+       1792728314.668,
+       "5.311465208791698"
+      ],
+      [
+       1792728329.668,
+       "5.5780256900306675"
+      ],
+      [
+       1792728344.668,
+       "6.422723002801584"
+      ],
+      [
+       1792728359.668,
+       "7.111342230606642"
+      ],
+      [
+       1792728374.668,
+       "6.689551671425132"
+      ],
+      [
+       1792728389.668,
+       "5.689320527256415"
+      ],
+      [
+       1792728404.668,
+       "4.667099301601031"
+      ],
+      [
+       1792728419.668,
+       "5.377897286606369"
+      ],
+      [
+       1792728434.668,
+       "5.6667925953910085"
+      ],
+      [
+       1792728449.668,
+       "6.111302228927556"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "code": "200",
+      "service": "payment"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "29.97744494566787"
+      ],
+      [
+       1792728044.668,
+       "30.02422335808044"
+      ],
+      [
+       1792728059.668,
+       "29.979110182674784"
+      ],
+      [
+       1792728074.668,
+       "30.025558395377264"
+      ],
+      [
+       1792728089.668,
+       "29.979110182674784"
+      ],
+      [
+       1792728104.668,
+       "30.024891101431237"
+      ],
+      [
+       1792728119.668,
+       "29.955888402458328"
+      ],
+      [
+       1792728134.668,
+       "30.024223837144703"
+      ],
+      [
+       1792728149.668,
+       "29.979110182674784"
+      ],
+      [
+       1792728164.668,
+       "27.22437153103201"
+      ],
+      [
+       1792728179.668,
+       "22.444943220960468"
+      ],
+      [
+       1792728194.668,
+       "13.512264296842634"
+      ],
+      [
+       1792728209.668,
+       "7.222703735804609"
+      ],
+      [
+       1792728224.668,
+       "2.7336370707856426"
+      ],
+      [
+       1792728239.668,
+       "2.5556691408507044"
+      ],
+      [
+       1792728254.668,
+       "4.4447407604951445"
+      ],
+      [
+       1792728269.668,
+       "5.3999999999999995"
+      ],
+      [
+       1792728284.668,
+       "6.155829147962131"
+      ],
+      [
+       1792728299.668,
+       "5.000111113580302"
+      ],
+      [
+       1792728314.668,
+       "5.267134856431682"
+      ],
+      [
+       1792728329.668,
+       "5.600248899951109"
+      ],
+      [
+       1792728344.668,
+       "6.533914125700062"
+      ],
+      [
+       1792728359.668,
+       "7.044600991133136"
+      ],
+      [
+       1792728374.668,
+       "6.734231230830778"
+      ],
+      [
+       1792728389.668,
+       "5.6671704151480125"
+      ],
+      [
+       1792728404.668,
+       "4.733859317701967"
+      ],
+      [
+       1792728419.668,
+       "5.266666666666666"
+      ],
+      [
+       1792728434.668,
+       "5.577901731149581"
+      ],
+      [
+       1792728449.668,
+       "6.111246916598146"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "code": "502",
+      "service": "checkout"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0"
+      ],
+      [
+       1792728044.668,
+       "0"
+      ],
+      [
+       1792728059.668,
+       "0"
+      ],
+      [
+       1792728074.668,
+       "0"
+      ],
+      [
+       1792728089.668,
+       "0"
+      ],
+      [
+       1792728104.668,
+       "0"
+      ],
+      [
+       1792728119.668,
+       "0"
+      ],
+      [
+       1792728134.668,
+       "0"
+      ],
+      [
+       1792728149.668,
+       "0"
+      ],
+      [
+       1792728164.668,
+       "0"
+      ],
+      [
+       1792728179.668,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "code": "502",
+      "service": "frontend"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0"
+      ],
+      [
+       1792728044.668,
+       "0"
+      ],
+      [
+       1792728059.668,
+       "0"
+      ],
+      [
+       1792728074.668,
+       "0"
+      ],
+      [
+       1792728089.668,
+       "0"
+      ],
+      [
+       1792728104.668,
+       "0"
+      ],
+      [
+       1792728119.668,
+       "0"
+      ],
+      [
+       1792728134.668,
+       "0"
+      ],
+      [
+       1792728149.668,
+       "0"
+      ],
+      [
+       1792728164.668,
+       "0"
+      ],
+      [
+       1792728179.668,
+       "3.600160007111427"
+      ],
+      [
+       1792728194.668,
+       "12.46749783318888"
+      ],
+      [
+       1792728209.668,
+       "21.57873683274812"
+      ],
+      [
+       1792728224.668,
+       "27.335433251085874"
+      ],
+      [
+       1792728239.668,
+       "27.423770461141302"
+      ],
+      [
+       1792728254.668,
+       "25.446399659523927"
+      ],
+      [
+       1792728269.668,
+       "24.445530912484998"
+      ],
+      [
+       1792728284.668,
+       "23.934646988624475"
+      ],
+      [
+       1792728299.668,
+       "25.000846945351075"
+      ],
+      [
+       1792728314.668,
+       "24.712758628353"
+      ],
+      [
+       1792728329.668,
+       "24.423307702564557"
+      ],
+      [
+       1792728344.668,
+       "23.64630928576262"
+      ],
+      [
+       1792728359.668,
+       "22.934076570108054"
+      ],
+      [
+       1792728374.668,
+       "23.31342196030888"
+      ],
+      [
+       1792728389.668,
+       "24.224089035731943"
+      ],
+      [
+       1792728404.668,
+       "25.291173552153666"
+      ],
+      [
+       1792728419.668,
+       "24.57832396275473"
+      ],
+      [
+       1792728434.668,
+       "24.356096802151157"
+      ],
+      [
+       1792728449.668,
+       "23.889670645806344"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "code": "503",
+      "service": "checkout"
+     },
+     "values": [
+      [
+       1792728194.668,
+       "14.413135084677958"
+      ],
+      [
+       1792728209.668,
+       "21.17030312088734"
+      ],
+      [
+       1792728224.668,
+       "27.312931973242662"
+      ],
+      [
+       1792728239.668,
+       "26.73413187868413"
+      ],
+      [
+       1792728254.668,
+       "25.179631744120407"
+      ],
+      [
+       1792728269.668,
+       "24.312191652962355"
+      ],
+      [
+       1792728284.668,
+       "24.26866584618151"
+      ],
+      [
+       1792728299.668,
+       "25.156114580324008"
+      ],
+      [
+       1792728314.668,
+       "24.624411058760778"
+      ],
+      [
+       1792728329.668,
+       "24.02328992399662"
+      ],
+      [
+       1792728344.668,
+       "23.179838207840696"
+      ],
+      [
+       1792728359.668,
+       "22.689775345329416"
+      ],
+      [
+       1792728374.668,
+       "23.713218952795803"
+      ],
+      [
+       1792728389.668,
+       "24.73514927170311"
+      ],
+      [
+       1792728404.668,
+       "25.290928570331552"
+      ],
+      [
+       1792728419.668,
+       "24.533878530634013"
+      ],
+      [
+       1792728434.668,
+       "24.223298813280593"
+      ],
+      [
+       1792728449.668,
+       "24.111646925487232"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "promql": "histogram_quantile(0.95, sum by (service, le) (rate(http_request_duration_seconds_bucket{namespace=\"shop\"}[1m])))",
+   "query_id": "latency_p95",
+   "result": [
+    {
+     "metric": {
+      "service": "checkout"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0.2425"
+      ],
+      [
+       1792728044.668,
+       "0.2425"
+      ],
+      [
+       1792728059.668,
+       "0.2425"
+      ],
+      [
+       1792728074.668,
+       "0.2425"
+      ],
+      [
+       1792728089.668,
+       "0.2425"
+      ],
+      [
+       1792728104.668,
+       "0.2425"
+      ],
+      [
+       1792728119.668,
+       "0.2425"
+      ],
+      [
+       1792728134.668,
+       "0.2425"
+      ],
+      [
+       1792728149.668,
+       "0.2425"
+      ],
+      [
+       1792728164.668,
+       "0.2425"
+      ],
+      [
+       1792728179.668,
+       "2.224564624031933"
+      ],
+      [
+       1792728194.668,
+       "2.425"
+      ],
+      [
+       1792728209.668,
+       "2.425"
+      ],
+      [
+       1792728224.668,
+       "2.425"
+      ],
+      [
+       1792728239.668,
+       "2.425"
+      ],
+      [
+       1792728254.668,
+       "2.425"
+      ],
+      [
+       1792728269.668,
+       "2.425"
+      ],
+      [
+       1792728284.668,
+       "2.425"
+      ],
+      [
+       1792728299.668,
+       "2.425"
+      ],
+      [
+       1792728314.668,
+       "2.425"
+      ],
+      [
+       1792728329.668,
+       "2.425"
+      ],
+      [
+       1792728344.668,
+       "2.425"
+      ],
+      [
+       1792728359.668,
+       "2.425"
+      ],
+      [
+       1792728374.668,
+       "2.425"
+      ],
+      [
+       1792728389.668,
+       "2.425"
+      ],
+      [
+       1792728404.668,
+       "2.425"
+      ],
+      [
+       1792728419.668,
+       "2.425"
+      ],
+      [
+       1792728434.668,
+       "2.425"
+      ],
+      [
+       1792728449.668,
+       "2.425"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "service": "frontend"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0.2425"
+      ],
+      [
+       1792728044.668,
+       "0.2425"
+      ],
+      [
+       1792728059.668,
+       "0.24250000000000002"
+      ],
+      [
+       1792728074.668,
+       "0.2425"
+      ],
+      [
+       1792728089.668,
+       "0.2425"
+      ],
+      [
+       1792728104.668,
+       "0.2425"
+      ],
+      [
+       1792728119.668,
+       "0.2425"
+      ],
+      [
+       1792728134.668,
+       "0.2425"
+      ],
+      [
+       1792728149.668,
+       "0.2425"
+      ],
+      [
+       1792728164.668,
+       "0.2425"
+      ],
+      [
+       1792728179.668,
+       "2.1612068965517235"
+      ],
+      [
+       1792728194.668,
+       "2.367151556156969"
+      ],
+      [
+       1792728209.668,
+       "2.41718487394958"
+      ],
+      [
+       1792728224.668,
+       "2.425"
+      ],
+      [
+       1792728239.668,
+       "2.425"
+      ],
+      [
+       1792728254.668,
+       "2.425"
+      ],
+      [
+       1792728269.668,
+       "2.425"
+      ],
+      [
+       1792728284.668,
+       "2.425"
+      ],
+      [
+       1792728299.668,
+       "2.425"
+      ],
+      [
+       1792728314.668,
+       "2.425"
+      ],
+      [
+       1792728329.668,
+       "2.425"
+      ],
+      [
+       1792728344.668,
+       "2.425"
+      ],
+      [
+       1792728359.668,
+       "2.425"
+      ],
+      [
+       1792728374.668,
+       "2.425"
+      ],
+      [
+       1792728389.668,
+       "2.425"
+      ],
+      [
+       1792728404.668,
+       "2.425"
+      ],
+      [
+       1792728419.668,
+       "2.425"
+      ],
+      [
+       1792728434.668,
+       "2.425"
+      ],
+      [
+       1792728449.668,
+       "2.425"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "service": "payment"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0.02425"
+      ],
+      [
+       1792728044.668,
+       "0.02425"
+      ],
+      [
+       1792728059.668,
+       "0.02425"
+      ],
+      [
+       1792728074.668,
+       "0.02425"
+      ],
+      [
+       1792728089.668,
+       "0.02425"
+      ],
+      [
+       1792728104.668,
+       "0.02425"
+      ],
+      [
+       1792728119.668,
+       "0.02425"
+      ],
+      [
+       1792728134.668,
+       "0.02425"
+      ],
+      [
+       1792728149.668,
+       "0.02425"
+      ],
+      [
+       1792728164.668,
+       "0.02425"
+      ],
+      [
+       1792728179.668,
+       "0.02425"
+      ],
+      [
+       1792728194.668,
+       "0.02425"
+      ],
+      [
+       1792728209.668,
+       "0.02425"
+      ],
+      [
+       1792728224.668,
+       "0.02425"
+      ],
+      [
+       1792728239.668,
+       "0.02425"
+      ],
+      [
+       1792728254.668,
+       "0.02425"
+      ],
+      [
+       1792728269.668,
+       "0.02425"
+      ],
+      [
+       1792728284.668,
+       "0.02425"
+      ],
+      [
+       1792728299.668,
+       "0.02425"
+      ],
+      [
+       1792728314.668,
+       "0.02425"
+      ],
+      [
+       1792728329.668,
+       "0.02425"
+      ],
+      [
+       1792728344.668,
+       "0.02425"
+      ],
+      [
+       1792728359.668,
+       "0.02425"
+      ],
+      [
+       1792728374.668,
+       "0.02425"
+      ],
+      [
+       1792728389.668,
+       "0.02425"
+      ],
+      [
+       1792728404.668,
+       "0.02425"
+      ],
+      [
+       1792728419.668,
+       "0.02425"
+      ],
+      [
+       1792728434.668,
+       "0.02425"
+      ],
+      [
+       1792728449.668,
+       "0.02425"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "promql": "sum by (pod) (rate(db_pool_acquire_wait_seconds_total{namespace=\"shop\"}[1m]))",
+   "query_id": "db_pool_wait",
+   "result": [
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-7bdwq"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0.000027026332748161183"
+      ],
+      [
+       1792728044.668,
+       "0.00002458352407831295"
+      ],
+      [
+       1792728059.668,
+       "0.000025044425183901182"
+      ],
+      [
+       1792728074.668,
+       "0.0000254878428234875"
+      ],
+      [
+       1792728089.668,
+       "0.000025939194595075127"
+      ],
+      [
+       1792728104.668,
+       "0.000026260839611529695"
+      ],
+      [
+       1792728119.668,
+       "0.000025884330762905914"
+      ],
+      [
+       1792728134.668,
+       "0.000025338378114096474"
+      ],
+      [
+       1792728149.668,
+       "0.000023478243477487772"
+      ],
+      [
+       1792728164.668,
+       "0.000017794743240469054"
+      ],
+      [
+       1792728179.668,
+       "0.000011254482685598598"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-gx9rf"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0.00002416126666666669"
+      ],
+      [
+       1792728044.668,
+       "0.000023270389795102116"
+      ],
+      [
+       1792728059.668,
+       "0.000023414796213165"
+      ],
+      [
+       1792728074.668,
+       "0.000023676371232998418"
+      ],
+      [
+       1792728089.668,
+       "0.000023246544290857388"
+      ],
+      [
+       1792728104.668,
+       "0.000025561827718019394"
+      ],
+      [
+       1792728119.668,
+       "0.000025508166848152248"
+      ],
+      [
+       1792728134.668,
+       "0.00002521357453995907"
+      ],
+      [
+       1792728149.668,
+       "0.000020894264316984932"
+      ],
+      [
+       1792728164.668,
+       "0.000013134426001733518"
+      ],
+      [
+       1792728179.668,
+       "0.000007361694962558108"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-6gg6d"
+     },
+     "values": [
+      [
+       1792728179.668,
+       "9.806374039004185"
+      ],
+      [
+       1792728194.668,
+       "19.802634869013904"
+      ],
+      [
+       1792728209.668,
+       "28.797595788089314"
+      ],
+      [
+       1792728224.668,
+       "34.541193812809745"
+      ],
+      [
+       1792728239.668,
+       "34.199217177492834"
+      ],
+      [
+       1792728254.668,
+       "34.28447617498944"
+      ],
+      [
+       1792728269.668,
+       "34.32528144735321"
+      ],
+      [
+       1792728284.668,
+       "34.62453843586096"
+      ],
+      [
+       1792728299.668,
+       "34.66737973077179"
+      ],
+      [
+       1792728314.668,
+       "34.670768552004624"
+      ],
+      [
+       1792728329.668,
+       "34.676302184541534"
+      ],
+      [
+       1792728344.668,
+       "34.63350391408125"
+      ],
+      [
+       1792728359.668,
+       "34.57335839855105"
+      ],
+      [
+       1792728374.668,
+       "34.56807600162235"
+      ],
+      [
+       1792728389.668,
+       "34.51972433368892"
+      ],
+      [
+       1792728404.668,
+       "34.532999490188224"
+      ],
+      [
+       1792728419.668,
+       "34.530632807595744"
+      ],
+      [
+       1792728434.668,
+       "34.62174350513355"
+      ],
+      [
+       1792728449.668,
+       "34.62168065332564"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-br895"
+     },
+     "values": [
+      [
+       1792728179.668,
+       "8.420963181673148"
+      ],
+      [
+       1792728194.668,
+       "14.374252161957306"
+      ],
+      [
+       1792728209.668,
+       "20.318106838858128"
+      ],
+      [
+       1792728224.668,
+       "23.666861520234686"
+      ],
+      [
+       1792728239.668,
+       "23.263980005955823"
+      ],
+      [
+       1792728254.668,
+       "23.273864105964975"
+      ],
+      [
+       1792728269.668,
+       "23.21346079056847"
+      ],
+      [
+       1792728284.668,
+       "23.649316606929347"
+      ],
+      [
+       1792728299.668,
+       "23.659399831751816"
+      ],
+      [
+       1792728314.668,
+       "23.681370682860695"
+      ],
+      [
+       1792728329.668,
+       "23.646693377816796"
+      ],
+      [
+       1792728344.668,
+       "23.662924756044973"
+      ],
+      [
+       1792728359.668,
+       "23.6104111057579"
+      ],
+      [
+       1792728374.668,
+       "23.652047998866557"
+      ],
+      [
+       1792728389.668,
+       "23.652668167748246"
+      ],
+      [
+       1792728404.668,
+       "23.67163545676186"
+      ],
+      [
+       1792728419.668,
+       "23.69849075643905"
+      ],
+      [
+       1792728434.668,
+       "23.646554971176503"
+      ],
+      [
+       1792728449.668,
+       "23.683112754372317"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "promql": "sum by (pod) (kube_pod_container_status_restarts_total{namespace=\"shop\"})",
+   "query_id": "restarts",
+   "result": [
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-7bdwq"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0"
+      ],
+      [
+       1792728044.668,
+       "0"
+      ],
+      [
+       1792728059.668,
+       "0"
+      ],
+      [
+       1792728074.668,
+       "0"
+      ],
+      [
+       1792728089.668,
+       "0"
+      ],
+      [
+       1792728104.668,
+       "0"
+      ],
+      [
+       1792728119.668,
+       "0"
+      ],
+      [
+       1792728134.668,
+       "0"
+      ],
+      [
+       1792728149.668,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-gx9rf"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0"
+      ],
+      [
+       1792728044.668,
+       "0"
+      ],
+      [
+       1792728059.668,
+       "0"
+      ],
+      [
+       1792728074.668,
+       "0"
+      ],
+      [
+       1792728089.668,
+       "0"
+      ],
+      [
+       1792728104.668,
+       "0"
+      ],
+      [
+       1792728119.668,
+       "0"
+      ],
+      [
+       1792728134.668,
+       "0"
+      ],
+      [
+       1792728149.668,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-6gg6d"
+     },
+     "values": [
+      [
+       1792728164.668,
+       "0"
+      ],
+      [
+       1792728179.668,
+       "0"
+      ],
+      [
+       1792728194.668,
+       "0"
+      ],
+      [
+       1792728209.668,
+       "0"
+      ],
+      [
+       1792728224.668,
+       "0"
+      ],
+      [
+       1792728239.668,
+       "0"
+      ],
+      [
+       1792728254.668,
+       "0"
+      ],
+      [
+       1792728269.668,
+       "0"
+      ],
+      [
+       1792728284.668,
+       "0"
+      ],
+      [
+       1792728299.668,
+       "0"
+      ],
+      [
+       1792728314.668,
+       "0"
+      ],
+      [
+       1792728329.668,
+       "0"
+      ],
+      [
+       1792728344.668,
+       "0"
+      ],
+      [
+       1792728359.668,
+       "0"
+      ],
+      [
+       1792728374.668,
+       "0"
+      ],
+      [
+       1792728389.668,
+       "0"
+      ],
+      [
+       1792728404.668,
+       "0"
+      ],
+      [
+       1792728419.668,
+       "0"
+      ],
+      [
+       1792728434.668,
+       "0"
+      ],
+      [
+       1792728449.668,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-br895"
+     },
+     "values": [
+      [
+       1792728164.668,
+       "0"
+      ],
+      [
+       1792728179.668,
+       "0"
+      ],
+      [
+       1792728194.668,
+       "0"
+      ],
+      [
+       1792728209.668,
+       "0"
+      ],
+      [
+       1792728224.668,
+       "0"
+      ],
+      [
+       1792728239.668,
+       "0"
+      ],
+      [
+       1792728254.668,
+       "0"
+      ],
+      [
+       1792728269.668,
+       "0"
+      ],
+      [
+       1792728284.668,
+       "0"
+      ],
+      [
+       1792728299.668,
+       "0"
+      ],
+      [
+       1792728314.668,
+       "0"
+      ],
+      [
+       1792728329.668,
+       "0"
+      ],
+      [
+       1792728344.668,
+       "0"
+      ],
+      [
+       1792728359.668,
+       "0"
+      ],
+      [
+       1792728374.668,
+       "0"
+      ],
+      [
+       1792728389.668,
+       "0"
+      ],
+      [
+       1792728404.668,
+       "0"
+      ],
+      [
+       1792728419.668,
+       "0"
+      ],
+      [
+       1792728434.668,
+       "0"
+      ],
+      [
+       1792728449.668,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "frontend-5cdb9cc587-r9gnj"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0"
+      ],
+      [
+       1792728044.668,
+       "0"
+      ],
+      [
+       1792728059.668,
+       "0"
+      ],
+      [
+       1792728074.668,
+       "0"
+      ],
+      [
+       1792728089.668,
+       "0"
+      ],
+      [
+       1792728104.668,
+       "0"
+      ],
+      [
+       1792728119.668,
+       "0"
+      ],
+      [
+       1792728134.668,
+       "0"
+      ],
+      [
+       1792728149.668,
+       "0"
+      ],
+      [
+       1792728164.668,
+       "0"
+      ],
+      [
+       1792728179.668,
+       "0"
+      ],
+      [
+       1792728194.668,
+       "0"
+      ],
+      [
+       1792728209.668,
+       "0"
+      ],
+      [
+       1792728224.668,
+       "0"
+      ],
+      [
+       1792728239.668,
+       "0"
+      ],
+      [
+       1792728254.668,
+       "0"
+      ],
+      [
+       1792728269.668,
+       "0"
+      ],
+      [
+       1792728284.668,
+       "0"
+      ],
+      [
+       1792728299.668,
+       "0"
+      ],
+      [
+       1792728314.668,
+       "0"
+      ],
+      [
+       1792728329.668,
+       "0"
+      ],
+      [
+       1792728344.668,
+       "0"
+      ],
+      [
+       1792728359.668,
+       "0"
+      ],
+      [
+       1792728374.668,
+       "0"
+      ],
+      [
+       1792728389.668,
+       "0"
+      ],
+      [
+       1792728404.668,
+       "0"
+      ],
+      [
+       1792728419.668,
+       "0"
+      ],
+      [
+       1792728434.668,
+       "0"
+      ],
+      [
+       1792728449.668,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "frontend-5cdb9cc587-xfkzt"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0"
+      ],
+      [
+       1792728044.668,
+       "0"
+      ],
+      [
+       1792728059.668,
+       "0"
+      ],
+      [
+       1792728074.668,
+       "0"
+      ],
+      [
+       1792728089.668,
+       "0"
+      ],
+      [
+       1792728104.668,
+       "0"
+      ],
+      [
+       1792728119.668,
+       "0"
+      ],
+      [
+       1792728134.668,
+       "0"
+      ],
+      [
+       1792728149.668,
+       "0"
+      ],
+      [
+       1792728164.668,
+       "0"
+      ],
+      [
+       1792728179.668,
+       "0"
+      ],
+      [
+       1792728194.668,
+       "0"
+      ],
+      [
+       1792728209.668,
+       "0"
+      ],
+      [
+       1792728224.668,
+       "0"
+      ],
+      [
+       1792728239.668,
+       "0"
+      ],
+      [
+       1792728254.668,
+       "0"
+      ],
+      [
+       1792728269.668,
+       "0"
+      ],
+      [
+       1792728284.668,
+       "0"
+      ],
+      [
+       1792728299.668,
+       "0"
+      ],
+      [
+       1792728314.668,
+       "0"
+      ],
+      [
+       1792728329.668,
+       "0"
+      ],
+      [
+       1792728344.668,
+       "0"
+      ],
+      [
+       1792728359.668,
+       "0"
+      ],
+      [
+       1792728374.668,
+       "0"
+      ],
+      [
+       1792728389.668,
+       "0"
+      ],
+      [
+       1792728404.668,
+       "0"
+      ],
+      [
+       1792728419.668,
+       "0"
+      ],
+      [
+       1792728434.668,
+       "0"
+      ],
+      [
+       1792728449.668,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "loadgen-5ddf45bbfd-8xvsz"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0"
+      ],
+      [
+       1792728044.668,
+       "0"
+      ],
+      [
+       1792728059.668,
+       "0"
+      ],
+      [
+       1792728074.668,
+       "0"
+      ],
+      [
+       1792728089.668,
+       "0"
+      ],
+      [
+       1792728104.668,
+       "0"
+      ],
+      [
+       1792728119.668,
+       "0"
+      ],
+      [
+       1792728134.668,
+       "0"
+      ],
+      [
+       1792728149.668,
+       "0"
+      ],
+      [
+       1792728164.668,
+       "0"
+      ],
+      [
+       1792728179.668,
+       "0"
+      ],
+      [
+       1792728194.668,
+       "0"
+      ],
+      [
+       1792728209.668,
+       "0"
+      ],
+      [
+       1792728224.668,
+       "0"
+      ],
+      [
+       1792728239.668,
+       "0"
+      ],
+      [
+       1792728254.668,
+       "0"
+      ],
+      [
+       1792728269.668,
+       "0"
+      ],
+      [
+       1792728284.668,
+       "0"
+      ],
+      [
+       1792728299.668,
+       "0"
+      ],
+      [
+       1792728314.668,
+       "0"
+      ],
+      [
+       1792728329.668,
+       "0"
+      ],
+      [
+       1792728344.668,
+       "0"
+      ],
+      [
+       1792728359.668,
+       "0"
+      ],
+      [
+       1792728374.668,
+       "0"
+      ],
+      [
+       1792728389.668,
+       "0"
+      ],
+      [
+       1792728404.668,
+       "0"
+      ],
+      [
+       1792728419.668,
+       "0"
+      ],
+      [
+       1792728434.668,
+       "0"
+      ],
+      [
+       1792728449.668,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5bcbc9bb7c-xv8lj"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0"
+      ],
+      [
+       1792728044.668,
+       "0"
+      ],
+      [
+       1792728059.668,
+       "0"
+      ],
+      [
+       1792728074.668,
+       "0"
+      ],
+      [
+       1792728089.668,
+       "0"
+      ],
+      [
+       1792728104.668,
+       "0"
+      ],
+      [
+       1792728119.668,
+       "0"
+      ],
+      [
+       1792728134.668,
+       "0"
+      ],
+      [
+       1792728149.668,
+       "0"
+      ],
+      [
+       1792728164.668,
+       "0"
+      ],
+      [
+       1792728179.668,
+       "0"
+      ],
+      [
+       1792728194.668,
+       "0"
+      ],
+      [
+       1792728209.668,
+       "0"
+      ],
+      [
+       1792728224.668,
+       "0"
+      ],
+      [
+       1792728239.668,
+       "0"
+      ],
+      [
+       1792728254.668,
+       "0"
+      ],
+      [
+       1792728269.668,
+       "0"
+      ],
+      [
+       1792728284.668,
+       "0"
+      ],
+      [
+       1792728299.668,
+       "0"
+      ],
+      [
+       1792728314.668,
+       "0"
+      ],
+      [
+       1792728329.668,
+       "0"
+      ],
+      [
+       1792728344.668,
+       "0"
+      ],
+      [
+       1792728359.668,
+       "0"
+      ],
+      [
+       1792728374.668,
+       "0"
+      ],
+      [
+       1792728389.668,
+       "0"
+      ],
+      [
+       1792728404.668,
+       "0"
+      ],
+      [
+       1792728419.668,
+       "0"
+      ],
+      [
+       1792728434.668,
+       "0"
+      ],
+      [
+       1792728449.668,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5bcbc9bb7c-zdgsj"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0"
+      ],
+      [
+       1792728044.668,
+       "0"
+      ],
+      [
+       1792728059.668,
+       "0"
+      ],
+      [
+       1792728074.668,
+       "0"
+      ],
+      [
+       1792728089.668,
+       "0"
+      ],
+      [
+       1792728104.668,
+       "0"
+      ],
+      [
+       1792728119.668,
+       "0"
+      ],
+      [
+       1792728134.668,
+       "0"
+      ],
+      [
+       1792728149.668,
+       "0"
+      ],
+      [
+       1792728164.668,
+       "0"
+      ],
+      [
+       1792728179.668,
+       "0"
+      ],
+      [
+       1792728194.668,
+       "0"
+      ],
+      [
+       1792728209.668,
+       "0"
+      ],
+      [
+       1792728224.668,
+       "0"
+      ],
+      [
+       1792728239.668,
+       "0"
+      ],
+      [
+       1792728254.668,
+       "0"
+      ],
+      [
+       1792728269.668,
+       "0"
+      ],
+      [
+       1792728284.668,
+       "0"
+      ],
+      [
+       1792728299.668,
+       "0"
+      ],
+      [
+       1792728314.668,
+       "0"
+      ],
+      [
+       1792728329.668,
+       "0"
+      ],
+      [
+       1792728344.668,
+       "0"
+      ],
+      [
+       1792728359.668,
+       "0"
+      ],
+      [
+       1792728374.668,
+       "0"
+      ],
+      [
+       1792728389.668,
+       "0"
+      ],
+      [
+       1792728404.668,
+       "0"
+      ],
+      [
+       1792728419.668,
+       "0"
+      ],
+      [
+       1792728434.668,
+       "0"
+      ],
+      [
+       1792728449.668,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "postgres-646fd656b6-z7sbq"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "0"
+      ],
+      [
+       1792728044.668,
+       "0"
+      ],
+      [
+       1792728059.668,
+       "0"
+      ],
+      [
+       1792728074.668,
+       "0"
+      ],
+      [
+       1792728089.668,
+       "0"
+      ],
+      [
+       1792728104.668,
+       "0"
+      ],
+      [
+       1792728119.668,
+       "0"
+      ],
+      [
+       1792728134.668,
+       "0"
+      ],
+      [
+       1792728149.668,
+       "0"
+      ],
+      [
+       1792728164.668,
+       "0"
+      ],
+      [
+       1792728179.668,
+       "0"
+      ],
+      [
+       1792728194.668,
+       "0"
+      ],
+      [
+       1792728209.668,
+       "0"
+      ],
+      [
+       1792728224.668,
+       "0"
+      ],
+      [
+       1792728239.668,
+       "0"
+      ],
+      [
+       1792728254.668,
+       "0"
+      ],
+      [
+       1792728269.668,
+       "0"
+      ],
+      [
+       1792728284.668,
+       "0"
+      ],
+      [
+       1792728299.668,
+       "0"
+      ],
+      [
+       1792728314.668,
+       "0"
+      ],
+      [
+       1792728329.668,
+       "0"
+      ],
+      [
+       1792728344.668,
+       "0"
+      ],
+      [
+       1792728359.668,
+       "0"
+      ],
+      [
+       1792728374.668,
+       "0"
+      ],
+      [
+       1792728389.668,
+       "0"
+      ],
+      [
+       1792728404.668,
+       "0"
+      ],
+      [
+       1792728419.668,
+       "0"
+      ],
+      [
+       1792728434.668,
+       "0"
+      ],
+      [
+       1792728449.668,
+       "0"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "promql": "sum by (pod) (container_memory_working_set_bytes{namespace=\"shop\", container=\"app\"})",
+   "query_id": "memory_working_set",
+   "result": [
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-7bdwq"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "10100736"
+      ],
+      [
+       1792728044.668,
+       "10080256"
+      ],
+      [
+       1792728059.668,
+       "10240000"
+      ],
+      [
+       1792728074.668,
+       "10387456"
+      ],
+      [
+       1792728089.668,
+       "10387456"
+      ],
+      [
+       1792728104.668,
+       "10686464"
+      ],
+      [
+       1792728119.668,
+       "9469952"
+      ],
+      [
+       1792728134.668,
+       "9871360"
+      ],
+      [
+       1792728149.668,
+       "10690560"
+      ],
+      [
+       1792728164.668,
+       "10690560"
+      ],
+      [
+       1792728179.668,
+       "10690560"
+      ],
+      [
+       1792728194.668,
+       "10690560"
+      ],
+      [
+       1792728209.668,
+       "10690560"
+      ],
+      [
+       1792728224.668,
+       "10690560"
+      ],
+      [
+       1792728239.668,
+       "10690560"
+      ],
+      [
+       1792728254.668,
+       "10690560"
+      ],
+      [
+       1792728269.668,
+       "10690560"
+      ],
+      [
+       1792728284.668,
+       "10690560"
+      ],
+      [
+       1792728299.668,
+       "10690560"
+      ],
+      [
+       1792728314.668,
+       "10690560"
+      ],
+      [
+       1792728329.668,
+       "10690560"
+      ],
+      [
+       1792728344.668,
+       "10690560"
+      ],
+      [
+       1792728359.668,
+       "10690560"
+      ],
+      [
+       1792728374.668,
+       "10690560"
+      ],
+      [
+       1792728389.668,
+       "10690560"
+      ],
+      [
+       1792728404.668,
+       "10690560"
+      ],
+      [
+       1792728419.668,
+       "10690560"
+      ],
+      [
+       1792728434.668,
+       "10690560"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-gx9rf"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "10440704"
+      ],
+      [
+       1792728044.668,
+       "10358784"
+      ],
+      [
+       1792728059.668,
+       "11636736"
+      ],
+      [
+       1792728074.668,
+       "10031104"
+      ],
+      [
+       1792728089.668,
+       "11079680"
+      ],
+      [
+       1792728104.668,
+       "11309056"
+      ],
+      [
+       1792728119.668,
+       "10579968"
+      ],
+      [
+       1792728134.668,
+       "11300864"
+      ],
+      [
+       1792728149.668,
+       "10821632"
+      ],
+      [
+       1792728164.668,
+       "10821632"
+      ],
+      [
+       1792728179.668,
+       "10821632"
+      ],
+      [
+       1792728194.668,
+       "10821632"
+      ],
+      [
+       1792728209.668,
+       "10821632"
+      ],
+      [
+       1792728224.668,
+       "10821632"
+      ],
+      [
+       1792728239.668,
+       "10821632"
+      ],
+      [
+       1792728254.668,
+       "10821632"
+      ],
+      [
+       1792728269.668,
+       "10821632"
+      ],
+      [
+       1792728284.668,
+       "10821632"
+      ],
+      [
+       1792728299.668,
+       "10821632"
+      ],
+      [
+       1792728314.668,
+       "10821632"
+      ],
+      [
+       1792728329.668,
+       "10821632"
+      ],
+      [
+       1792728344.668,
+       "10821632"
+      ],
+      [
+       1792728359.668,
+       "10821632"
+      ],
+      [
+       1792728374.668,
+       "10821632"
+      ],
+      [
+       1792728389.668,
+       "10821632"
+      ],
+      [
+       1792728404.668,
+       "10821632"
+      ],
+      [
+       1792728419.668,
+       "10821632"
+      ],
+      [
+       1792728434.668,
+       "10821632"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-6gg6d"
+     },
+     "values": [
+      [
+       1792728164.668,
+       "3014656"
+      ],
+      [
+       1792728179.668,
+       "8990720"
+      ],
+      [
+       1792728194.668,
+       "8990720"
+      ],
+      [
+       1792728209.668,
+       "9637888"
+      ],
+      [
+       1792728224.668,
+       "9711616"
+      ],
+      [
+       1792728239.668,
+       "9707520"
+      ],
+      [
+       1792728254.668,
+       "10375168"
+      ],
+      [
+       1792728269.668,
+       "9773056"
+      ],
+      [
+       1792728284.668,
+       "9678848"
+      ],
+      [
+       1792728299.668,
+       "10084352"
+      ],
+      [
+       1792728314.668,
+       "10084352"
+      ],
+      [
+       1792728329.668,
+       "10121216"
+      ],
+      [
+       1792728344.668,
+       "9965568"
+      ],
+      [
+       1792728359.668,
+       "10338304"
+      ],
+      [
+       1792728374.668,
+       "10031104"
+      ],
+      [
+       1792728389.668,
+       "10018816"
+      ],
+      [
+       1792728404.668,
+       "10088448"
+      ],
+      [
+       1792728419.668,
+       "10088448"
+      ],
+      [
+       1792728434.668,
+       "10100736"
+      ],
+      [
+       1792728449.668,
+       "10100736"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-br895"
+     },
+     "values": [
+      [
+       1792728164.668,
+       "2895872"
+      ],
+      [
+       1792728179.668,
+       "9461760"
+      ],
+      [
+       1792728194.668,
+       "8974336"
+      ],
+      [
+       1792728209.668,
+       "8974336"
+      ],
+      [
+       1792728224.668,
+       "9293824"
+      ],
+      [
+       1792728239.668,
+       "9342976"
+      ],
+      [
+       1792728254.668,
+       "9379840"
+      ],
+      [
+       1792728269.668,
+       "8835072"
+      ],
+      [
+       1792728284.668,
+       "9396224"
+      ],
+      [
+       1792728299.668,
+       "9555968"
+      ],
+      [
+       1792728314.668,
+       "9334784"
+      ],
+      [
+       1792728329.668,
+       "10121216"
+      ],
+      [
+       1792728344.668,
+       "9457664"
+      ],
+      [
+       1792728359.668,
+       "9842688"
+      ],
+      [
+       1792728374.668,
+       "9203712"
+      ],
+      [
+       1792728389.668,
+       "9433088"
+      ],
+      [
+       1792728404.668,
+       "9809920"
+      ],
+      [
+       1792728419.668,
+       "9584640"
+      ],
+      [
+       1792728434.668,
+       "9527296"
+      ],
+      [
+       1792728449.668,
+       "9527296"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "frontend-5cdb9cc587-r9gnj"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "13803520"
+      ],
+      [
+       1792728044.668,
+       "13860864"
+      ],
+      [
+       1792728059.668,
+       "13807616"
+      ],
+      [
+       1792728074.668,
+       "13807616"
+      ],
+      [
+       1792728089.668,
+       "13893632"
+      ],
+      [
+       1792728104.668,
+       "14409728"
+      ],
+      [
+       1792728119.668,
+       "15159296"
+      ],
+      [
+       1792728134.668,
+       "13959168"
+      ],
+      [
+       1792728149.668,
+       "13627392"
+      ],
+      [
+       1792728164.668,
+       "14077952"
+      ],
+      [
+       1792728179.668,
+       "14602240"
+      ],
+      [
+       1792728194.668,
+       "14602240"
+      ],
+      [
+       1792728209.668,
+       "15069184"
+      ],
+      [
+       1792728224.668,
+       "16183296"
+      ],
+      [
+       1792728239.668,
+       "15720448"
+      ],
+      [
+       1792728254.668,
+       "15929344"
+      ],
+      [
+       1792728269.668,
+       "15998976"
+      ],
+      [
+       1792728284.668,
+       "16605184"
+      ],
+      [
+       1792728299.668,
+       "16605184"
+      ],
+      [
+       1792728314.668,
+       "16977920"
+      ],
+      [
+       1792728329.668,
+       "16977920"
+      ],
+      [
+       1792728344.668,
+       "17039360"
+      ],
+      [
+       1792728359.668,
+       "15912960"
+      ],
+      [
+       1792728374.668,
+       "16400384"
+      ],
+      [
+       1792728389.668,
+       "16707584"
+      ],
+      [
+       1792728404.668,
+       "16228352"
+      ],
+      [
+       1792728419.668,
+       "15663104"
+      ],
+      [
+       1792728434.668,
+       "15966208"
+      ],
+      [
+       1792728449.668,
+       "15966208"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "frontend-5cdb9cc587-xfkzt"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "12431360"
+      ],
+      [
+       1792728044.668,
+       "12431360"
+      ],
+      [
+       1792728059.668,
+       "11902976"
+      ],
+      [
+       1792728074.668,
+       "11915264"
+      ],
+      [
+       1792728089.668,
+       "13012992"
+      ],
+      [
+       1792728104.668,
+       "13316096"
+      ],
+      [
+       1792728119.668,
+       "13316096"
+      ],
+      [
+       1792728134.668,
+       "13864960"
+      ],
+      [
+       1792728149.668,
+       "13877248"
+      ],
+      [
+       1792728164.668,
+       "12345344"
+      ],
+      [
+       1792728179.668,
+       "12992512"
+      ],
+      [
+       1792728194.668,
+       "13905920"
+      ],
+      [
+       1792728209.668,
+       "14409728"
+      ],
+      [
+       1792728224.668,
+       "14745600"
+      ],
+      [
+       1792728239.668,
+       "15831040"
+      ],
+      [
+       1792728254.668,
+       "14675968"
+      ],
+      [
+       1792728269.668,
+       "14700544"
+      ],
+      [
+       1792728284.668,
+       "14446592"
+      ],
+      [
+       1792728299.668,
+       "14471168"
+      ],
+      [
+       1792728314.668,
+       "14471168"
+      ],
+      [
+       1792728329.668,
+       "14475264"
+      ],
+      [
+       1792728344.668,
+       "14471168"
+      ],
+      [
+       1792728359.668,
+       "14684160"
+      ],
+      [
+       1792728374.668,
+       "14753792"
+      ],
+      [
+       1792728389.668,
+       "14794752"
+      ],
+      [
+       1792728404.668,
+       "15781888"
+      ],
+      [
+       1792728419.668,
+       "16494592"
+      ],
+      [
+       1792728434.668,
+       "14098432"
+      ],
+      [
+       1792728449.668,
+       "14098432"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "loadgen-5ddf45bbfd-8xvsz"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "10084352"
+      ],
+      [
+       1792728044.668,
+       "10276864"
+      ],
+      [
+       1792728059.668,
+       "10412032"
+      ],
+      [
+       1792728074.668,
+       "10412032"
+      ],
+      [
+       1792728089.668,
+       "9965568"
+      ],
+      [
+       1792728104.668,
+       "10223616"
+      ],
+      [
+       1792728119.668,
+       "9965568"
+      ],
+      [
+       1792728134.668,
+       "9965568"
+      ],
+      [
+       1792728149.668,
+       "9965568"
+      ],
+      [
+       1792728164.668,
+       "10088448"
+      ],
+      [
+       1792728179.668,
+       "10100736"
+      ],
+      [
+       1792728194.668,
+       "10174464"
+      ],
+      [
+       1792728209.668,
+       "10240000"
+      ],
+      [
+       1792728224.668,
+       "10276864"
+      ],
+      [
+       1792728239.668,
+       "10571776"
+      ],
+      [
+       1792728254.668,
+       "10342400"
+      ],
+      [
+       1792728269.668,
+       "10375168"
+      ],
+      [
+       1792728284.668,
+       "10641408"
+      ],
+      [
+       1792728299.668,
+       "10637312"
+      ],
+      [
+       1792728314.668,
+       "10641408"
+      ],
+      [
+       1792728329.668,
+       "10641408"
+      ],
+      [
+       1792728344.668,
+       "10502144"
+      ],
+      [
+       1792728359.668,
+       "10575872"
+      ],
+      [
+       1792728374.668,
+       "10579968"
+      ],
+      [
+       1792728389.668,
+       "10846208"
+      ],
+      [
+       1792728404.668,
+       "10584064"
+      ],
+      [
+       1792728419.668,
+       "10616832"
+      ],
+      [
+       1792728434.668,
+       "10715136"
+      ],
+      [
+       1792728449.668,
+       "10715136"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5bcbc9bb7c-xv8lj"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "7782400"
+      ],
+      [
+       1792728044.668,
+       "8093696"
+      ],
+      [
+       1792728059.668,
+       "8216576"
+      ],
+      [
+       1792728074.668,
+       "8245248"
+      ],
+      [
+       1792728089.668,
+       "8691712"
+      ],
+      [
+       1792728104.668,
+       "8454144"
+      ],
+      [
+       1792728119.668,
+       "8212480"
+      ],
+      [
+       1792728134.668,
+       "8208384"
+      ],
+      [
+       1792728149.668,
+       "8916992"
+      ],
+      [
+       1792728164.668,
+       "9330688"
+      ],
+      [
+       1792728179.668,
+       "9089024"
+      ],
+      [
+       1792728194.668,
+       "9396224"
+      ],
+      [
+       1792728209.668,
+       "9887744"
+      ],
+      [
+       1792728224.668,
+       "9928704"
+      ],
+      [
+       1792728239.668,
+       "10203136"
+      ],
+      [
+       1792728254.668,
+       "10498048"
+      ],
+      [
+       1792728269.668,
+       "9584640"
+      ],
+      [
+       1792728284.668,
+       "9768960"
+      ],
+      [
+       1792728299.668,
+       "9818112"
+      ],
+      [
+       1792728314.668,
+       "10276864"
+      ],
+      [
+       1792728329.668,
+       "11227136"
+      ],
+      [
+       1792728344.668,
+       "11227136"
+      ],
+      [
+       1792728359.668,
+       "10465280"
+      ],
+      [
+       1792728374.668,
+       "10493952"
+      ],
+      [
+       1792728389.668,
+       "10493952"
+      ],
+      [
+       1792728404.668,
+       "10858496"
+      ],
+      [
+       1792728419.668,
+       "11214848"
+      ],
+      [
+       1792728434.668,
+       "11223040"
+      ],
+      [
+       1792728449.668,
+       "11223040"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5bcbc9bb7c-zdgsj"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "7778304"
+      ],
+      [
+       1792728044.668,
+       "8302592"
+      ],
+      [
+       1792728059.668,
+       "8339456"
+      ],
+      [
+       1792728074.668,
+       "9306112"
+      ],
+      [
+       1792728089.668,
+       "9420800"
+      ],
+      [
+       1792728104.668,
+       "10297344"
+      ],
+      [
+       1792728119.668,
+       "8765440"
+      ],
+      [
+       1792728134.668,
+       "9207808"
+      ],
+      [
+       1792728149.668,
+       "9220096"
+      ],
+      [
+       1792728164.668,
+       "9150464"
+      ],
+      [
+       1792728179.668,
+       "9158656"
+      ],
+      [
+       1792728194.668,
+       "9170944"
+      ],
+      [
+       1792728209.668,
+       "8966144"
+      ],
+      [
+       1792728224.668,
+       "8990720"
+      ],
+      [
+       1792728239.668,
+       "9113600"
+      ],
+      [
+       1792728254.668,
+       "9465856"
+      ],
+      [
+       1792728269.668,
+       "9805824"
+      ],
+      [
+       1792728284.668,
+       "9805824"
+      ],
+      [
+       1792728299.668,
+       "9428992"
+      ],
+      [
+       1792728314.668,
+       "9457664"
+      ],
+      [
+       1792728329.668,
+       "9281536"
+      ],
+      [
+       1792728344.668,
+       "9428992"
+      ],
+      [
+       1792728359.668,
+       "9428992"
+      ],
+      [
+       1792728374.668,
+       "9932800"
+      ],
+      [
+       1792728389.668,
+       "10158080"
+      ],
+      [
+       1792728404.668,
+       "10620928"
+      ],
+      [
+       1792728419.668,
+       "10620928"
+      ],
+      [
+       1792728434.668,
+       "10620928"
+      ],
+      [
+       1792728449.668,
+       "11042816"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5c6689b66d-2kh8z"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "10887168"
+      ],
+      [
+       1792728044.668,
+       "10887168"
+      ],
+      [
+       1792728059.668,
+       "10887168"
+      ],
+      [
+       1792728074.668,
+       "10887168"
+      ],
+      [
+       1792728089.668,
+       "10887168"
+      ],
+      [
+       1792728104.668,
+       "10887168"
+      ],
+      [
+       1792728119.668,
+       "10887168"
+      ],
+      [
+       1792728134.668,
+       "10887168"
+      ],
+      [
+       1792728149.668,
+       "10887168"
+      ],
+      [
+       1792728164.668,
+       "10887168"
+      ],
+      [
+       1792728179.668,
+       "10887168"
+      ],
+      [
+       1792728194.668,
+       "10887168"
+      ],
+      [
+       1792728209.668,
+       "10887168"
+      ],
+      [
+       1792728224.668,
+       "10887168"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5c6689b66d-d872f"
+     },
+     "values": [
+      [
+       1792728029.668,
+       "11796480"
+      ],
+      [
+       1792728044.668,
+       "11796480"
+      ],
+      [
+       1792728059.668,
+       "11796480"
+      ],
+      [
+       1792728074.668,
+       "11796480"
+      ],
+      [
+       1792728089.668,
+       "11796480"
+      ],
+      [
+       1792728104.668,
+       "11796480"
+      ],
+      [
+       1792728119.668,
+       "11796480"
+      ],
+      [
+       1792728134.668,
+       "11796480"
+      ],
+      [
+       1792728149.668,
+       "11796480"
+      ],
+      [
+       1792728164.668,
+       "11796480"
+      ],
+      [
+       1792728179.668,
+       "11796480"
+      ],
+      [
+       1792728194.668,
+       "11796480"
+      ],
+      [
+       1792728209.668,
+       "11796480"
+      ],
+      [
+       1792728224.668,
+       "11796480"
+      ]
+     ]
+    }
+   ]
+  }
+ ],
+ "scenario_id": "checkout-db-pool-after-release",
+ "schema_version": 1,
+ "step_seconds": 15,
+ "window": {
+  "end_at": "2026-10-23T04:07:29.668096+00:00",
+  "start_at": "2026-10-23T04:00:29.668096+00:00"
+ }
+}

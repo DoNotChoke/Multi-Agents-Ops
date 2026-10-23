@@ -1,0 +1,4707 @@
+{
+ "k8s_events": [
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:54Z",
+   "last_at": "2026-10-23T03:51:54Z",
+   "message": "Successfully assigned shop/checkout-57c848fbc5-7bdwq to opsteam-lab-control-plane",
+   "object": "Pod/checkout-57c848fbc5-7bdwq",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-57c848fbc5-7bdwq",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Container created",
+   "object": "Pod/checkout-57c848fbc5-7bdwq",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Container started",
+   "object": "Pod/checkout-57c848fbc5-7bdwq",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:32Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-57c848fbc5-7bdwq",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-57c848fbc5-cjdct",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Successfully assigned shop/checkout-57c848fbc5-gx9rf to opsteam-lab-control-plane",
+   "object": "Pod/checkout-57c848fbc5-gx9rf",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:56Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-57c848fbc5-gx9rf",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:56Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Container created",
+   "object": "Pod/checkout-57c848fbc5-gx9rf",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:56Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Container started",
+   "object": "Pod/checkout-57c848fbc5-gx9rf",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-57c848fbc5-gx9rf",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:32Z",
+   "last_at": "2026-10-23T04:07:32Z",
+   "message": "Successfully assigned shop/checkout-57c848fbc5-mlzmv to opsteam-lab-control-plane",
+   "object": "Pod/checkout-57c848fbc5-mlzmv",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:33Z",
+   "last_at": "2026-10-23T04:07:33Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-57c848fbc5-mlzmv",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:33Z",
+   "last_at": "2026-10-23T04:07:33Z",
+   "message": "Container created",
+   "object": "Pod/checkout-57c848fbc5-mlzmv",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:33Z",
+   "last_at": "2026-10-23T04:07:33Z",
+   "message": "Container started",
+   "object": "Pod/checkout-57c848fbc5-mlzmv",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:57Z",
+   "last_at": "2026-10-23T03:46:57Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-57c848fbc5-qb62x",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:31Z",
+   "last_at": "2026-10-23T04:07:31Z",
+   "message": "Successfully assigned shop/checkout-57c848fbc5-tt57h to opsteam-lab-control-plane",
+   "object": "Pod/checkout-57c848fbc5-tt57h",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:32Z",
+   "last_at": "2026-10-23T04:07:32Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-57c848fbc5-tt57h",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:32Z",
+   "last_at": "2026-10-23T04:07:32Z",
+   "message": "Container created",
+   "object": "Pod/checkout-57c848fbc5-tt57h",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:32Z",
+   "last_at": "2026-10-23T04:07:32Z",
+   "message": "Container started",
+   "object": "Pod/checkout-57c848fbc5-tt57h",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Deleted pod: checkout-57c848fbc5-cjdct",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:57Z",
+   "last_at": "2026-10-23T03:46:57Z",
+   "message": "Deleted pod: checkout-57c848fbc5-qb62x",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:54Z",
+   "last_at": "2026-10-23T03:51:54Z",
+   "message": "Created pod: checkout-57c848fbc5-7bdwq",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Created pod: checkout-57c848fbc5-gx9rf",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Deleted pod: checkout-57c848fbc5-gx9rf",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:32Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Deleted pod: checkout-57c848fbc5-7bdwq",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:31Z",
+   "last_at": "2026-10-23T04:07:31Z",
+   "message": "Created pod: checkout-57c848fbc5-tt57h",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:32Z",
+   "last_at": "2026-10-23T04:07:32Z",
+   "message": "Created pod: checkout-57c848fbc5-mlzmv",
+   "object": "ReplicaSet/checkout-57c848fbc5",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Successfully assigned shop/checkout-65599d9544-2bgl9 to opsteam-lab-control-plane",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Container created",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Container started",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 25,
+   "first_at": "2026-10-23T03:47:02Z",
+   "last_at": "2026-10-23T03:48:57Z",
+   "message": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Unhealthy",
+   "type": "Warning"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-65599d9544-2bgl9",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:30Z",
+   "last_at": "2026-10-23T04:02:30Z",
+   "message": "Successfully assigned shop/checkout-65599d9544-6gg6d to opsteam-lab-control-plane",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Container created",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Container started",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 64,
+   "first_at": "2026-10-23T04:02:37Z",
+   "last_at": "2026-10-23T04:07:37Z",
+   "message": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Unhealthy",
+   "type": "Warning"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:38Z",
+   "last_at": "2026-10-23T04:07:38Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-65599d9544-6gg6d",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Successfully assigned shop/checkout-65599d9544-br895 to opsteam-lab-control-plane",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:32Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:32Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Container created",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:32Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Container started",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 25,
+   "first_at": "2026-10-23T04:02:38Z",
+   "last_at": "2026-10-23T04:04:32Z",
+   "message": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Unhealthy",
+   "type": "Warning"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:32Z",
+   "last_at": "2026-10-23T04:07:32Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-65599d9544-br895",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:54Z",
+   "last_at": "2026-10-23T03:46:54Z",
+   "message": "Successfully assigned shop/checkout-65599d9544-tjpzd to opsteam-lab-control-plane",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:55Z",
+   "last_at": "2026-10-23T03:46:55Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:55Z",
+   "last_at": "2026-10-23T03:46:55Z",
+   "message": "Container created",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:55Z",
+   "last_at": "2026-10-23T03:46:55Z",
+   "message": "Container started",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 25,
+   "first_at": "2026-10-23T03:47:01Z",
+   "last_at": "2026-10-23T03:48:52Z",
+   "message": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Unhealthy",
+   "type": "Warning"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:56Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Stopping container app",
+   "object": "Pod/checkout-65599d9544-tjpzd",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:54Z",
+   "last_at": "2026-10-23T03:46:54Z",
+   "message": "Created pod: checkout-65599d9544-tjpzd",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:46:56Z",
+   "last_at": "2026-10-23T03:46:56Z",
+   "message": "Created pod: checkout-65599d9544-2bgl9",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:55Z",
+   "last_at": "2026-10-23T03:51:55Z",
+   "message": "Deleted pod: checkout-65599d9544-2bgl9",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:51:56Z",
+   "last_at": "2026-10-23T03:51:56Z",
+   "message": "Deleted pod: checkout-65599d9544-tjpzd",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:30Z",
+   "last_at": "2026-10-23T04:02:30Z",
+   "message": "Created pod: checkout-65599d9544-6gg6d",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:02:31Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Created pod: checkout-65599d9544-br895",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:32Z",
+   "last_at": "2026-10-23T04:07:32Z",
+   "message": "Deleted pod: checkout-65599d9544-br895",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:07:38Z",
+   "last_at": "2026-10-23T04:07:38Z",
+   "message": "Deleted pod: checkout-65599d9544-6gg6d",
+   "object": "ReplicaSet/checkout-65599d9544",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 5,
+   "first_at": "2026-10-23T02:25:28Z",
+   "last_at": "2026-10-23T04:07:31Z",
+   "message": "Scaled up replica set checkout-57c848fbc5 from 0 to 1",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 5,
+   "first_at": "2026-10-23T02:25:29Z",
+   "last_at": "2026-10-23T04:07:32Z",
+   "message": "Scaled up replica set checkout-57c848fbc5 from 1 to 2",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:37:16Z",
+   "last_at": "2026-10-23T04:02:30Z",
+   "message": "Scaled up replica set checkout-65599d9544 from 0 to 1",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:37:17Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Scaled down replica set checkout-57c848fbc5 from 2 to 1",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:37:17Z",
+   "last_at": "2026-10-23T04:02:31Z",
+   "message": "Scaled up replica set checkout-65599d9544 from 1 to 2",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:37:18Z",
+   "last_at": "2026-10-23T04:02:32Z",
+   "message": "Scaled down replica set checkout-57c848fbc5 from 1 to 0",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:40:08Z",
+   "last_at": "2026-10-23T04:07:32Z",
+   "message": "Scaled down replica set checkout-65599d9544 from 2 to 1",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:40:09Z",
+   "last_at": "2026-10-23T04:07:38Z",
+   "message": "Scaled down replica set checkout-65599d9544 from 1 to 0",
+   "object": "Deployment/checkout",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:10Z",
+   "last_at": "2026-10-23T03:54:10Z",
+   "message": "Stopping container app",
+   "object": "Pod/payment-5bcbc9bb7c-b7shj",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:11Z",
+   "last_at": "2026-10-23T03:54:11Z",
+   "message": "Readiness probe failed: Get \"http://10.244.0.55:8080/readyz\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+   "object": "Pod/payment-5bcbc9bb7c-b7shj",
+   "reason": "Unhealthy",
+   "type": "Warning"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Stopping container app",
+   "object": "Pod/payment-5bcbc9bb7c-vtsdb",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:09Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Successfully assigned shop/payment-5bcbc9bb7c-xv8lj to opsteam-lab-control-plane",
+   "object": "Pod/payment-5bcbc9bb7c-xv8lj",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/payment-5bcbc9bb7c-xv8lj",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Container created",
+   "object": "Pod/payment-5bcbc9bb7c-xv8lj",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Container started",
+   "object": "Pod/payment-5bcbc9bb7c-xv8lj",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:42Z",
+   "last_at": "2026-10-23T04:09:42Z",
+   "message": "Stopping container app",
+   "object": "Pod/payment-5bcbc9bb7c-xv8lj",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:08Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Successfully assigned shop/payment-5bcbc9bb7c-zdgsj to opsteam-lab-control-plane",
+   "object": "Pod/payment-5bcbc9bb7c-zdgsj",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:08Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/payment-5bcbc9bb7c-zdgsj",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:08Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Container created",
+   "object": "Pod/payment-5bcbc9bb7c-zdgsj",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:08Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Container started",
+   "object": "Pod/payment-5bcbc9bb7c-zdgsj",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:41Z",
+   "last_at": "2026-10-23T04:09:41Z",
+   "message": "Stopping container app",
+   "object": "Pod/payment-5bcbc9bb7c-zdgsj",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Deleted pod: payment-5bcbc9bb7c-vtsdb",
+   "object": "ReplicaSet/payment-5bcbc9bb7c",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:10Z",
+   "last_at": "2026-10-23T03:54:10Z",
+   "message": "Deleted pod: payment-5bcbc9bb7c-b7shj",
+   "object": "ReplicaSet/payment-5bcbc9bb7c",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:08Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Created pod: payment-5bcbc9bb7c-zdgsj",
+   "object": "ReplicaSet/payment-5bcbc9bb7c",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:09Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Created pod: payment-5bcbc9bb7c-xv8lj",
+   "object": "ReplicaSet/payment-5bcbc9bb7c",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:41Z",
+   "last_at": "2026-10-23T04:09:41Z",
+   "message": "Deleted pod: payment-5bcbc9bb7c-zdgsj",
+   "object": "ReplicaSet/payment-5bcbc9bb7c",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:42Z",
+   "last_at": "2026-10-23T04:09:42Z",
+   "message": "Deleted pod: payment-5bcbc9bb7c-xv8lj",
+   "object": "ReplicaSet/payment-5bcbc9bb7c",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:07Z",
+   "last_at": "2026-10-23T03:54:07Z",
+   "message": "Successfully assigned shop/payment-5c6689b66d-2kh8z to opsteam-lab-control-plane",
+   "object": "Pod/payment-5c6689b66d-2kh8z",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:08Z",
+   "last_at": "2026-10-23T03:54:08Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/payment-5c6689b66d-2kh8z",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:08Z",
+   "last_at": "2026-10-23T03:54:08Z",
+   "message": "Container created",
+   "object": "Pod/payment-5c6689b66d-2kh8z",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:08Z",
+   "last_at": "2026-10-23T03:54:08Z",
+   "message": "Container started",
+   "object": "Pod/payment-5c6689b66d-2kh8z",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:09Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Stopping container app",
+   "object": "Pod/payment-5c6689b66d-2kh8z",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Successfully assigned shop/payment-5c6689b66d-d872f to opsteam-lab-control-plane",
+   "object": "Pod/payment-5c6689b66d-d872f",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/payment-5c6689b66d-d872f",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Container created",
+   "object": "Pod/payment-5c6689b66d-d872f",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Container started",
+   "object": "Pod/payment-5c6689b66d-d872f",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Stopping container app",
+   "object": "Pod/payment-5c6689b66d-d872f",
+   "reason": "Killing",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:40Z",
+   "last_at": "2026-10-23T04:09:40Z",
+   "message": "Successfully assigned shop/payment-5c6689b66d-hm7w5 to opsteam-lab-control-plane",
+   "object": "Pod/payment-5c6689b66d-hm7w5",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:40Z",
+   "last_at": "2026-10-23T04:09:40Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/payment-5c6689b66d-hm7w5",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:40Z",
+   "last_at": "2026-10-23T04:09:40Z",
+   "message": "Container created",
+   "object": "Pod/payment-5c6689b66d-hm7w5",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:40Z",
+   "last_at": "2026-10-23T04:09:40Z",
+   "message": "Container started",
+   "object": "Pod/payment-5c6689b66d-hm7w5",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:41Z",
+   "last_at": "2026-10-23T04:09:41Z",
+   "message": "Successfully assigned shop/payment-5c6689b66d-zdq6p to opsteam-lab-control-plane",
+   "object": "Pod/payment-5c6689b66d-zdq6p",
+   "reason": "Scheduled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:42Z",
+   "last_at": "2026-10-23T04:09:42Z",
+   "message": "Container image \"opsteam-lab/demo-app:dev\" already present on machine and can be accessed by the pod",
+   "object": "Pod/payment-5c6689b66d-zdq6p",
+   "reason": "Pulled",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:42Z",
+   "last_at": "2026-10-23T04:09:42Z",
+   "message": "Container created",
+   "object": "Pod/payment-5c6689b66d-zdq6p",
+   "reason": "Created",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:42Z",
+   "last_at": "2026-10-23T04:09:42Z",
+   "message": "Container started",
+   "object": "Pod/payment-5c6689b66d-zdq6p",
+   "reason": "Started",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:07Z",
+   "last_at": "2026-10-23T03:54:07Z",
+   "message": "Created pod: payment-5c6689b66d-2kh8z",
+   "object": "ReplicaSet/payment-5c6689b66d",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T03:54:09Z",
+   "message": "Created pod: payment-5c6689b66d-d872f",
+   "object": "ReplicaSet/payment-5c6689b66d",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:09Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Deleted pod: payment-5c6689b66d-2kh8z",
+   "object": "ReplicaSet/payment-5c6689b66d",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Deleted pod: payment-5c6689b66d-d872f",
+   "object": "ReplicaSet/payment-5c6689b66d",
+   "reason": "SuccessfulDelete",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:40Z",
+   "last_at": "2026-10-23T04:09:40Z",
+   "message": "Created pod: payment-5c6689b66d-hm7w5",
+   "object": "ReplicaSet/payment-5c6689b66d",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T04:09:41Z",
+   "last_at": "2026-10-23T04:09:41Z",
+   "message": "Created pod: payment-5c6689b66d-zdq6p",
+   "object": "ReplicaSet/payment-5c6689b66d",
+   "reason": "SuccessfulCreate",
+   "type": "Normal"
+  },
+  {
+   "count": 4,
+   "first_at": "2026-10-23T02:25:28Z",
+   "last_at": "2026-10-23T03:59:08Z",
+   "message": "Scaled up replica set payment-5bcbc9bb7c from 0 to 1",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 4,
+   "first_at": "2026-10-23T02:25:29Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Scaled up replica set payment-5bcbc9bb7c from 1 to 2",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:32:11Z",
+   "last_at": "2026-10-23T04:09:40Z",
+   "message": "Scaled up replica set payment-5c6689b66d from 0 to 1",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:53:18Z",
+   "last_at": "2026-10-23T04:09:41Z",
+   "message": "Scaled down replica set payment-5bcbc9bb7c from 2 to 1",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 3,
+   "first_at": "2026-10-23T02:53:21Z",
+   "last_at": "2026-10-23T04:09:42Z",
+   "message": "Scaled down replica set payment-5bcbc9bb7c from 1 to 0",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 2,
+   "first_at": "2026-10-23T03:54:09Z",
+   "last_at": "2026-10-23T04:09:41Z",
+   "message": "Scaled up replica set payment-5c6689b66d from 1 to 2",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:09Z",
+   "last_at": "2026-10-23T03:59:09Z",
+   "message": "Scaled down replica set payment-5c6689b66d from 2 to 1",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  },
+  {
+   "count": 1,
+   "first_at": "2026-10-23T03:59:10Z",
+   "last_at": "2026-10-23T03:59:10Z",
+   "message": "Scaled down replica set payment-5c6689b66d from 1 to 0",
+   "object": "Deployment/payment",
+   "reason": "ScalingReplicaSet",
+   "type": "Normal"
+  }
+ ],
+ "lab_fault": "dependency_slow",
+ "logs": [
+  {
+   "limit": 200,
+   "logql": "{namespace=\"shop\"} |= \"\\\"level\\\":\\\"ERROR\\\"\"",
+   "query_id": "errors",
+   "result": [
+    {
+     "stream": {
+      "container": "app",
+      "detected_level": "error",
+      "instance": "shop/checkout-57c848fbc5-mlzmv:app",
+      "job": "loki.source.kubernetes.shop",
+      "namespace": "shop",
+      "pod": "checkout-57c848fbc5-mlzmv",
+      "service": "checkout",
+      "service_name": "checkout",
+      "version": "v1"
+     },
+     "values": [
+      [
+       "1792728582625600493",
+       "{\"time\":\"2026-10-23T04:09:42.625380502Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":83,\"trace_id\":\"3ba6612dc2bff05fbf01475048095ae9\"}\n"
+      ],
+      [
+       "1792728582625545787",
+       "{\"time\":\"2026-10-23T04:09:42.625332833Z\",\"level\":\"ERROR\",\"msg\":\"payment call failed\",\"service\":\"checkout\",\"version\":\"v1\",\"error\":\"Get \\\"http://payment:8080/pay\\\": dial tcp 10.96.74.153:8080: connect: connection refused\",\"trace_id\":\"3ba6612dc2bff05fbf01475048095ae9\"}\n"
+      ]
+     ]
+    },
+    {
+     "stream": {
+      "container": "app",
+      "detected_level": "error",
+      "instance": "shop/checkout-65599d9544-6gg6d:app",
+      "job": "loki.source.kubernetes.shop",
+      "namespace": "shop",
+      "pod": "checkout-65599d9544-6gg6d",
+      "service": "checkout",
+      "service_name": "checkout",
+      "version": "v2"
+     },
+     "values": [
+      [
+       "1792728459946623356",
+       "{\"time\":\"2026-10-23T04:07:39.946370564Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"cfa23fff740d6e99d28c7a6f980ec76f\"}\n"
+      ],
+      [
+       "1792728459946581214",
+       "{\"time\":\"2026-10-23T04:07:39.94633191Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"cfa23fff740d6e99d28c7a6f980ec76f\"}\n"
+      ],
+      [
+       "1792728459814019492",
+       "{\"time\":\"2026-10-23T04:07:39.813724443Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"62c56929736629f6b9d08ab52b65f1d1\"}\n"
+      ],
+      [
+       "1792728459813975154",
+       "{\"time\":\"2026-10-23T04:07:39.813667359Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"62c56929736629f6b9d08ab52b65f1d1\"}\n"
+      ],
+      [
+       "1792728459679791579",
+       "{\"time\":\"2026-10-23T04:07:39.679620182Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"5970b5b7ae31a319e70cf9fdd4670c39\"}\n"
+      ],
+      [
+       "1792728459679759098",
+       "{\"time\":\"2026-10-23T04:07:39.679585411Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"5970b5b7ae31a319e70cf9fdd4670c39\"}\n"
+      ],
+      [
+       "1792728459547242189",
+       "{\"time\":\"2026-10-23T04:07:39.547083084Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"98469372bad98e037f58576e2e3c0a7c\"}\n"
+      ],
+      [
+       "1792728459547204434",
+       "{\"time\":\"2026-10-23T04:07:39.547028664Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"98469372bad98e037f58576e2e3c0a7c\"}\n"
+      ],
+      [
+       "1792728459279604710",
+       "{\"time\":\"2026-10-23T04:07:39.279269367Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"checkout\",\"version\":\"v2\",\"route\":\"/checkout\",\"status\":503,\"duration_ms\":2000,\"trace_id\":\"41ba33a206c667e56f646c9954ef85dc\"}\n"
+      ],
+      [
+       "1792728459279553386",
+       "{\"time\":\"2026-10-23T04:07:39.279206543Z\",\"level\":\"ERROR\",\"msg\":\"place order failed\",\"service\":\"checkout\",\"version\":\"v2\",\"error\":\"timeout: context deadline exceeded\",\"trace_id\":\"41ba33a206c667e56f646c9954ef85dc\"}\n"
+      ]
+     ]
+    },
+    {
+     "stream": {
+      "container": "app",
+      "detected_level": "error",
+      "instance": "shop/frontend-5cdb9cc587-r9gnj:app",
+      "job": "loki.source.kubernetes.shop",
+      "namespace": "shop",
+      "pod": "frontend-5cdb9cc587-r9gnj",
+      "service": "frontend",
+      "service_name": "frontend",
+      "version": "v1"
+     },
+     "values": [
+      [
+       "1792728459680008942",
+       "{\"time\":\"2026-10-23T04:07:39.679860019Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2000,\"trace_id\":\"5970b5b7ae31a319e70cf9fdd4670c39\"}\n"
+      ],
+      [
+       "1792728459679976906",
+       "{\"time\":\"2026-10-23T04:07:39.679812279Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"5970b5b7ae31a319e70cf9fdd4670c39\"}\n"
+      ],
+      [
+       "1792728459279773786",
+       "{\"time\":\"2026-10-23T04:07:39.279585808Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"41ba33a206c667e56f646c9954ef85dc\"}\n"
+      ],
+      [
+       "1792728459279743057",
+       "{\"time\":\"2026-10-23T04:07:39.279523331Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"41ba33a206c667e56f646c9954ef85dc\"}\n"
+      ]
+     ]
+    },
+    {
+     "stream": {
+      "container": "app",
+      "detected_level": "error",
+      "instance": "shop/frontend-5cdb9cc587-xfkzt:app",
+      "job": "loki.source.kubernetes.shop",
+      "namespace": "shop",
+      "pod": "frontend-5cdb9cc587-xfkzt",
+      "service": "frontend",
+      "service_name": "frontend",
+      "version": "v1"
+     },
+     "values": [
+      [
+       "1792728582625794592",
+       "{\"time\":\"2026-10-23T04:09:42.625604506Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":83,\"trace_id\":\"3ba6612dc2bff05fbf01475048095ae9\"}\n"
+      ],
+      [
+       "1792728582625754637",
+       "{\"time\":\"2026-10-23T04:09:42.62556868Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 502\",\"trace_id\":\"3ba6612dc2bff05fbf01475048095ae9\"}\n"
+      ],
+      [
+       "1792728459946753942",
+       "{\"time\":\"2026-10-23T04:07:39.946594711Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"cfa23fff740d6e99d28c7a6f980ec76f\"}\n"
+      ],
+      [
+       "1792728459946730613",
+       "{\"time\":\"2026-10-23T04:07:39.946562586Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"cfa23fff740d6e99d28c7a6f980ec76f\"}\n"
+      ],
+      [
+       "1792728459814138682",
+       "{\"time\":\"2026-10-23T04:07:39.813916473Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"62c56929736629f6b9d08ab52b65f1d1\"}\n"
+      ],
+      [
+       "1792728459814111560",
+       "{\"time\":\"2026-10-23T04:07:39.813891356Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"62c56929736629f6b9d08ab52b65f1d1\"}\n"
+      ],
+      [
+       "1792728459547541980",
+       "{\"time\":\"2026-10-23T04:07:39.547391285Z\",\"level\":\"ERROR\",\"msg\":\"request\",\"service\":\"frontend\",\"version\":\"v1\",\"route\":\"/checkout\",\"status\":502,\"duration_ms\":2001,\"trace_id\":\"98469372bad98e037f58576e2e3c0a7c\"}\n"
+      ],
+      [
+       "1792728459547514670",
+       "{\"time\":\"2026-10-23T04:07:39.547342178Z\",\"level\":\"ERROR\",\"msg\":\"checkout call failed\",\"service\":\"frontend\",\"version\":\"v1\",\"error\":\"http://checkout:8080/checkout returned 503\",\"trace_id\":\"98469372bad98e037f58576e2e3c0a7c\"}\n"
+      ]
+     ]
+    }
+   ]
+  }
+ ],
+ "metrics": [
+  {
+   "promql": "sum by (service, code) (rate(http_requests_total{namespace=\"shop\"}[1m]))",
+   "query_id": "request_rate",
+   "result": [
+    {
+     "metric": {
+      "code": "200",
+      "service": "checkout"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "5.867050395623068"
+      ],
+      [
+       1792728474.208,
+       "3.9506767838927965"
+      ],
+      [
+       1792728489.208,
+       "14.481897515389914"
+      ],
+      [
+       1792728504.208,
+       "22.848840000000003"
+      ],
+      [
+       1792728519.208,
+       "30.95624347207716"
+      ],
+      [
+       1792728534.208,
+       "30.97868398043456"
+      ],
+      [
+       1792728549.208,
+       "29.97960999129402"
+      ],
+      [
+       1792728564.208,
+       "30.023056322250564"
+      ],
+      [
+       1792728579.208,
+       "29.979443560445706"
+      ],
+      [
+       1792728594.208,
+       "28.645081001800037"
+      ],
+      [
+       1792728609.208,
+       "28.690396634727442"
+      ],
+      [
+       1792728624.208,
+       "28.845726476732303"
+      ],
+      [
+       1792728639.208,
+       "30.201342281879192"
+      ],
+      [
+       1792728654.208,
+       "30.111632615770574"
+      ],
+      [
+       1792728669.208,
+       "30.00066668148181"
+      ],
+      [
+       1792728684.208,
+       "29.978701760385306"
+      ],
+      [
+       1792728699.208,
+       "30.024116200517856"
+      ],
+      [
+       1792728714.208,
+       "29.845770923152138"
+      ],
+      [
+       1792728729.208,
+       "29.89021734299302"
+      ],
+      [
+       1792728744.208,
+       "29.823044499262913"
+      ],
+      [
+       1792728759.208,
+       "30.02355660251567"
+      ],
+      [
+       1792728774.208,
+       "29.97872299636892"
+      ],
+      [
+       1792728789.208,
+       "30.067722015968748"
+      ],
+      [
+       1792728804.208,
+       "29.978722502508838"
+      ],
+      [
+       1792728819.208,
+       "30.02394331214893"
+      ],
+      [
+       1792728834.208,
+       "29.979110182674784"
+      ],
+      [
+       1792728849.208,
+       "30.02355660251567"
+      ],
+      [
+       1792728864.208,
+       "30.023168428489637"
+      ],
+      [
+       1792728879.208,
+       "29.979110182674788"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "code": "200",
+      "service": "frontend"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "6.1336889102235395"
+      ],
+      [
+       1792728474.208,
+       "12.444997555446909"
+      ],
+      [
+       1792728489.208,
+       "20.400906706964754"
+      ],
+      [
+       1792728504.208,
+       "28.156181248472187"
+      ],
+      [
+       1792728519.208,
+       "29.956886972754344"
+      ],
+      [
+       1792728534.208,
+       "29.9562212493611"
+      ],
+      [
+       1792728549.208,
+       "30.001333392595228"
+      ],
+      [
+       1792728564.208,
+       "30.311784706326808"
+      ],
+      [
+       1792728579.208,
+       "30.0897965740039"
+      ],
+      [
+       1792728594.208,
+       "29.712061268566487"
+      ],
+      [
+       1792728609.208,
+       "29.468294414535066"
+      ],
+      [
+       1792728624.208,
+       "29.645411393208526"
+      ],
+      [
+       1792728639.208,
+       "30.06763756589438"
+      ],
+      [
+       1792728654.208,
+       "29.955854821465167"
+      ],
+      [
+       1792728669.208,
+       "30.046447540947177"
+      ],
+      [
+       1792728684.208,
+       "29.979110182674788"
+      ],
+      [
+       1792728699.208,
+       "30.02428657638584"
+      ],
+      [
+       1792728714.208,
+       "30.0454834963857"
+      ],
+      [
+       1792728729.208,
+       "30.02355660251567"
+      ],
+      [
+       1792728744.208,
+       "30.089453852269976"
+      ],
+      [
+       1792728759.208,
+       "29.95660695408671"
+      ],
+      [
+       1792728774.208,
+       "30.045112113602528"
+      ],
+      [
+       1792728789.208,
+       "29.956886972754347"
+      ],
+      [
+       1792728804.208,
+       "30.06722570385844"
+      ],
+      [
+       1792728819.208,
+       "29.979110182674788"
+      ],
+      [
+       1792728834.208,
+       "30.045112113602524"
+      ],
+      [
+       1792728849.208,
+       "29.979496398426008"
+      ],
+      [
+       1792728864.208,
+       "30.04577981243611"
+      ],
+      [
+       1792728879.208,
+       "29.979496892308045"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "code": "200",
+      "service": "payment"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "6.200275567803013"
+      ],
+      [
+       1792728474.208,
+       "10.644697784153811"
+      ],
+      [
+       1792728489.208,
+       "18.5561234820313"
+      ],
+      [
+       1792728504.208,
+       "25.445248917389307"
+      ],
+      [
+       1792728519.208,
+       "29.001548728125698"
+      ],
+      [
+       1792728534.208,
+       "28.957282081345486"
+      ],
+      [
+       1792728549.208,
+       "29.82305187770735"
+      ],
+      [
+       1792728564.208,
+       "32.912309183167956"
+      ],
+      [
+       1792728579.208,
+       "32.93479710209343"
+      ],
+      [
+       1792728594.208,
+       "25.208419351594365"
+      ],
+      [
+       1792728609.208,
+       "22.554878721136962"
+      ],
+      [
+       1792728624.208,
+       "18.686998739841915"
+      ],
+      [
+       1792728639.208,
+       "27.860382761456428"
+      ],
+      [
+       1792728654.208,
+       "29.911775817240382"
+      ],
+      [
+       1792728669.208,
+       "30.378974894622605"
+      ],
+      [
+       1792728684.208,
+       "30.268280089585424"
+      ],
+      [
+       1792728699.208,
+       "29.756878083470376"
+      ],
+      [
+       1792728714.208,
+       "29.823029683460376"
+      ],
+      [
+       1792728729.208,
+       "29.289918558234824"
+      ],
+      [
+       1792728744.208,
+       "29.97902673327156"
+      ],
+      [
+       1792728759.208,
+       "29.934748229568932"
+      ],
+      [
+       1792728774.208,
+       "30.556525466580215"
+      ],
+      [
+       1792728789.208,
+       "30.023001516116764"
+      ],
+      [
+       1792728804.208,
+       "29.68982571214395"
+      ],
+      [
+       1792728819.208,
+       "29.712525019933835"
+      ],
+      [
+       1792728834.208,
+       "29.49012599220159"
+      ],
+      [
+       1792728849.208,
+       "30.023922569103462"
+      ],
+      [
+       1792728864.208,
+       "29.890158587098867"
+      ],
+      [
+       1792728879.208,
+       "30.42394528649175"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "code": "502",
+      "service": "checkout"
+     },
+     "values": [
+      [
+       1792728609.208,
+       "0"
+      ],
+      [
+       1792728624.208,
+       "0"
+      ],
+      [
+       1792728639.208,
+       "0"
+      ],
+      [
+       1792728654.208,
+       "0"
+      ],
+      [
+       1792728669.208,
+       "0"
+      ],
+      [
+       1792728684.208,
+       "0"
+      ],
+      [
+       1792728699.208,
+       "0"
+      ],
+      [
+       1792728714.208,
+       "0"
+      ],
+      [
+       1792728729.208,
+       "0"
+      ],
+      [
+       1792728744.208,
+       "0"
+      ],
+      [
+       1792728759.208,
+       "0"
+      ],
+      [
+       1792728774.208,
+       "0"
+      ],
+      [
+       1792728789.208,
+       "0"
+      ],
+      [
+       1792728804.208,
+       "0"
+      ],
+      [
+       1792728819.208,
+       "0"
+      ],
+      [
+       1792728834.208,
+       "0"
+      ],
+      [
+       1792728849.208,
+       "0"
+      ],
+      [
+       1792728864.208,
+       "0"
+      ],
+      [
+       1792728879.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "code": "502",
+      "service": "frontend"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "23.934675633782494"
+      ],
+      [
+       1792728474.208,
+       "18.467487443886395"
+      ],
+      [
+       1792728489.208,
+       "10.51157829236855"
+      ],
+      [
+       1792728504.208,
+       "2.644503211182471"
+      ],
+      [
+       1792728519.208,
+       "0"
+      ],
+      [
+       1792728534.208,
+       "0"
+      ],
+      [
+       1792728549.208,
+       "0"
+      ],
+      [
+       1792728564.208,
+       "0"
+      ],
+      [
+       1792728579.208,
+       "0"
+      ],
+      [
+       1792728594.208,
+       "0.022223209920440908"
+      ],
+      [
+       1792728609.208,
+       "0.022223703802475722"
+      ],
+      [
+       1792728624.208,
+       "0.0222227160603569"
+      ],
+      [
+       1792728639.208,
+       "0"
+      ],
+      [
+       1792728654.208,
+       "0"
+      ],
+      [
+       1792728669.208,
+       "0"
+      ],
+      [
+       1792728684.208,
+       "0"
+      ],
+      [
+       1792728699.208,
+       "0"
+      ],
+      [
+       1792728714.208,
+       "0"
+      ],
+      [
+       1792728729.208,
+       "0"
+      ],
+      [
+       1792728744.208,
+       "0"
+      ],
+      [
+       1792728759.208,
+       "0"
+      ],
+      [
+       1792728774.208,
+       "0"
+      ],
+      [
+       1792728789.208,
+       "0"
+      ],
+      [
+       1792728804.208,
+       "0"
+      ],
+      [
+       1792728819.208,
+       "0"
+      ],
+      [
+       1792728834.208,
+       "0"
+      ],
+      [
+       1792728849.208,
+       "0"
+      ],
+      [
+       1792728864.208,
+       "0"
+      ],
+      [
+       1792728879.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "code": "503",
+      "service": "checkout"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "24.145667965638648"
+      ],
+      [
+       1792728474.208,
+       "17.092799746991567"
+      ],
+      [
+       1792728489.208,
+       "8.929550303353556"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "promql": "histogram_quantile(0.95, sum by (service, le) (rate(http_request_duration_seconds_bucket{namespace=\"shop\"}[1m])))",
+   "query_id": "latency_p95",
+   "result": [
+    {
+     "metric": {
+      "service": "checkout"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "2.425"
+      ],
+      [
+       1792728474.208,
+       "2.425"
+      ],
+      [
+       1792728489.208,
+       "2.307061535325916"
+      ],
+      [
+       1792728504.208,
+       "0.24249999999999997"
+      ],
+      [
+       1792728519.208,
+       "0.2425"
+      ],
+      [
+       1792728534.208,
+       "0.2425"
+      ],
+      [
+       1792728549.208,
+       "0.2425"
+      ],
+      [
+       1792728564.208,
+       "0.2425"
+      ],
+      [
+       1792728579.208,
+       "0.2425"
+      ],
+      [
+       1792728594.208,
+       "1.5420792079207912"
+      ],
+      [
+       1792728609.208,
+       "2.325090031466085"
+      ],
+      [
+       1792728624.208,
+       "2.403539603960396"
+      ],
+      [
+       1792728639.208,
+       "2.425"
+      ],
+      [
+       1792728654.208,
+       "2.425"
+      ],
+      [
+       1792728669.208,
+       "2.425"
+      ],
+      [
+       1792728684.208,
+       "2.425"
+      ],
+      [
+       1792728699.208,
+       "2.425"
+      ],
+      [
+       1792728714.208,
+       "2.425"
+      ],
+      [
+       1792728729.208,
+       "2.425"
+      ],
+      [
+       1792728744.208,
+       "2.425"
+      ],
+      [
+       1792728759.208,
+       "2.425"
+      ],
+      [
+       1792728774.208,
+       "2.425"
+      ],
+      [
+       1792728789.208,
+       "2.425"
+      ],
+      [
+       1792728804.208,
+       "2.425"
+      ],
+      [
+       1792728819.208,
+       "2.425"
+      ],
+      [
+       1792728834.208,
+       "2.425"
+      ],
+      [
+       1792728849.208,
+       "2.425"
+      ],
+      [
+       1792728864.208,
+       "2.425"
+      ],
+      [
+       1792728879.208,
+       "2.425"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "service": "frontend"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "2.4248889699983107"
+      ],
+      [
+       1792728474.208,
+       "2.4029036827195465"
+      ],
+      [
+       1792728489.208,
+       "2.3311576354679797"
+      ],
+      [
+       1792728504.208,
+       "1.851582278481012"
+      ],
+      [
+       1792728519.208,
+       "0.24249999999999997"
+      ],
+      [
+       1792728534.208,
+       "0.2425"
+      ],
+      [
+       1792728549.208,
+       "0.2425"
+      ],
+      [
+       1792728564.208,
+       "0.2425"
+      ],
+      [
+       1792728579.208,
+       "0.2425"
+      ],
+      [
+       1792728594.208,
+       "1.6637542223473285"
+      ],
+      [
+       1792728609.208,
+       "2.326309220428313"
+      ],
+      [
+       1792728624.208,
+       "2.401934313532051"
+      ],
+      [
+       1792728639.208,
+       "2.425"
+      ],
+      [
+       1792728654.208,
+       "2.425"
+      ],
+      [
+       1792728669.208,
+       "2.425"
+      ],
+      [
+       1792728684.208,
+       "2.425"
+      ],
+      [
+       1792728699.208,
+       "2.425"
+      ],
+      [
+       1792728714.208,
+       "2.425"
+      ],
+      [
+       1792728729.208,
+       "2.425"
+      ],
+      [
+       1792728744.208,
+       "2.425"
+      ],
+      [
+       1792728759.208,
+       "2.425"
+      ],
+      [
+       1792728774.208,
+       "2.425"
+      ],
+      [
+       1792728789.208,
+       "2.425"
+      ],
+      [
+       1792728804.208,
+       "2.425"
+      ],
+      [
+       1792728819.208,
+       "2.425"
+      ],
+      [
+       1792728834.208,
+       "2.425"
+      ],
+      [
+       1792728849.208,
+       "2.425"
+      ],
+      [
+       1792728864.208,
+       "2.425"
+      ],
+      [
+       1792728879.208,
+       "2.425"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "service": "payment"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "0.02425"
+      ],
+      [
+       1792728474.208,
+       "0.02425"
+      ],
+      [
+       1792728489.208,
+       "0.02425"
+      ],
+      [
+       1792728504.208,
+       "0.02425"
+      ],
+      [
+       1792728519.208,
+       "0.02425"
+      ],
+      [
+       1792728534.208,
+       "0.02425"
+      ],
+      [
+       1792728549.208,
+       "0.02425"
+      ],
+      [
+       1792728564.208,
+       "0.02425"
+      ],
+      [
+       1792728579.208,
+       "0.02425"
+      ],
+      [
+       1792728594.208,
+       "0.02425"
+      ],
+      [
+       1792728609.208,
+       "0.9233024605728976"
+      ],
+      [
+       1792728624.208,
+       "0.9748905478454399"
+      ],
+      [
+       1792728639.208,
+       "0.975"
+      ],
+      [
+       1792728654.208,
+       "0.975"
+      ],
+      [
+       1792728669.208,
+       "0.975"
+      ],
+      [
+       1792728684.208,
+       "0.975"
+      ],
+      [
+       1792728699.208,
+       "0.975"
+      ],
+      [
+       1792728714.208,
+       "0.975"
+      ],
+      [
+       1792728729.208,
+       "0.975"
+      ],
+      [
+       1792728744.208,
+       "0.975"
+      ],
+      [
+       1792728759.208,
+       "0.975"
+      ],
+      [
+       1792728774.208,
+       "0.975"
+      ],
+      [
+       1792728789.208,
+       "0.975"
+      ],
+      [
+       1792728804.208,
+       "0.975"
+      ],
+      [
+       1792728819.208,
+       "0.975"
+      ],
+      [
+       1792728834.208,
+       "0.975"
+      ],
+      [
+       1792728849.208,
+       "0.975"
+      ],
+      [
+       1792728864.208,
+       "0.975"
+      ],
+      [
+       1792728879.208,
+       "0.975"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "promql": "sum by (pod) (rate(db_pool_acquire_wait_seconds_total{namespace=\"shop\"}[1m]))",
+   "query_id": "db_pool_wait",
+   "result": [
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-mlzmv"
+     },
+     "values": [
+      [
+       1792728489.208,
+       "0.00022133975669555556"
+      ],
+      [
+       1792728504.208,
+       "0.00017093390492055557"
+      ],
+      [
+       1792728519.208,
+       "0.00014671872708282407"
+      ],
+      [
+       1792728534.208,
+       "0.00001703851282279218"
+      ],
+      [
+       1792728549.208,
+       "0.000011700342237432773"
+      ],
+      [
+       1792728564.208,
+       "0.000010344304191297412"
+      ],
+      [
+       1792728579.208,
+       "0.000009669592657614604"
+      ],
+      [
+       1792728594.208,
+       "0.000010718571523811612"
+      ],
+      [
+       1792728609.208,
+       "0.000014357007933509596"
+      ],
+      [
+       1792728624.208,
+       "0.000017651340059558137"
+      ],
+      [
+       1792728639.208,
+       "0.000024151495622027675"
+      ],
+      [
+       1792728654.208,
+       "0.000022724832214765164"
+      ],
+      [
+       1792728669.208,
+       "0.000023627791728705158"
+      ],
+      [
+       1792728684.208,
+       "0.000019779279079070205"
+      ],
+      [
+       1792728699.208,
+       "0.000021830551790039746"
+      ],
+      [
+       1792728714.208,
+       "0.000021272589892884118"
+      ],
+      [
+       1792728729.208,
+       "0.000020832192541890702"
+      ],
+      [
+       1792728744.208,
+       "0.000021212369713536474"
+      ],
+      [
+       1792728759.208,
+       "0.000021912751677852323"
+      ],
+      [
+       1792728774.208,
+       "0.00002230768034134855"
+      ],
+      [
+       1792728789.208,
+       "0.00002119022644947665"
+      ],
+      [
+       1792728804.208,
+       "0.00002130465798479932"
+      ],
+      [
+       1792728819.208,
+       "0.000024021445397573162"
+      ],
+      [
+       1792728834.208,
+       "0.00002424496644295304"
+      ],
+      [
+       1792728849.208,
+       "0.000024705098004355755"
+      ],
+      [
+       1792728864.208,
+       "0.000022510444908662635"
+      ],
+      [
+       1792728879.208,
+       "0.000022394395306458035"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-tt57h"
+     },
+     "values": [
+      [
+       1792728489.208,
+       "0.000010905171419999894"
+      ],
+      [
+       1792728504.208,
+       "0.00001975910490833322"
+      ],
+      [
+       1792728519.208,
+       "0.00003400960021333797"
+      ],
+      [
+       1792728534.208,
+       "0.00004096717704837886"
+      ],
+      [
+       1792728549.208,
+       "0.000043684045603040337"
+      ],
+      [
+       1792728564.208,
+       "0.000040886886375252805"
+      ],
+      [
+       1792728579.208,
+       "0.00003828908593906266"
+      ],
+      [
+       1792728594.208,
+       "0.00003661808040178662"
+      ],
+      [
+       1792728609.208,
+       "0.00003559481743227337"
+      ],
+      [
+       1792728624.208,
+       "0.000036902640117338536"
+      ],
+      [
+       1792728639.208,
+       "0.00003562978354593547"
+      ],
+      [
+       1792728654.208,
+       "0.00003547062222222214"
+      ],
+      [
+       1792728669.208,
+       "0.000038514233649636664"
+      ],
+      [
+       1792728684.208,
+       "0.00003951241138691968"
+      ],
+      [
+       1792728699.208,
+       "0.0000395480264912437"
+      ],
+      [
+       1792728714.208,
+       "0.000032869505311347087"
+      ],
+      [
+       1792728729.208,
+       "0.00003245066447397664"
+      ],
+      [
+       1792728744.208,
+       "0.00003165620000000001"
+      ],
+      [
+       1792728759.208,
+       "0.00003288592826347844"
+      ],
+      [
+       1792728774.208,
+       "0.000034536723038289745"
+      ],
+      [
+       1792728789.208,
+       "0.000035948286590515055"
+      ],
+      [
+       1792728804.208,
+       "0.0000376432587390831"
+      ],
+      [
+       1792728819.208,
+       "0.00003737713625352788"
+      ],
+      [
+       1792728834.208,
+       "0.00003917569669763103"
+      ],
+      [
+       1792728849.208,
+       "0.00003690399573314374"
+      ],
+      [
+       1792728864.208,
+       "0.00003580690682015161"
+      ],
+      [
+       1792728879.208,
+       "0.00003368687497222106"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-6gg6d"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "34.670955513622836"
+      ],
+      [
+       1792728474.208,
+       "26.44604441208371"
+      ],
+      [
+       1792728489.208,
+       "17.815828928965196"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-br895"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "23.660074901793426"
+      ],
+      [
+       1792728474.208,
+       "14.481678077191198"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "promql": "sum by (pod) (kube_pod_container_status_restarts_total{namespace=\"shop\"})",
+   "query_id": "restarts",
+   "result": [
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-mlzmv"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "0"
+      ],
+      [
+       1792728474.208,
+       "0"
+      ],
+      [
+       1792728489.208,
+       "0"
+      ],
+      [
+       1792728504.208,
+       "0"
+      ],
+      [
+       1792728519.208,
+       "0"
+      ],
+      [
+       1792728534.208,
+       "0"
+      ],
+      [
+       1792728549.208,
+       "0"
+      ],
+      [
+       1792728564.208,
+       "0"
+      ],
+      [
+       1792728579.208,
+       "0"
+      ],
+      [
+       1792728594.208,
+       "0"
+      ],
+      [
+       1792728609.208,
+       "0"
+      ],
+      [
+       1792728624.208,
+       "0"
+      ],
+      [
+       1792728639.208,
+       "0"
+      ],
+      [
+       1792728654.208,
+       "0"
+      ],
+      [
+       1792728669.208,
+       "0"
+      ],
+      [
+       1792728684.208,
+       "0"
+      ],
+      [
+       1792728699.208,
+       "0"
+      ],
+      [
+       1792728714.208,
+       "0"
+      ],
+      [
+       1792728729.208,
+       "0"
+      ],
+      [
+       1792728744.208,
+       "0"
+      ],
+      [
+       1792728759.208,
+       "0"
+      ],
+      [
+       1792728774.208,
+       "0"
+      ],
+      [
+       1792728789.208,
+       "0"
+      ],
+      [
+       1792728804.208,
+       "0"
+      ],
+      [
+       1792728819.208,
+       "0"
+      ],
+      [
+       1792728834.208,
+       "0"
+      ],
+      [
+       1792728849.208,
+       "0"
+      ],
+      [
+       1792728864.208,
+       "0"
+      ],
+      [
+       1792728879.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-tt57h"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "0"
+      ],
+      [
+       1792728474.208,
+       "0"
+      ],
+      [
+       1792728489.208,
+       "0"
+      ],
+      [
+       1792728504.208,
+       "0"
+      ],
+      [
+       1792728519.208,
+       "0"
+      ],
+      [
+       1792728534.208,
+       "0"
+      ],
+      [
+       1792728549.208,
+       "0"
+      ],
+      [
+       1792728564.208,
+       "0"
+      ],
+      [
+       1792728579.208,
+       "0"
+      ],
+      [
+       1792728594.208,
+       "0"
+      ],
+      [
+       1792728609.208,
+       "0"
+      ],
+      [
+       1792728624.208,
+       "0"
+      ],
+      [
+       1792728639.208,
+       "0"
+      ],
+      [
+       1792728654.208,
+       "0"
+      ],
+      [
+       1792728669.208,
+       "0"
+      ],
+      [
+       1792728684.208,
+       "0"
+      ],
+      [
+       1792728699.208,
+       "0"
+      ],
+      [
+       1792728714.208,
+       "0"
+      ],
+      [
+       1792728729.208,
+       "0"
+      ],
+      [
+       1792728744.208,
+       "0"
+      ],
+      [
+       1792728759.208,
+       "0"
+      ],
+      [
+       1792728774.208,
+       "0"
+      ],
+      [
+       1792728789.208,
+       "0"
+      ],
+      [
+       1792728804.208,
+       "0"
+      ],
+      [
+       1792728819.208,
+       "0"
+      ],
+      [
+       1792728834.208,
+       "0"
+      ],
+      [
+       1792728849.208,
+       "0"
+      ],
+      [
+       1792728864.208,
+       "0"
+      ],
+      [
+       1792728879.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-6gg6d"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "frontend-5cdb9cc587-r9gnj"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "0"
+      ],
+      [
+       1792728474.208,
+       "0"
+      ],
+      [
+       1792728489.208,
+       "0"
+      ],
+      [
+       1792728504.208,
+       "0"
+      ],
+      [
+       1792728519.208,
+       "0"
+      ],
+      [
+       1792728534.208,
+       "0"
+      ],
+      [
+       1792728549.208,
+       "0"
+      ],
+      [
+       1792728564.208,
+       "0"
+      ],
+      [
+       1792728579.208,
+       "0"
+      ],
+      [
+       1792728594.208,
+       "0"
+      ],
+      [
+       1792728609.208,
+       "0"
+      ],
+      [
+       1792728624.208,
+       "0"
+      ],
+      [
+       1792728639.208,
+       "0"
+      ],
+      [
+       1792728654.208,
+       "0"
+      ],
+      [
+       1792728669.208,
+       "0"
+      ],
+      [
+       1792728684.208,
+       "0"
+      ],
+      [
+       1792728699.208,
+       "0"
+      ],
+      [
+       1792728714.208,
+       "0"
+      ],
+      [
+       1792728729.208,
+       "0"
+      ],
+      [
+       1792728744.208,
+       "0"
+      ],
+      [
+       1792728759.208,
+       "0"
+      ],
+      [
+       1792728774.208,
+       "0"
+      ],
+      [
+       1792728789.208,
+       "0"
+      ],
+      [
+       1792728804.208,
+       "0"
+      ],
+      [
+       1792728819.208,
+       "0"
+      ],
+      [
+       1792728834.208,
+       "0"
+      ],
+      [
+       1792728849.208,
+       "0"
+      ],
+      [
+       1792728864.208,
+       "0"
+      ],
+      [
+       1792728879.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "frontend-5cdb9cc587-xfkzt"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "0"
+      ],
+      [
+       1792728474.208,
+       "0"
+      ],
+      [
+       1792728489.208,
+       "0"
+      ],
+      [
+       1792728504.208,
+       "0"
+      ],
+      [
+       1792728519.208,
+       "0"
+      ],
+      [
+       1792728534.208,
+       "0"
+      ],
+      [
+       1792728549.208,
+       "0"
+      ],
+      [
+       1792728564.208,
+       "0"
+      ],
+      [
+       1792728579.208,
+       "0"
+      ],
+      [
+       1792728594.208,
+       "0"
+      ],
+      [
+       1792728609.208,
+       "0"
+      ],
+      [
+       1792728624.208,
+       "0"
+      ],
+      [
+       1792728639.208,
+       "0"
+      ],
+      [
+       1792728654.208,
+       "0"
+      ],
+      [
+       1792728669.208,
+       "0"
+      ],
+      [
+       1792728684.208,
+       "0"
+      ],
+      [
+       1792728699.208,
+       "0"
+      ],
+      [
+       1792728714.208,
+       "0"
+      ],
+      [
+       1792728729.208,
+       "0"
+      ],
+      [
+       1792728744.208,
+       "0"
+      ],
+      [
+       1792728759.208,
+       "0"
+      ],
+      [
+       1792728774.208,
+       "0"
+      ],
+      [
+       1792728789.208,
+       "0"
+      ],
+      [
+       1792728804.208,
+       "0"
+      ],
+      [
+       1792728819.208,
+       "0"
+      ],
+      [
+       1792728834.208,
+       "0"
+      ],
+      [
+       1792728849.208,
+       "0"
+      ],
+      [
+       1792728864.208,
+       "0"
+      ],
+      [
+       1792728879.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "loadgen-5ddf45bbfd-8xvsz"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "0"
+      ],
+      [
+       1792728474.208,
+       "0"
+      ],
+      [
+       1792728489.208,
+       "0"
+      ],
+      [
+       1792728504.208,
+       "0"
+      ],
+      [
+       1792728519.208,
+       "0"
+      ],
+      [
+       1792728534.208,
+       "0"
+      ],
+      [
+       1792728549.208,
+       "0"
+      ],
+      [
+       1792728564.208,
+       "0"
+      ],
+      [
+       1792728579.208,
+       "0"
+      ],
+      [
+       1792728594.208,
+       "0"
+      ],
+      [
+       1792728609.208,
+       "0"
+      ],
+      [
+       1792728624.208,
+       "0"
+      ],
+      [
+       1792728639.208,
+       "0"
+      ],
+      [
+       1792728654.208,
+       "0"
+      ],
+      [
+       1792728669.208,
+       "0"
+      ],
+      [
+       1792728684.208,
+       "0"
+      ],
+      [
+       1792728699.208,
+       "0"
+      ],
+      [
+       1792728714.208,
+       "0"
+      ],
+      [
+       1792728729.208,
+       "0"
+      ],
+      [
+       1792728744.208,
+       "0"
+      ],
+      [
+       1792728759.208,
+       "0"
+      ],
+      [
+       1792728774.208,
+       "0"
+      ],
+      [
+       1792728789.208,
+       "0"
+      ],
+      [
+       1792728804.208,
+       "0"
+      ],
+      [
+       1792728819.208,
+       "0"
+      ],
+      [
+       1792728834.208,
+       "0"
+      ],
+      [
+       1792728849.208,
+       "0"
+      ],
+      [
+       1792728864.208,
+       "0"
+      ],
+      [
+       1792728879.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5bcbc9bb7c-xv8lj"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "0"
+      ],
+      [
+       1792728474.208,
+       "0"
+      ],
+      [
+       1792728489.208,
+       "0"
+      ],
+      [
+       1792728504.208,
+       "0"
+      ],
+      [
+       1792728519.208,
+       "0"
+      ],
+      [
+       1792728534.208,
+       "0"
+      ],
+      [
+       1792728549.208,
+       "0"
+      ],
+      [
+       1792728564.208,
+       "0"
+      ],
+      [
+       1792728579.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5bcbc9bb7c-zdgsj"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "0"
+      ],
+      [
+       1792728474.208,
+       "0"
+      ],
+      [
+       1792728489.208,
+       "0"
+      ],
+      [
+       1792728504.208,
+       "0"
+      ],
+      [
+       1792728519.208,
+       "0"
+      ],
+      [
+       1792728534.208,
+       "0"
+      ],
+      [
+       1792728549.208,
+       "0"
+      ],
+      [
+       1792728564.208,
+       "0"
+      ],
+      [
+       1792728579.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5c6689b66d-hm7w5"
+     },
+     "values": [
+      [
+       1792728594.208,
+       "0"
+      ],
+      [
+       1792728609.208,
+       "0"
+      ],
+      [
+       1792728624.208,
+       "0"
+      ],
+      [
+       1792728639.208,
+       "0"
+      ],
+      [
+       1792728654.208,
+       "0"
+      ],
+      [
+       1792728669.208,
+       "0"
+      ],
+      [
+       1792728684.208,
+       "0"
+      ],
+      [
+       1792728699.208,
+       "0"
+      ],
+      [
+       1792728714.208,
+       "0"
+      ],
+      [
+       1792728729.208,
+       "0"
+      ],
+      [
+       1792728744.208,
+       "0"
+      ],
+      [
+       1792728759.208,
+       "0"
+      ],
+      [
+       1792728774.208,
+       "0"
+      ],
+      [
+       1792728789.208,
+       "0"
+      ],
+      [
+       1792728804.208,
+       "0"
+      ],
+      [
+       1792728819.208,
+       "0"
+      ],
+      [
+       1792728834.208,
+       "0"
+      ],
+      [
+       1792728849.208,
+       "0"
+      ],
+      [
+       1792728864.208,
+       "0"
+      ],
+      [
+       1792728879.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5c6689b66d-zdq6p"
+     },
+     "values": [
+      [
+       1792728594.208,
+       "0"
+      ],
+      [
+       1792728609.208,
+       "0"
+      ],
+      [
+       1792728624.208,
+       "0"
+      ],
+      [
+       1792728639.208,
+       "0"
+      ],
+      [
+       1792728654.208,
+       "0"
+      ],
+      [
+       1792728669.208,
+       "0"
+      ],
+      [
+       1792728684.208,
+       "0"
+      ],
+      [
+       1792728699.208,
+       "0"
+      ],
+      [
+       1792728714.208,
+       "0"
+      ],
+      [
+       1792728729.208,
+       "0"
+      ],
+      [
+       1792728744.208,
+       "0"
+      ],
+      [
+       1792728759.208,
+       "0"
+      ],
+      [
+       1792728774.208,
+       "0"
+      ],
+      [
+       1792728789.208,
+       "0"
+      ],
+      [
+       1792728804.208,
+       "0"
+      ],
+      [
+       1792728819.208,
+       "0"
+      ],
+      [
+       1792728834.208,
+       "0"
+      ],
+      [
+       1792728849.208,
+       "0"
+      ],
+      [
+       1792728864.208,
+       "0"
+      ],
+      [
+       1792728879.208,
+       "0"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "postgres-646fd656b6-z7sbq"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "0"
+      ],
+      [
+       1792728474.208,
+       "0"
+      ],
+      [
+       1792728489.208,
+       "0"
+      ],
+      [
+       1792728504.208,
+       "0"
+      ],
+      [
+       1792728519.208,
+       "0"
+      ],
+      [
+       1792728534.208,
+       "0"
+      ],
+      [
+       1792728549.208,
+       "0"
+      ],
+      [
+       1792728564.208,
+       "0"
+      ],
+      [
+       1792728579.208,
+       "0"
+      ],
+      [
+       1792728594.208,
+       "0"
+      ],
+      [
+       1792728609.208,
+       "0"
+      ],
+      [
+       1792728624.208,
+       "0"
+      ],
+      [
+       1792728639.208,
+       "0"
+      ],
+      [
+       1792728654.208,
+       "0"
+      ],
+      [
+       1792728669.208,
+       "0"
+      ],
+      [
+       1792728684.208,
+       "0"
+      ],
+      [
+       1792728699.208,
+       "0"
+      ],
+      [
+       1792728714.208,
+       "0"
+      ],
+      [
+       1792728729.208,
+       "0"
+      ],
+      [
+       1792728744.208,
+       "0"
+      ],
+      [
+       1792728759.208,
+       "0"
+      ],
+      [
+       1792728774.208,
+       "0"
+      ],
+      [
+       1792728789.208,
+       "0"
+      ],
+      [
+       1792728804.208,
+       "0"
+      ],
+      [
+       1792728819.208,
+       "0"
+      ],
+      [
+       1792728834.208,
+       "0"
+      ],
+      [
+       1792728849.208,
+       "0"
+      ],
+      [
+       1792728864.208,
+       "0"
+      ],
+      [
+       1792728879.208,
+       "0"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "promql": "sum by (pod) (container_memory_working_set_bytes{namespace=\"shop\", container=\"app\"})",
+   "query_id": "memory_working_set",
+   "result": [
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-mlzmv"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "2785280"
+      ],
+      [
+       1792728474.208,
+       "6279168"
+      ],
+      [
+       1792728489.208,
+       "7659520"
+      ],
+      [
+       1792728504.208,
+       "7659520"
+      ],
+      [
+       1792728519.208,
+       "8687616"
+      ],
+      [
+       1792728534.208,
+       "9146368"
+      ],
+      [
+       1792728549.208,
+       "8171520"
+      ],
+      [
+       1792728564.208,
+       "8466432"
+      ],
+      [
+       1792728579.208,
+       "8466432"
+      ],
+      [
+       1792728594.208,
+       "8196096"
+      ],
+      [
+       1792728609.208,
+       "8196096"
+      ],
+      [
+       1792728624.208,
+       "10002432"
+      ],
+      [
+       1792728639.208,
+       "10002432"
+      ],
+      [
+       1792728654.208,
+       "9494528"
+      ],
+      [
+       1792728669.208,
+       "10027008"
+      ],
+      [
+       1792728684.208,
+       "9089024"
+      ],
+      [
+       1792728699.208,
+       "9089024"
+      ],
+      [
+       1792728714.208,
+       "9965568"
+      ],
+      [
+       1792728729.208,
+       "9588736"
+      ],
+      [
+       1792728744.208,
+       "9895936"
+      ],
+      [
+       1792728759.208,
+       "9179136"
+      ],
+      [
+       1792728774.208,
+       "9179136"
+      ],
+      [
+       1792728789.208,
+       "10530816"
+      ],
+      [
+       1792728804.208,
+       "11042816"
+      ],
+      [
+       1792728819.208,
+       "11042816"
+      ],
+      [
+       1792728834.208,
+       "10362880"
+      ],
+      [
+       1792728849.208,
+       "10846208"
+      ],
+      [
+       1792728864.208,
+       "11476992"
+      ],
+      [
+       1792728879.208,
+       "11476992"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-57c848fbc5-tt57h"
+     },
+     "values": [
+      [
+       1792728474.208,
+       "5619712"
+      ],
+      [
+       1792728489.208,
+       "7786496"
+      ],
+      [
+       1792728504.208,
+       "8933376"
+      ],
+      [
+       1792728519.208,
+       "8417280"
+      ],
+      [
+       1792728534.208,
+       "8916992"
+      ],
+      [
+       1792728549.208,
+       "8916992"
+      ],
+      [
+       1792728564.208,
+       "9273344"
+      ],
+      [
+       1792728579.208,
+       "9412608"
+      ],
+      [
+       1792728594.208,
+       "9592832"
+      ],
+      [
+       1792728609.208,
+       "9433088"
+      ],
+      [
+       1792728624.208,
+       "10235904"
+      ],
+      [
+       1792728639.208,
+       "10235904"
+      ],
+      [
+       1792728654.208,
+       "11661312"
+      ],
+      [
+       1792728669.208,
+       "10051584"
+      ],
+      [
+       1792728684.208,
+       "10051584"
+      ],
+      [
+       1792728699.208,
+       "11333632"
+      ],
+      [
+       1792728714.208,
+       "11628544"
+      ],
+      [
+       1792728729.208,
+       "10305536"
+      ],
+      [
+       1792728744.208,
+       "11407360"
+      ],
+      [
+       1792728759.208,
+       "11407360"
+      ],
+      [
+       1792728774.208,
+       "11059200"
+      ],
+      [
+       1792728789.208,
+       "11059200"
+      ],
+      [
+       1792728804.208,
+       "10952704"
+      ],
+      [
+       1792728819.208,
+       "10076160"
+      ],
+      [
+       1792728834.208,
+       "11296768"
+      ],
+      [
+       1792728849.208,
+       "10944512"
+      ],
+      [
+       1792728864.208,
+       "10829824"
+      ],
+      [
+       1792728879.208,
+       "10829824"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-6gg6d"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "9805824"
+      ],
+      [
+       1792728474.208,
+       "9805824"
+      ],
+      [
+       1792728489.208,
+       "9805824"
+      ],
+      [
+       1792728504.208,
+       "9805824"
+      ],
+      [
+       1792728519.208,
+       "9805824"
+      ],
+      [
+       1792728534.208,
+       "9805824"
+      ],
+      [
+       1792728549.208,
+       "9805824"
+      ],
+      [
+       1792728564.208,
+       "9805824"
+      ],
+      [
+       1792728579.208,
+       "9805824"
+      ],
+      [
+       1792728594.208,
+       "9805824"
+      ],
+      [
+       1792728609.208,
+       "9805824"
+      ],
+      [
+       1792728624.208,
+       "9805824"
+      ],
+      [
+       1792728639.208,
+       "9805824"
+      ],
+      [
+       1792728654.208,
+       "9805824"
+      ],
+      [
+       1792728669.208,
+       "9805824"
+      ],
+      [
+       1792728684.208,
+       "9805824"
+      ],
+      [
+       1792728699.208,
+       "9805824"
+      ],
+      [
+       1792728714.208,
+       "9805824"
+      ],
+      [
+       1792728729.208,
+       "9805824"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "checkout-65599d9544-br895"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "9404416"
+      ],
+      [
+       1792728474.208,
+       "9404416"
+      ],
+      [
+       1792728489.208,
+       "9404416"
+      ],
+      [
+       1792728504.208,
+       "9404416"
+      ],
+      [
+       1792728519.208,
+       "9404416"
+      ],
+      [
+       1792728534.208,
+       "9404416"
+      ],
+      [
+       1792728549.208,
+       "9404416"
+      ],
+      [
+       1792728564.208,
+       "9404416"
+      ],
+      [
+       1792728579.208,
+       "9404416"
+      ],
+      [
+       1792728594.208,
+       "9404416"
+      ],
+      [
+       1792728609.208,
+       "9404416"
+      ],
+      [
+       1792728624.208,
+       "9404416"
+      ],
+      [
+       1792728639.208,
+       "9404416"
+      ],
+      [
+       1792728654.208,
+       "9404416"
+      ],
+      [
+       1792728669.208,
+       "9404416"
+      ],
+      [
+       1792728684.208,
+       "9404416"
+      ],
+      [
+       1792728699.208,
+       "9404416"
+      ],
+      [
+       1792728714.208,
+       "9404416"
+      ],
+      [
+       1792728729.208,
+       "9404416"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "frontend-5cdb9cc587-r9gnj"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "16416768"
+      ],
+      [
+       1792728474.208,
+       "17072128"
+      ],
+      [
+       1792728489.208,
+       "13598720"
+      ],
+      [
+       1792728504.208,
+       "13975552"
+      ],
+      [
+       1792728519.208,
+       "14028800"
+      ],
+      [
+       1792728534.208,
+       "14323712"
+      ],
+      [
+       1792728549.208,
+       "14323712"
+      ],
+      [
+       1792728564.208,
+       "14610432"
+      ],
+      [
+       1792728579.208,
+       "15040512"
+      ],
+      [
+       1792728594.208,
+       "14622720"
+      ],
+      [
+       1792728609.208,
+       "14622720"
+      ],
+      [
+       1792728624.208,
+       "14778368"
+      ],
+      [
+       1792728639.208,
+       "14585856"
+      ],
+      [
+       1792728654.208,
+       "14585856"
+      ],
+      [
+       1792728669.208,
+       "15265792"
+      ],
+      [
+       1792728684.208,
+       "14753792"
+      ],
+      [
+       1792728699.208,
+       "14753792"
+      ],
+      [
+       1792728714.208,
+       "14704640"
+      ],
+      [
+       1792728729.208,
+       "15499264"
+      ],
+      [
+       1792728744.208,
+       "15499264"
+      ],
+      [
+       1792728759.208,
+       "14393344"
+      ],
+      [
+       1792728774.208,
+       "14401536"
+      ],
+      [
+       1792728789.208,
+       "14757888"
+      ],
+      [
+       1792728804.208,
+       "14757888"
+      ],
+      [
+       1792728819.208,
+       "14725120"
+      ],
+      [
+       1792728834.208,
+       "15310848"
+      ],
+      [
+       1792728849.208,
+       "16035840"
+      ],
+      [
+       1792728864.208,
+       "13922304"
+      ],
+      [
+       1792728879.208,
+       "14442496"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "frontend-5cdb9cc587-xfkzt"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "14094336"
+      ],
+      [
+       1792728474.208,
+       "14848000"
+      ],
+      [
+       1792728489.208,
+       "12754944"
+      ],
+      [
+       1792728504.208,
+       "11980800"
+      ],
+      [
+       1792728519.208,
+       "11980800"
+      ],
+      [
+       1792728534.208,
+       "12345344"
+      ],
+      [
+       1792728549.208,
+       "12771328"
+      ],
+      [
+       1792728564.208,
+       "11640832"
+      ],
+      [
+       1792728579.208,
+       "11640832"
+      ],
+      [
+       1792728594.208,
+       "12414976"
+      ],
+      [
+       1792728609.208,
+       "12967936"
+      ],
+      [
+       1792728624.208,
+       "13635584"
+      ],
+      [
+       1792728639.208,
+       "13635584"
+      ],
+      [
+       1792728654.208,
+       "13750272"
+      ],
+      [
+       1792728669.208,
+       "13557760"
+      ],
+      [
+       1792728684.208,
+       "13557760"
+      ],
+      [
+       1792728699.208,
+       "12857344"
+      ],
+      [
+       1792728714.208,
+       "13598720"
+      ],
+      [
+       1792728729.208,
+       "12759040"
+      ],
+      [
+       1792728744.208,
+       "12759040"
+      ],
+      [
+       1792728759.208,
+       "13008896"
+      ],
+      [
+       1792728774.208,
+       "12935168"
+      ],
+      [
+       1792728789.208,
+       "13172736"
+      ],
+      [
+       1792728804.208,
+       "12652544"
+      ],
+      [
+       1792728819.208,
+       "13320192"
+      ],
+      [
+       1792728834.208,
+       "13426688"
+      ],
+      [
+       1792728849.208,
+       "12972032"
+      ],
+      [
+       1792728864.208,
+       "13365248"
+      ],
+      [
+       1792728879.208,
+       "12926976"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "loadgen-5ddf45bbfd-8xvsz"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "10956800"
+      ],
+      [
+       1792728474.208,
+       "11177984"
+      ],
+      [
+       1792728489.208,
+       "10878976"
+      ],
+      [
+       1792728504.208,
+       "10878976"
+      ],
+      [
+       1792728519.208,
+       "11067392"
+      ],
+      [
+       1792728534.208,
+       "10801152"
+      ],
+      [
+       1792728549.208,
+       "10797056"
+      ],
+      [
+       1792728564.208,
+       "10797056"
+      ],
+      [
+       1792728579.208,
+       "10993664"
+      ],
+      [
+       1792728594.208,
+       "10993664"
+      ],
+      [
+       1792728609.208,
+       "10645504"
+      ],
+      [
+       1792728624.208,
+       "10645504"
+      ],
+      [
+       1792728639.208,
+       "10645504"
+      ],
+      [
+       1792728654.208,
+       "10645504"
+      ],
+      [
+       1792728669.208,
+       "10846208"
+      ],
+      [
+       1792728684.208,
+       "11104256"
+      ],
+      [
+       1792728699.208,
+       "10711040"
+      ],
+      [
+       1792728714.208,
+       "10711040"
+      ],
+      [
+       1792728729.208,
+       "10973184"
+      ],
+      [
+       1792728744.208,
+       "10715136"
+      ],
+      [
+       1792728759.208,
+       "10973184"
+      ],
+      [
+       1792728774.208,
+       "10973184"
+      ],
+      [
+       1792728789.208,
+       "10944512"
+      ],
+      [
+       1792728804.208,
+       "10678272"
+      ],
+      [
+       1792728819.208,
+       "10936320"
+      ],
+      [
+       1792728834.208,
+       "10674176"
+      ],
+      [
+       1792728849.208,
+       "10674176"
+      ],
+      [
+       1792728864.208,
+       "10674176"
+      ],
+      [
+       1792728879.208,
+       "10936320"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5bcbc9bb7c-xv8lj"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "11849728"
+      ],
+      [
+       1792728474.208,
+       "12390400"
+      ],
+      [
+       1792728489.208,
+       "12390400"
+      ],
+      [
+       1792728504.208,
+       "12435456"
+      ],
+      [
+       1792728519.208,
+       "12435456"
+      ],
+      [
+       1792728534.208,
+       "12701696"
+      ],
+      [
+       1792728549.208,
+       "12701696"
+      ],
+      [
+       1792728564.208,
+       "12763136"
+      ],
+      [
+       1792728579.208,
+       "12210176"
+      ],
+      [
+       1792728594.208,
+       "12210176"
+      ],
+      [
+       1792728609.208,
+       "12210176"
+      ],
+      [
+       1792728624.208,
+       "12210176"
+      ],
+      [
+       1792728639.208,
+       "12210176"
+      ],
+      [
+       1792728654.208,
+       "12210176"
+      ],
+      [
+       1792728669.208,
+       "12210176"
+      ],
+      [
+       1792728684.208,
+       "12210176"
+      ],
+      [
+       1792728699.208,
+       "12210176"
+      ],
+      [
+       1792728714.208,
+       "12210176"
+      ],
+      [
+       1792728729.208,
+       "12210176"
+      ],
+      [
+       1792728744.208,
+       "12210176"
+      ],
+      [
+       1792728759.208,
+       "12210176"
+      ],
+      [
+       1792728774.208,
+       "12210176"
+      ],
+      [
+       1792728789.208,
+       "12210176"
+      ],
+      [
+       1792728804.208,
+       "12210176"
+      ],
+      [
+       1792728819.208,
+       "12210176"
+      ],
+      [
+       1792728834.208,
+       "12210176"
+      ],
+      [
+       1792728849.208,
+       "12210176"
+      ],
+      [
+       1792728864.208,
+       "12210176"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5bcbc9bb7c-zdgsj"
+     },
+     "values": [
+      [
+       1792728459.208,
+       "11108352"
+      ],
+      [
+       1792728474.208,
+       "11378688"
+      ],
+      [
+       1792728489.208,
+       "11264000"
+      ],
+      [
+       1792728504.208,
+       "12070912"
+      ],
+      [
+       1792728519.208,
+       "12070912"
+      ],
+      [
+       1792728534.208,
+       "12169216"
+      ],
+      [
+       1792728549.208,
+       "12288000"
+      ],
+      [
+       1792728564.208,
+       "12398592"
+      ],
+      [
+       1792728579.208,
+       "12398592"
+      ],
+      [
+       1792728594.208,
+       "12398592"
+      ],
+      [
+       1792728609.208,
+       "12398592"
+      ],
+      [
+       1792728624.208,
+       "12398592"
+      ],
+      [
+       1792728639.208,
+       "12398592"
+      ],
+      [
+       1792728654.208,
+       "12398592"
+      ],
+      [
+       1792728669.208,
+       "12398592"
+      ],
+      [
+       1792728684.208,
+       "12398592"
+      ],
+      [
+       1792728699.208,
+       "12398592"
+      ],
+      [
+       1792728714.208,
+       "12398592"
+      ],
+      [
+       1792728729.208,
+       "12398592"
+      ],
+      [
+       1792728744.208,
+       "12398592"
+      ],
+      [
+       1792728759.208,
+       "12398592"
+      ],
+      [
+       1792728774.208,
+       "12398592"
+      ],
+      [
+       1792728789.208,
+       "12398592"
+      ],
+      [
+       1792728804.208,
+       "12398592"
+      ],
+      [
+       1792728819.208,
+       "12398592"
+      ],
+      [
+       1792728834.208,
+       "12398592"
+      ],
+      [
+       1792728849.208,
+       "12398592"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5c6689b66d-hm7w5"
+     },
+     "values": [
+      [
+       1792728594.208,
+       "3194880"
+      ],
+      [
+       1792728609.208,
+       "5300224"
+      ],
+      [
+       1792728624.208,
+       "6774784"
+      ],
+      [
+       1792728639.208,
+       "7634944"
+      ],
+      [
+       1792728654.208,
+       "7634944"
+      ],
+      [
+       1792728669.208,
+       "8749056"
+      ],
+      [
+       1792728684.208,
+       "8871936"
+      ],
+      [
+       1792728699.208,
+       "9703424"
+      ],
+      [
+       1792728714.208,
+       "9703424"
+      ],
+      [
+       1792728729.208,
+       "9904128"
+      ],
+      [
+       1792728744.208,
+       "9904128"
+      ],
+      [
+       1792728759.208,
+       "10436608"
+      ],
+      [
+       1792728774.208,
+       "10653696"
+      ],
+      [
+       1792728789.208,
+       "10653696"
+      ],
+      [
+       1792728804.208,
+       "11022336"
+      ],
+      [
+       1792728819.208,
+       "11030528"
+      ],
+      [
+       1792728834.208,
+       "10833920"
+      ],
+      [
+       1792728849.208,
+       "10833920"
+      ],
+      [
+       1792728864.208,
+       "11239424"
+      ],
+      [
+       1792728879.208,
+       "11599872"
+      ]
+     ]
+    },
+    {
+     "metric": {
+      "pod": "payment-5c6689b66d-zdq6p"
+     },
+     "values": [
+      [
+       1792728594.208,
+       "3039232"
+      ],
+      [
+       1792728609.208,
+       "5312512"
+      ],
+      [
+       1792728624.208,
+       "6717440"
+      ],
+      [
+       1792728639.208,
+       "7610368"
+      ],
+      [
+       1792728654.208,
+       "8830976"
+      ],
+      [
+       1792728669.208,
+       "9445376"
+      ],
+      [
+       1792728684.208,
+       "9445376"
+      ],
+      [
+       1792728699.208,
+       "10211328"
+      ],
+      [
+       1792728714.208,
+       "10305536"
+      ],
+      [
+       1792728729.208,
+       "10547200"
+      ],
+      [
+       1792728744.208,
+       "11042816"
+      ],
+      [
+       1792728759.208,
+       "11071488"
+      ],
+      [
+       1792728774.208,
+       "11071488"
+      ],
+      [
+       1792728789.208,
+       "12197888"
+      ],
+      [
+       1792728804.208,
+       "10063872"
+      ],
+      [
+       1792728819.208,
+       "10280960"
+      ],
+      [
+       1792728834.208,
+       "10280960"
+      ],
+      [
+       1792728849.208,
+       "9818112"
+      ],
+      [
+       1792728864.208,
+       "8839168"
+      ],
+      [
+       1792728879.208,
+       "8839168"
+      ]
+     ]
+    }
+   ]
+  }
+ ],
+ "scenario_id": "payment-slow-dependency",
+ "schema_version": 1,
+ "step_seconds": 15,
+ "window": {
+  "end_at": "2026-10-23T04:14:39.208234+00:00",
+  "start_at": "2026-10-23T04:07:39.208234+00:00"
+ }
+}

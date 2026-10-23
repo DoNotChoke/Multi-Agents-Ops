@@ -30,8 +30,13 @@ def _git_sha() -> str:
     return f"{sha}-dirty" if _git(git, "status", "--porcelain") else sha
 
 
-def write_report(scenarios: list[dict[str, Any]], out_root: Path = REPORTS_DIR) -> Path:
+def write_report(
+    scenarios: list[dict[str, Any]],
+    out_root: Path = REPORTS_DIR,
+    detections: dict[str, dict[str, Any]] | None = None,
+) -> Path:
     """Write report.json and report.md under a new timestamped directory and return it."""
+    detections = detections or {}
     now = datetime.now(UTC)
     out = out_root / now.strftime("%Y%m%dT%H%M%S%fZ")
     out.mkdir(parents=True)
@@ -41,6 +46,7 @@ def write_report(scenarios: list[dict[str, Any]], out_root: Path = REPORTS_DIR) 
             "lab_fault": s["setup"]["lab_fault"],
             "status": "skipped",
             "reason": SKIP_REASON,
+            "detection": detections.get(s["id"], {"status": "not_run"}),
         }
         for s in scenarios
     ]
@@ -53,7 +59,8 @@ def write_report(scenarios: list[dict[str, Any]], out_root: Path = REPORTS_DIR) 
     }
     (out / "report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     rows = "\n".join(
-        f"| {r['id']} | {r['lab_fault']} | {r['status']} | {r['reason']} |" for r in results
+        f"| {r['id']} | {r['lab_fault']} | {r['detection']['status']} | {r['status']} |"
+        for r in results
     )
     (out / "report.md").write_text(
         f"# Eval report\n\n- generated_at: {report['generated_at']}\n"
