@@ -22,12 +22,12 @@ LOG_LIMIT = 200
 
 METRIC_QUERIES = {
     "request_rate": 'sum by (service, code) (rate(http_requests_total{namespace="shop"}[1m]))',
-    "latency_p95": (
+    "http_latency_p95": (
         "histogram_quantile(0.95, sum by (service, le) "
         '(rate(http_request_duration_seconds_bucket{namespace="shop"}[1m])))'
     ),
     "db_pool_wait": 'sum by (pod) (rate(db_pool_acquire_wait_seconds_total{namespace="shop"}[1m]))',
-    "restarts": 'sum by (pod) (kube_pod_container_status_restarts_total{namespace="shop"})',
+    "pod_restarts": 'sum by (pod) (kube_pod_container_status_restarts_total{namespace="shop"})',
     "memory_working_set": (
         'sum by (pod) (container_memory_working_set_bytes{namespace="shop", container="app"})'
     ),

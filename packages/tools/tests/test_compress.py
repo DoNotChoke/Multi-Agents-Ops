@@ -99,7 +99,7 @@ def test_anomaly_count_is_capped_at_five() -> None:
 def test_replayed_db_pool_incident_shows_checkout_latency_jump() -> None:
     replay = Path(__file__).parents[3] / "evals/replay/checkout-db-pool-after-release/replay.json"
     doc = json.loads(replay.read_text(encoding="utf-8"))
-    (latency,) = [m for m in doc["metrics"] if m["query_id"] == "latency_p95"]
+    (latency,) = [m for m in doc["metrics"] if m["query_id"] == "http_latency_p95"]
     out = compress_series(latency["result"], LIMITS)
     by_service = {s["labels"]["service"]: s for s in out["series"]}
     assert by_service["checkout"]["anomalies"][0]["peak"] > 2.0

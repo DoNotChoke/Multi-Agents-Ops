@@ -2327,7 +2327,7 @@
   },
   {
    "promql": "histogram_quantile(0.95, sum by (service, le) (rate(http_request_duration_seconds_bucket{namespace=\"shop\"}[1m])))",
-   "query_id": "latency_p95",
+   "query_id": "http_latency_p95",
    "result": [
     {
      "metric": {
@@ -2976,7 +2976,7 @@
   },
   {
    "promql": "sum by (pod) (kube_pod_container_status_restarts_total{namespace=\"shop\"})",
-   "query_id": "restarts",
+   "query_id": "pod_restarts",
    "result": [
     {
      "metric": {
