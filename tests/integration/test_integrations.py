@@ -1,4 +1,6 @@
+import json
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -15,6 +17,7 @@ pytestmark = pytest.mark.integration
 FAKE_TOKEN = "dev-only-prometheus-bearer-xyz"
 PUBLIC = "https://93.184.216.34"  # an IP literal, so no DNS lookup happens in tests
 LAB = "http://127.0.0.1:30090"
+LAB_MAPPING = json.loads(Path("deploy/lab/metric_mapping.json").read_text(encoding="utf-8"))
 
 
 async def _who(engine: AsyncEngine, role: str = "admin") -> tuple[str, str]:
@@ -182,8 +185,23 @@ async def test_permissions_and_isolation(app_engine: AsyncEngine) -> None:
 
 @pytest.mark.parametrize(
     "extra",
-    [{"mode": "runner"}, {"type": "loki"}, {"tenant_id": "tnt_x"}, {"credentials": "x" * 5000}],
+    [
+        {"mode": "runner"},
+        {"type": "loki"},
+        {"tenant_id": "tnt_x"},
+        {"credentials": "x" * 5000},
+        {"config": {"endpoint": PUBLIC, "metric_mapping": {"raw": "up"}}},
+        {"config": {"endpoint": PUBLIC, "metric_mapping": {"request_rate": 'x{t="${tenant}"}'}}},
+    ],
 )
 async def test_invalid_bodies(app_engine: AsyncEngine, extra: dict[str, Any]) -> None:
     resp = _call(app_engine, "POST", "/integrations", await _who(app_engine), json=_body() | extra)
     assert (resp.status_code, resp.json()["code"]) == (422, "request.invalid")
+
+
+async def test_lab_metric_mapping_is_stored(app_engine: AsyncEngine) -> None:
+    mapping = LAB_MAPPING
+    body = _body(endpoint=LAB) | {"config": {"endpoint": LAB, "metric_mapping": mapping}}
+    resp = _call(app_engine, "POST", "/integrations", await _who(app_engine), json=body)
+    assert resp.status_code == 201, resp.text
+    assert resp.json()["config"]["metric_mapping"] == mapping

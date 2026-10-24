@@ -17,7 +17,8 @@ from opsteam_tools.connectors.prometheus import (
     ConnectorError,
     PrometheusConnector,
 )
-from pydantic import BaseModel, ConfigDict, Field, SecretStr
+from opsteam_tools.registry.templates import TemplateError, validate_mapping
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
@@ -49,9 +50,16 @@ class Config(BaseModel):
     model_config = ConfigDict(extra="forbid")
     endpoint: str = Field(max_length=2048)
     # Template name -> customer metric expression; set by admins, never by the LLM.
-    metric_mapping: dict[str, Annotated[str, Field(max_length=1000)]] = Field(
-        default_factory=dict, max_length=50
-    )
+    metric_mapping: dict[str, str] = Field(default_factory=dict, max_length=50)
+
+    @field_validator("metric_mapping")
+    @classmethod
+    def _known_templates_only(cls, mapping: dict[str, str]) -> dict[str, str]:
+        try:
+            validate_mapping(mapping)
+        except TemplateError as exc:
+            raise ValueError(str(exc)) from exc
+        return mapping
 
 
 class NewIntegration(BaseModel):

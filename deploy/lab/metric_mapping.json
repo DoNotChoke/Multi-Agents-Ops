@@ -1,0 +1,8 @@
+{
+  "http_latency_p95": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{namespace=\"shop\", service=\"${service}\"}[5m])))",
+  "http_error_rate": "sum(rate(http_requests_total{namespace=\"shop\", service=\"${service}\", code=~\"5..\"}[5m])) / sum(rate(http_requests_total{namespace=\"shop\", service=\"${service}\"}[5m]))",
+  "request_rate": "sum(rate(http_requests_total{namespace=\"shop\", service=\"${service}\"}[5m]))",
+  "pod_restarts": "sum(increase(kube_pod_container_status_restarts_total{namespace=\"shop\", pod=~\"${service}-.*\"}[15m]))",
+  "memory_working_set": "sum(container_memory_working_set_bytes{namespace=\"shop\", container=\"app\", pod=~\"${service}-.*\"})",
+  "cpu_saturation": "sum(rate(container_cpu_usage_seconds_total{namespace=\"shop\", container=\"app\", pod=~\"${service}-.*\"}[5m])) / sum(kube_pod_container_resource_requests{namespace=\"shop\", resource=\"cpu\", pod=~\"${service}-.*\"})"
+}
