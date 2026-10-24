@@ -159,6 +159,21 @@
         "title": "HTTPValidationError",
         "type": "object"
       },
+      "ImportRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "integration_id": {
+            "pattern": "^int_[0-9A-HJKMNP-TV-Z]{26}$",
+            "title": "Integration Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "integration_id"
+        ],
+        "title": "ImportRequest",
+        "type": "object"
+      },
       "Integration": {
         "properties": {
           "config": {
@@ -699,6 +714,50 @@
           "items"
         ],
         "title": "ServiceList",
+        "type": "object"
+      },
+      "Suggestion": {
+        "properties": {
+          "environment": {
+            "title": "Environment",
+            "type": "string"
+          },
+          "exists": {
+            "title": "Exists",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "environment",
+          "exists"
+        ],
+        "title": "Suggestion",
+        "type": "object"
+      },
+      "Suggestions": {
+        "properties": {
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/Suggestion"
+            },
+            "title": "Suggestions",
+            "type": "array"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "suggestions",
+          "truncated"
+        ],
+        "title": "Suggestions",
         "type": "object"
       },
       "Tenant": {
@@ -1793,6 +1852,82 @@
           }
         },
         "summary": "Create Service",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/api/v1/services/import/prometheus": {
+      "post": {
+        "description": "Propose catalog entries from Prometheus labels; nothing is saved until the user confirms.",
+        "operationId": "suggest_services_api_v1_services_import_prometheus_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Tenant-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Suggestions"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suggest Services",
         "tags": [
           "catalog"
         ]

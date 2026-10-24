@@ -1,22 +1,26 @@
 """Service catalog: the tenant's services, named after OpenTelemetry, and their dependencies."""
 
+import re
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Path, Request, Response
 from opsteam_core.context import RequestContext
-from opsteam_core.errors import OpsteamError
+from opsteam_core.errors import NetguardBlocked, OpsteamError
 from opsteam_core.ids import new_id
 from opsteam_db import audit, tenant_session
+from opsteam_tools.connectors.prometheus import ConnectorError
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
 from opsteam_api.deps import require_scope
+from opsteam_api.routers.integrations import IntegrationUnavailable, prometheus_for
 
 router = APIRouter(prefix="/api/v1", tags=["catalog"])
 
 # Same alphabet as query-template parameters, so a catalog name is always safe to put in a query.
-Name = Annotated[str, Field(pattern=r"^[A-Za-z0-9_.\-/:]{1,128}$")]
+NAME = re.compile(r"[A-Za-z0-9_.\-/:]{1,128}")
+Name = Annotated[str, Field(pattern=f"^{NAME.pattern}$")]
 ServiceId = Annotated[str, Path(pattern=r"^svc_[0-9A-HJKMNP-TV-Z]{26}$")]
 Criticality = Literal["low", "medium", "high", "critical"]
 Reader = Annotated[RequestContext, Depends(require_scope("catalog:read"))]
@@ -196,3 +200,53 @@ async def topology(request: Request, ctx: Reader) -> Topology:
 def _ref(row: dict[str, Any]) -> dict[str, Any]:
     keys = ("service_id", "name", "environment")
     return {"type": "service"} | {k: row[k] for k in keys}
+
+
+# Cheap (only `up` series) and yields (service, namespace) pairs; written by code, never by input.
+SUGGEST_QUERY = 'group by (service, namespace) (up{service!=""})'
+MAX_SUGGESTIONS = 200
+
+
+class ImportRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    integration_id: Annotated[str, Field(pattern=r"^int_[0-9A-HJKMNP-TV-Z]{26}$")]
+
+
+class Suggestion(BaseModel):
+    name: str
+    environment: str
+    exists: bool
+
+
+class Suggestions(BaseModel):
+    suggestions: list[Suggestion]
+    truncated: bool
+
+
+@router.post("/services/import/prometheus")
+async def suggest_services(request: Request, ctx: Writer, body: ImportRequest) -> Suggestions:
+    """Propose catalog entries from Prometheus labels; nothing is saved until the user confirms."""
+    prometheus = await prometheus_for(request, ctx, body.integration_id)
+    try:
+        data = await prometheus.query(SUGGEST_QUERY)
+    except (ConnectorError, NetguardBlocked) as exc:
+        raise IntegrationUnavailable(str(exc)) from exc
+    # Labels come from the customer's system: keep only values a catalog name could hold.
+    pairs = sorted(
+        {
+            (m.get("service", ""), m.get("namespace", ""))
+            for m in (r.get("metric", {}) for r in data.get("result", []))
+            if NAME.fullmatch(str(m.get("service", "")))
+            and NAME.fullmatch(str(m.get("namespace", "")))
+        }
+    )
+    async with tenant_session(request.app.state.engine, ctx) as session:
+        rows = await session.execute(text("select name, environment from services"))
+        existing = {(name, environment) for name, environment in rows}
+    return Suggestions(
+        suggestions=[
+            Suggestion(name=n, environment=e, exists=(n, e) in existing)
+            for n, e in pairs[:MAX_SUGGESTIONS]
+        ],
+        truncated=len(pairs) > MAX_SUGGESTIONS,
+    )

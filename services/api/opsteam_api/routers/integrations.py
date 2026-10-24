@@ -319,3 +319,39 @@ async def _live_checks(request: Request, endpoint: str, token: SecretStr | None)
         Check(name="reachable", ok=True, detail=f"Prometheus {version}"),
         Check(name="query_up", ok=count > 0, detail=f"{count} scrape targets"),
     ]
+
+
+class IntegrationUnavailable(OpsteamError):
+    code = "integration.unavailable"
+
+
+async def prometheus_for(
+    request: Request, ctx: RequestContext, integration_id: str
+) -> PrometheusConnector:
+    """A connector for one of the tenant's active integrations, with its stored credentials."""
+    async with tenant_session(request.app.state.engine, ctx) as session:
+        row = (
+            await session.execute(
+                text(
+                    "select endpoint, credentials_ref, status from integrations"
+                    " where integration_id = :id"
+                ),
+                {"id": integration_id},
+            )
+        ).one_or_none()
+    if row is None:
+        raise IntegrationNotFound("integration not found")
+    if row.status != "active":
+        raise IntegrationUnavailable("integration is disabled")
+    token = None
+    if row.credentials_ref is not None:
+        try:
+            token = await request.app.state.secrets.get(ctx, row.credentials_ref)
+        except (SecretNotFound, SecretUnreadable) as exc:
+            raise IntegrationUnavailable("integration credentials cannot be read") from exc
+    return PrometheusConnector(
+        row.endpoint,
+        token,
+        dev_allow=request.app.state.dev_allow,
+        transport=request.app.state.http_transport,
+    )
