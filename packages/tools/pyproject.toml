@@ -9,6 +9,7 @@ dependencies = [
     "opsteam-evidence",
     "opsteam-policy",
     "httpx>=0.28.1",
+    "redis>=8.1.0",
 ]
 
 [build-system]

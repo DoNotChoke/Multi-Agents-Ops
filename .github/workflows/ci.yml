@@ -81,6 +81,10 @@ jobs:
           docker run -d --name rustfs -p 127.0.0.1:9000:9000
           -e RUSTFS_ACCESS_KEY=dev-only-s3-access -e RUSTFS_SECRET_KEY=dev-only-s3-secret
           -e RUSTFS_ADDRESS=:9000 rustfs/rustfs:1.0.3
+      - name: start redis
+        run: >-
+          docker run -d --name redis -p 127.0.0.1:6379:6379 redis:8.10.2-alpine
+          redis-server --requirepass dev-only-redis
       - run: uv sync
       - run: make test-integration
 
