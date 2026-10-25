@@ -1,5 +1,6 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { auth, signOut } from "@/auth";
 import { Shell } from "@/components/shell";
 import { Empty } from "@/components/states";
@@ -31,6 +32,7 @@ async function leave() {
 }
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
+  await connection(); // auth() draws random values; never prerender
   const session = await auth();
   const requestHeaders = await headers();
   const token =

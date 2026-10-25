@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { auth, signIn } from "@/auth";
 import { Logo } from "./shell";
 
@@ -26,6 +27,8 @@ async function start(form: FormData) {
 }
 
 export async function AuthScreen({ mode }: { mode: "signin" | "signup" }) {
+  // auth() draws random values, which Next refuses while prerendering; render per request instead.
+  await connection();
   if (await auth()) redirect("/");
   const signup = mode === "signup";
   return (
