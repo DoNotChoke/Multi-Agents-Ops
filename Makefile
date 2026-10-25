@@ -122,12 +122,7 @@ toolcall: export OPSTEAM_S3_SECRET_KEY ?= $(S3_SECRET_KEY)
 toolcall:
 	uv run python -m opsteam_worker.toolcall $(ARGS)
 
-# The web app signs in through the compose Keycloak and forwards /api/v1/* to run-api.
-run-web: export AUTH_SECRET ?= $(shell printf 'dev-only-auth-secret-not-for-prod' | base64)
-run-web: export AUTH_KEYCLOAK_ID ?= opsteam-web
-run-web: export AUTH_KEYCLOAK_SECRET ?= $(KEYCLOAK_WEB_CLIENT_SECRET)
-run-web: export AUTH_KEYCLOAK_ISSUER ?= http://localhost:8080/realms/opsteam
-run-web: export OPSTEAM_API_URL ?= http://127.0.0.1:8000
+# Dev settings (compose Keycloak, run-api) come from web/.env.development.
 run-web:
 	pnpm -C web dev
 

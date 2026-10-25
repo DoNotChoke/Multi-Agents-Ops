@@ -39,7 +39,19 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       { headers: requestHeaders },
       requestHeaders.get("x-forwarded-proto") === "https",
     ));
-  if (!session?.user || !token) redirect("/sign-in");
+  // proxy.ts sends visitors without a session cookie to /sign-in; this covers an expired one.
+  if (!session?.user || !token) {
+    return (
+      <Empty
+        title="Your session has ended"
+        action={
+          <a href="/sign-in" className="text-brand-700 hover:underline">
+            Sign in again
+          </a>
+        }
+      />
+    );
+  }
 
   const me = await apiGet<{ memberships: Membership[] }>(
     "/api/v1/me",

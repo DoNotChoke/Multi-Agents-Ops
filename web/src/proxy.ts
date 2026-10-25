@@ -4,8 +4,20 @@ const IDP_ORIGIN = new URL(
   process.env.AUTH_KEYCLOAK_ISSUER ?? "http://localhost:8080",
 ).origin;
 
-/** Per-request CSP nonce plus the security headers every page carries. */
+const PUBLIC = new Set(["/sign-in", "/sign-up"]);
+const SESSION_COOKIES = [
+  "authjs.session-token",
+  "__Secure-authjs.session-token",
+];
+
+/** Sends visitors without a session to sign in; otherwise adds a per-request CSP nonce and security headers. */
 export function proxy(request: NextRequest) {
+  if (
+    !PUBLIC.has(request.nextUrl.pathname) &&
+    !SESSION_COOKIES.some((c) => request.cookies.has(c))
+  ) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
+  }
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const dev = process.env.NODE_ENV === "development";
   // The dev overlay needs eval and inline styles; production allows neither.

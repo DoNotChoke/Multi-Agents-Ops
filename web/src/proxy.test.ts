@@ -3,8 +3,11 @@ import { NextRequest } from "next/server";
 import { expect, test } from "vitest";
 import { proxy } from "./proxy";
 
+const signedIn = (url: string) =>
+  new NextRequest(url, { headers: { cookie: "authjs.session-token=sealed" } });
+
 test("pages carry a nonce CSP and the security headers", () => {
-  const response = proxy(new NextRequest("http://localhost:3000/integrations"));
+  const response = proxy(signedIn("http://localhost:3000/integrations"));
   const csp = response.headers.get("content-security-policy") ?? "";
   expect(csp).toMatch(
     /script-src 'self' 'nonce-[A-Za-z0-9+/=]+' 'strict-dynamic'/,
@@ -20,8 +23,28 @@ test("pages carry a nonce CSP and the security headers", () => {
 
 test("every request gets a fresh nonce", () => {
   const nonce = () =>
-    proxy(new NextRequest("http://localhost:3000/"))
+    proxy(signedIn("http://localhost:3000/"))
       .headers.get("content-security-policy")
       ?.match(/nonce-([^']+)/)?.[1];
-  expect(nonce()).not.toBe(nonce());
+  const first = nonce();
+  expect(first).toBeTruthy();
+  expect(first).not.toBe(nonce());
+});
+
+test("a visitor without a session is sent to sign in, before anything renders", () => {
+  const response = proxy(new NextRequest("http://localhost:3000/services"));
+  expect(response.status).toBe(307);
+  expect(response.headers.get("location")).toBe(
+    "http://localhost:3000/sign-in",
+  );
+});
+
+test("the sign-in and sign-up pages stay reachable without a session", () => {
+  for (const path of ["/sign-in", "/sign-up"]) {
+    const response = proxy(new NextRequest(`http://localhost:3000${path}`));
+    expect(response.headers.get("location")).toBeNull();
+    expect(response.headers.get("content-security-policy")).toContain(
+      "frame-ancestors 'none'",
+    );
+  }
 });
