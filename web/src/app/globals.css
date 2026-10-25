@@ -1,49 +1,36 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import "tailwindcss";
+
+/* White surfaces, one blue, muted status colours. */
+@theme {
+  --color-ink: #16202a;
+  --color-ink-2: #3c4a58;
+  --color-muted: #64748a;
+  --color-line: #e2e7ed;
+  --color-line-2: #eef1f4;
+  --color-wash: #f7f9fb;
+  --color-brand-50: #eff5fe;
+  --color-brand-100: #dbe7fb;
+  --color-brand-600: #3b7be0;
+  --color-brand-700: #2563d0;
+  --color-brand-800: #1a4f96;
+  --color-brand-900: #102f57;
+  --color-ok: #1d7347;
+  --color-ok-bg: #e7f3ec;
+  --color-warn: #935a00;
+  --color-warn-bg: #fbf1df;
+  --color-crit: #ad2a22;
+  --color-crit-bg: #faeceb;
+  --font-sans:
+    var(--font-fustat), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:
+    var(--font-dm-mono), ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-wash font-sans text-sm text-ink antialiased;
   }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+  :focus-visible {
+    @apply outline-2 outline-offset-1 outline-brand-600;
   }
 }

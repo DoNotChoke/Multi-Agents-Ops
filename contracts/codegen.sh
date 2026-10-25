@@ -34,3 +34,4 @@ done
 
 # OpenAPI from FastAPI; the web client is generated from this file.
 uv run python -m opsteam_api.openapi contracts/openapi/openapi.json
+web/node_modules/.bin/openapi-typescript contracts/openapi/openapi.json -o web/src/generated/api.ts --root-types
