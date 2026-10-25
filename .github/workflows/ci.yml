@@ -76,6 +76,11 @@ jobs:
           docker run -d --name opa -p 127.0.0.1:8181:8181
           -v "$PWD/policies:/policies:ro" openpolicyagent/opa:1.21.3-debug
           run --server --addr=0.0.0.0:8181 /policies
+      - name: start rustfs
+        run: >-
+          docker run -d --name rustfs -p 127.0.0.1:9000:9000
+          -e RUSTFS_ACCESS_KEY=dev-only-s3-access -e RUSTFS_SECRET_KEY=dev-only-s3-secret
+          -e RUSTFS_ADDRESS=:9000 rustfs/rustfs:1.0.3
       - run: uv sync
       - run: make test-integration
 

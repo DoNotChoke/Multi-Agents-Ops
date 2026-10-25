@@ -36,6 +36,7 @@ dev = [
     "pyyaml>=6.0.3",
     "rfc3339-validator>=0.1.4",
     "ruff",
+    "types-boto3[s3]>=1.43.118",
 ]
 
 [tool.uv]

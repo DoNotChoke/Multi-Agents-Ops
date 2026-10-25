@@ -97,6 +97,27 @@ async def _secrets(s: AsyncSession, t: str) -> Row:
     )
 
 
+async def _tool_calls(s: AsyncSession, t: str) -> Row:
+    return (
+        "insert into tool_calls (tool_call_id, tenant_id, tool, request, status)"
+        " values (:id, :t, 'metrics.query_range', '{}', 'ok')",
+        {"id": new_id("tc"), "t": t},
+    )
+
+
+async def _evidence(s: AsyncSession, t: str) -> Row:
+    sql, params = await _tool_calls(s, t)
+    await s.execute(text(sql), params)
+    return (
+        "insert into evidence (evidence_id, tenant_id, source_type, tool, tool_call_id,"
+        " source_query, time_window, collected_at, summary, content_hash, redaction_status,"
+        " truncated, payload_reference)"
+        " values (:id, :t, 'metrics', 'metrics.query_range', :tc, '{}', '{}', now(), '',"
+        " :hash, 'none_needed', false, 'k')",
+        {"id": new_id("ev"), "t": t, "tc": params["id"], "hash": "sha256:" + "0" * 64},
+    )
+
+
 FACTORIES: dict[str, Factory] = {
     "tenants": _tenants,
     "memberships": _memberships,
@@ -106,6 +127,8 @@ FACTORIES: dict[str, Factory] = {
     "runners": _runners,
     "audit_events": _audit_events,
     "secrets": _secrets,
+    "tool_calls": _tool_calls,
+    "evidence": _evidence,
 }
 
 

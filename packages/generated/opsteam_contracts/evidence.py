@@ -35,7 +35,7 @@ class Evidence(BaseModel):
     schema_version: Literal[1]
     evidence_id: Annotated[str, Field(pattern="^ev_[0-9A-HJKMNP-TV-Z]{26}$")]
     tenant_id: Annotated[str, Field(pattern="^tnt_[0-9A-HJKMNP-TV-Z]{26}$")]
-    incident_id: Annotated[str, Field(pattern="^inc_[0-9A-HJKMNP-TV-Z]{26}$")]
+    incident_id: Annotated[str | None, Field(pattern="^inc_[0-9A-HJKMNP-TV-Z]{26}$")] = None
     integration_id: Annotated[str | None, Field(pattern="^int_[0-9A-HJKMNP-TV-Z]{26}$")] = None
     source_type: SourceType
     tool: Annotated[str, Field(max_length=64, pattern="^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$")]
@@ -48,5 +48,5 @@ class Evidence(BaseModel):
     content_hash: Annotated[str, Field(pattern="^sha256:[0-9a-f]{64}$")]
     redaction_status: RedactionStatus
     truncated: bool
-    payload_reference: Annotated[str, Field(max_length=512)]
+    payload_reference: Annotated[str | None, Field(max_length=512)] = None
     derived_from: Annotated[list[common.EvidenceId] | None, Field(min_length=1)] = None

@@ -9,7 +9,7 @@ export interface Evidence {
   schema_version: 1;
   evidence_id: string;
   tenant_id: string;
-  incident_id: string;
+  incident_id?: string;
   integration_id?: string;
   source_type: "metrics" | "logs" | "traces" | "k8s" | "deployment" | "audit" | "probe" | "derived";
   tool: string;
@@ -24,7 +24,7 @@ export interface Evidence {
   content_hash: string;
   redaction_status: "none_needed" | "redacted" | "redaction_failed";
   truncated: boolean;
-  payload_reference: string;
+  payload_reference?: string;
   /**
    * @minItems 1
    */

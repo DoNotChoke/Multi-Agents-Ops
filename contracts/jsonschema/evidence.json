@@ -2,13 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://contracts.opsteam.dev/evidence.json",
   "title": "Evidence",
-  "$comment": "Collected data with provenance (docs/04 §3.3). redaction_failed => payload never reaches the LLM.",
+  "$comment": "Collected data with provenance (docs/04 §3.3). redaction_failed => no payload is stored and none reaches the LLM. incident_id is absent for ad-hoc calls (dev CLI).",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "evidence_id", "tenant_id", "incident_id", "source_type", "tool", "tool_call_id",
+    "schema_version", "evidence_id", "tenant_id", "source_type", "tool", "tool_call_id",
     "source_query", "time_window", "collected_at", "summary", "content_hash", "redaction_status",
-    "truncated", "payload_reference"
+    "truncated"
   ],
   "properties": {
     "schema_version": { "$ref": "common.json#/$defs/SchemaVersion" },
