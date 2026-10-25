@@ -99,9 +99,9 @@ services:
       retries: 20
 
   opa:
-    # -debug variant ships busybox (no wget); OPA loads /policies before it starts listening.
+    # -debug variant ships busybox (no wget); --watch reloads edited policies in dev.
     image: openpolicyagent/opa:1.21.3-debug
-    command: ["run", "--server", "--addr=0.0.0.0:8181", "--log-level=info", "/policies"]
+    command: ["run", "--server", "--addr=0.0.0.0:8181", "--log-level=info", "--watch", "/policies"]
     volumes:
       - ../../policies:/policies:ro
     ports:

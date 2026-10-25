@@ -70,6 +70,12 @@ jobs:
           -v migrator_password="$OPSTEAM_MIGRATOR_DB_PASSWORD"
           -v system_password="$OPSTEAM_SYSTEM_DB_PASSWORD"
           -f packages/db/opsteam_db/sql/roles.sql
+      # Not a service container: those start before checkout, so they cannot mount policies/.
+      - name: start opa
+        run: >-
+          docker run -d --name opa -p 127.0.0.1:8181:8181
+          -v "$PWD/policies:/policies:ro" openpolicyagent/opa:1.21.3-debug
+          run --server --addr=0.0.0.0:8181 /policies
       - run: uv sync
       - run: make test-integration
 

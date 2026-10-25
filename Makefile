@@ -4,6 +4,11 @@
 
 REQUIRED_TOOLS := uv go pnpm golangci-lint
 
+# Local opa CLI if installed, else the same image dev-up runs; MSYS_NO_PATHCONV keeps Git Bash
+# from rewriting the container paths.
+OPA_IMAGE := openpolicyagent/opa:1.21.3-debug
+OPA := $(if $(shell command -v opa 2>/dev/null),opa,MSYS_NO_PATHCONV=1 docker run --rm 	-v "$(CURDIR)/policies:/policies:ro" -w / $(OPA_IMAGE))
+
 # Fails loudly so a stub can never pass for a real check (e.g. in CI).
 not_implemented = @echo "make $@: not implemented yet ($(1))" >&2; exit 1
 
@@ -21,6 +26,7 @@ lint:
 	uv run ruff format --check .
 	uv run mypy
 	uv run lint-imports
+	$(OPA) check --strict policies
 	cd runner && golangci-lint run ./...
 	cd deploy/lab/demo-app && golangci-lint run ./...
 	pnpm -C web lint
@@ -29,6 +35,7 @@ lint:
 
 test:
 	uv run pytest
+	$(OPA) test policies
 	go -C runner test ./...
 	go -C deploy/lab/demo-app test ./...
 	pnpm -C web test

@@ -1494,12 +1494,14 @@ name = "opsteam-policy"
 version = "0.0.0"
 source = { editable = "packages/policy" }
 dependencies = [
+    { name = "httpx" },
     { name = "opsteam-contracts" },
     { name = "opsteam-core" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "opsteam-contracts", editable = "packages/generated" },
     { name = "opsteam-core", editable = "packages/core" },
 ]
