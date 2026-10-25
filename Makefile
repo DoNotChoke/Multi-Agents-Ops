@@ -122,6 +122,11 @@ toolcall: export OPSTEAM_S3_SECRET_KEY ?= $(S3_SECRET_KEY)
 toolcall:
 	uv run python -m opsteam_worker.toolcall $(ARGS)
 
+# Browser test of the web app; needs dev-up, lab-up, dev-seed and run-api.
+test-e2e: export KEYCLOAK_DEV_USER_PASSWORD ?= dev-only-user-password
+test-e2e:
+	pnpm -C web exec playwright test
+
 # Dev settings (compose Keycloak, run-api) come from web/.env.development.
 run-web:
 	pnpm -C web dev
@@ -131,6 +136,5 @@ dev-seed:
 	uv run python -m opsteam_api.devseed
 
 run-ingest:       ; $(call not_implemented,T-2.1)
-test-e2e:         ; $(call not_implemented,T-2.7)
 run-worker:       ; $(call not_implemented,T-3.6)
 run-runner:       ; $(call not_implemented,T-5.2)

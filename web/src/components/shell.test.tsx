@@ -35,4 +35,5 @@ test("account details appear only when known", () => {
   );
   expect(screen.getByText("acme-dev")).toBeDefined();
   expect(screen.getByText("a@x.test")).toBeDefined();
+  expect(screen.getByText("DA")).toBeDefined();
 });

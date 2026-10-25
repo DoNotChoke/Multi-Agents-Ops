@@ -138,7 +138,12 @@ export function Shell({
         {account && (
           <div className="mt-auto flex items-center gap-2.5 border-t border-line-2 px-3.5 py-3">
             <span className="grid size-7 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-800">
-              {account.name.slice(0, 2).toUpperCase()}
+              {account.name
+                .split(/\s+/)
+                .map((word) => word[0])
+                .join("")
+                .slice(0, 2)
+                .toUpperCase()}
             </span>
             <div className="min-w-0 flex-1 leading-tight">
               <div className="truncate font-semibold">{account.name}</div>
