@@ -18,18 +18,28 @@ export type Account = {
   name: string;
   email: string;
   tenant: string;
+  tenantId: string;
   role: string;
 };
 
-export function Logo({ size = 26 }: { size?: number }) {
+type Props = {
+  account?: Account;
+  tenants?: { id: string; name: string }[];
+  onSwitchTenant?: (form: FormData) => Promise<void>;
+  onSignOut?: () => Promise<void>;
+  children: React.ReactNode;
+};
+
+// Sizes are classes, not style attributes: the CSP allows no inline styles.
+const LOGO = {
+  sm: "size-[26px] rounded-md [&>svg]:size-[14px]",
+  lg: "size-14 rounded-[14px] [&>svg]:size-[30px]",
+};
+
+export function Logo({ size = "sm" }: { size?: keyof typeof LOGO }) {
   return (
-    <span
-      className="grid place-items-center rounded-[25%] bg-brand-700"
-      style={{ width: size, height: size }}
-    >
+    <span className={`grid place-items-center bg-brand-700 ${LOGO[size]}`}>
       <svg
-        width={size * 0.55}
-        height={size * 0.55}
         viewBox="0 0 24 24"
         fill="none"
         stroke="#fff"
@@ -44,11 +54,11 @@ export function Logo({ size = 26 }: { size?: number }) {
 
 export function Shell({
   account,
+  tenants = [],
+  onSwitchTenant,
+  onSignOut,
   children,
-}: {
-  account?: Account;
-  children: React.ReactNode;
-}) {
+}: Props) {
   const path = usePathname();
   return (
     <div className="grid min-h-screen grid-cols-[228px_1fr]">
@@ -61,7 +71,25 @@ export function Shell({
         </div>
         {account && (
           <div className="m-3 rounded-md border border-line px-2.5 py-2">
-            <strong>{account.tenant}</strong>
+            {tenants.length > 1 && onSwitchTenant ? (
+              <form action={onSwitchTenant}>
+                <select
+                  name="tenant"
+                  aria-label="Organization"
+                  defaultValue={account.tenantId}
+                  onChange={(e) => e.currentTarget.form?.requestSubmit()}
+                  className="w-full bg-transparent font-semibold"
+                >
+                  {tenants.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </form>
+            ) : (
+              <strong>{account.tenant}</strong>
+            )}
             <small className="block text-[11.5px] text-muted">
               {account.role}
             </small>
@@ -112,10 +140,20 @@ export function Shell({
             <span className="grid size-7 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-800">
               {account.name.slice(0, 2).toUpperCase()}
             </span>
-            <div className="leading-tight">
-              <div className="font-semibold">{account.name}</div>
-              <div className="text-xs text-muted">{account.email}</div>
+            <div className="min-w-0 flex-1 leading-tight">
+              <div className="truncate font-semibold">{account.name}</div>
+              <div className="truncate text-xs text-muted">{account.email}</div>
             </div>
+            {onSignOut && (
+              <form action={onSignOut}>
+                <button
+                  type="submit"
+                  className="text-xs text-muted hover:text-ink"
+                >
+                  Sign out
+                </button>
+              </form>
+            )}
           </div>
         )}
       </aside>

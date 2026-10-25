@@ -34,3 +34,31 @@
     @apply outline-2 outline-offset-1 outline-brand-600;
   }
 }
+
+/* Dot grid fading toward the top, behind the sign-in tagline. */
+.halftone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    rgb(255 255 255 / 0.5) 1.1px,
+    transparent 1.5px
+  );
+  background-size: 7px 7px;
+  mask-image: linear-gradient(
+    to top,
+    #000,
+    rgb(0 0 0 / 0.5) 45%,
+    transparent 85%
+  );
+}
+.halftone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 75% 115%,
+    rgb(255 255 255 / 0.25),
+    transparent 60%
+  );
+}

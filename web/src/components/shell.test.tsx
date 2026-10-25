@@ -26,6 +26,7 @@ test("account details appear only when known", () => {
         name: "Dev Admin",
         email: "a@x.test",
         tenant: "acme-dev",
+        tenantId: "tnt_1",
         role: "Admin",
       }}
     >
