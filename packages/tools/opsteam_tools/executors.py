@@ -8,6 +8,7 @@ from typing import Any
 
 from opsteam_contracts.tool_request import ToolRequest
 from opsteam_contracts.tool_result import ToolResult
+from opsteam_core.canonical import JsonValue
 from opsteam_core.context import RequestContext
 from opsteam_core.errors import NetguardBlocked, OpsteamError
 from opsteam_core.ids import new_id
@@ -56,6 +57,7 @@ def result(
     data: dict[str, Any] | None = None,
     error: tuple[str, str] | None = None,
     started: float | None = None,
+    tool_call_id: str | None = None,
 ) -> ToolResult:
     """Build a ToolResult; usage counts the serialized data."""
     body = json.dumps(data) if data is not None else ""
@@ -63,7 +65,7 @@ def result(
     return ToolResult.model_validate(
         {
             "schema_version": 1,
-            "tool_call_id": new_id("tc"),
+            "tool_call_id": tool_call_id or new_id("tc"),
             "status": status,
             "evidence_ids": [],
             "summary": _summary(data),
@@ -90,18 +92,39 @@ async def dispatch(
     started = time.monotonic()
     try:
         spec, args = check_request(request, agent)
-        data = await backend.run(spec, args, target, catalog)
     except Denied as exc:
         return result("denied", error=(exc.reason, str(exc)), started=started)
+    answer, _ = await run_checked(backend, spec, args, target, catalog, started)
+    return answer
+
+
+async def run_checked(
+    backend: IntegrationBackend,
+    spec: ToolSpec,
+    args: BaseModel,
+    target: IntegrationTarget,
+    catalog: Set[tuple[str, str]],
+    started: float,
+    tool_call_id: str | None = None,
+) -> tuple[ToolResult, JsonValue]:
+    """Run already-checked arguments; returns the result and, when ok, the raw payload."""
+
+    def failed(status: str, exc: OpsteamError) -> tuple[ToolResult, JsonValue]:
+        error = (exc.code, str(exc))
+        return result(status, error=error, started=started, tool_call_id=tool_call_id), None
+
+    try:
+        fetched = await backend.run(spec, args, target, catalog)
     except TemplateError as exc:
-        return result("denied", error=(TemplateError.code, str(exc)), started=started)
+        return failed("denied", exc)
     except ConnectorTimeout as exc:
-        return result("timeout", error=(exc.code, str(exc)), started=started)
+        return failed("timeout", exc)
     except ResponseTooLarge as exc:
-        return result("limit_exceeded", error=(exc.code, str(exc)), started=started)
+        return failed("limit_exceeded", exc)
     except (ConnectorError, NetguardBlocked) as exc:
-        return result("error", error=(exc.code, str(exc)), started=started)
-    return result("ok", data=data, started=started)
+        return failed("error", exc)
+    answer = result("ok", data=fetched.data, started=started, tool_call_id=tool_call_id)
+    return answer, fetched.raw
 
 
 class FakeToolExecutor:

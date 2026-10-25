@@ -6,6 +6,7 @@ from datetime import timedelta
 from typing import Any, Protocol
 
 import httpx
+from opsteam_core.canonical import JsonValue
 from opsteam_core.clock import Clock, SystemClock
 from pydantic import BaseModel, SecretStr
 
@@ -25,6 +26,14 @@ class IntegrationTarget:
     metric_mapping: Mapping[str, str]
 
 
+@dataclass(frozen=True)
+class Fetched:
+    """`data` is the compressed answer for the agent; `raw` is what the integration returned."""
+
+    data: dict[str, Any]
+    raw: JsonValue
+
+
 class IntegrationBackend(Protocol):
     """Runs a tool whose arguments already passed the ToolSpec schema."""
 
@@ -34,7 +43,7 @@ class IntegrationBackend(Protocol):
         args: BaseModel,
         target: IntegrationTarget,
         catalog: Set[tuple[str, str]],
-    ) -> dict[str, Any]: ...
+    ) -> Fetched: ...
 
 
 @dataclass(frozen=True)
@@ -51,7 +60,7 @@ class DirectBackend:
         args: BaseModel,
         target: IntegrationTarget,
         catalog: Set[tuple[str, str]],
-    ) -> dict[str, Any]:
+    ) -> Fetched:
         prometheus = PrometheusConnector(
             target.endpoint,
             target.credentials,
@@ -71,9 +80,10 @@ class DirectBackend:
                 data = await prometheus.query_range(promql, start, end, args.step_seconds)
             else:
                 data = await prometheus.query(promql, args.at)
-            return compress_series(data.get("result", []), spec.limits)
+            return Fetched(compress_series(data.get("result", []), spec.limits), data)
         if isinstance(args, AlertsListArgs):
-            return _alerts(await prometheus.alerts(), args, spec.limits.max_series)
+            alerts = await prometheus.alerts()
+            return Fetched(_alerts(alerts, args, spec.limits.max_series), {"alerts": alerts})
         raise TypeError(f"no direct handler for {spec.name}")
 
 

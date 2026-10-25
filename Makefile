@@ -1,13 +1,13 @@
 .PHONY: setup codegen dev-up dev-down dev-reset dev-seed migrate lab-up lab-down lab-fault lab-heal lab-verify \
 	lint test test-integration test-security test-e2e eval \
-	run-api run-worker run-ingest run-web run-runner
+	run-api run-worker run-ingest run-web run-runner toolcall
 
 REQUIRED_TOOLS := uv go pnpm golangci-lint
 
 # Local opa CLI if installed, else the same image dev-up runs; MSYS_NO_PATHCONV keeps Git Bash
 # from rewriting the container paths.
 OPA_IMAGE := openpolicyagent/opa:1.21.3-debug
-OPA := $(if $(shell command -v opa 2>/dev/null),opa,MSYS_NO_PATHCONV=1 docker run --rm 	-v "$(CURDIR)/policies:/policies:ro" -w / $(OPA_IMAGE))
+OPA := $(if $(shell command -v opa 2>/dev/null),opa,MSYS_NO_PATHCONV=1 docker run --rm -v "$(CURDIR)/policies:/policies:ro" -w / $(OPA_IMAGE))
 
 # Fails loudly so a stub can never pass for a real check (e.g. in CI).
 not_implemented = @echo "make $@: not implemented yet ($(1))" >&2; exit 1
@@ -112,6 +112,18 @@ run-api dev-seed: export OPSTEAM_SECRETS_KEY ?= $(shell printf 'dev-only-secrets
 run-api dev-seed: export OPSTEAM_NETGUARD_DEV_ALLOW ?= ["127.0.0.1:30090"]
 run-api:
 	uv run uvicorn --factory opsteam_api.main:create_app --host 127.0.0.1 --port 8000
+
+# One metrics.query_range through the full Gateway (dev only), e.g.
+# make toolcall ARGS="--tenant tnt_… --integration int_… --service checkout --environment shop"
+toolcall: export OPSTEAM_ENV ?= dev
+toolcall: export OPSTEAM_DATABASE_URL ?= $(call DB_URL,opsteam_app,$(OPSTEAM_APP_DB_PASSWORD))
+toolcall: export OPSTEAM_SECRETS_KEY ?= $(shell printf 'dev-only-secrets-key-32-bytes!!!' | base64)
+toolcall: export OPSTEAM_NETGUARD_DEV_ALLOW ?= ["127.0.0.1:30090"]
+toolcall: export OPSTEAM_REDIS_URL ?= redis://:$(REDIS_PASSWORD)@127.0.0.1:6379/0
+toolcall: export OPSTEAM_S3_ACCESS_KEY ?= $(S3_ACCESS_KEY)
+toolcall: export OPSTEAM_S3_SECRET_KEY ?= $(S3_SECRET_KEY)
+toolcall:
+	uv run python -m opsteam_worker.toolcall $(ARGS)
 
 # Dev tenant acme-dev with the four realm users; needs `make dev-up migrate`.
 dev-seed:

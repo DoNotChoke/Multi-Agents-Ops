@@ -1586,11 +1586,23 @@ name = "opsteam-worker"
 version = "0.0.0"
 source = { editable = "services/worker" }
 dependencies = [
+    { name = "opsteam-contracts" },
     { name = "opsteam-core" },
+    { name = "opsteam-db" },
+    { name = "opsteam-evidence" },
+    { name = "opsteam-policy" },
+    { name = "opsteam-tools" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "opsteam-core", editable = "packages/core" }]
+requires-dist = [
+    { name = "opsteam-contracts", editable = "packages/generated" },
+    { name = "opsteam-core", editable = "packages/core" },
+    { name = "opsteam-db", editable = "packages/db" },
+    { name = "opsteam-evidence", editable = "packages/evidence" },
+    { name = "opsteam-policy", editable = "packages/policy" },
+    { name = "opsteam-tools", editable = "packages/tools" },
+]
 
 [[package]]
 name = "packaging"
