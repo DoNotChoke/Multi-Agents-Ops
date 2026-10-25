@@ -99,10 +99,10 @@ test("import adds only the picked suggestions; existing ones are locked", async 
   });
   renderWithQuery(<ServicesScreen />);
   fireEvent.click(
-    await screen.findByRole("button", { name: "Import from Prometheus" }),
+    await screen.findByRole("button", { name: "Import services" }),
   );
   const drawer = within(
-    screen.getByRole("dialog", { name: "Import from Prometheus" }),
+    screen.getByRole("dialog", { name: "Import services" }),
   );
   await drawer.findByRole("option", { name: "lab-prometheus" });
   fireEvent.click(drawer.getByRole("button", { name: "Find services" }));

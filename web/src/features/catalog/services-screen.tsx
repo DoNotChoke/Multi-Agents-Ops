@@ -37,7 +37,7 @@ export function ServicesScreen() {
 
   const actions = (
     <div className="flex gap-2">
-      <Button onClick={() => setImporting(true)}>Import from Prometheus</Button>
+      <Button onClick={() => setImporting(true)}>Import services</Button>
       <Button variant="primary" onClick={() => setEditing("new")}>
         Add service
       </Button>
@@ -269,7 +269,11 @@ function ImportDrawer({ onClose }: { onClose: () => void }) {
     });
 
   return (
-    <Dialog title="Import from Prometheus" onClose={onClose} side>
+    <Dialog title="Import services" onClose={onClose} side>
+      <p className="border-b border-line-2 px-4 pt-3 pb-2 text-[12.5px] text-muted">
+        From Prometheus labels: <span className="font-mono">service</span>,{" "}
+        <span className="font-mono">namespace</span>
+      </p>
       <div className="flex gap-2 border-b border-line-2 px-4 py-3">
         <select
           aria-label="Integration"
