@@ -264,6 +264,13 @@ forbidden_modules = [
 ]
 
 [[tool.importlinter.contracts]]
+# Detection never waits on or calls an LLM.
+name = "Ingest (T0) has no path to agents/LLM"
+type = "forbidden"
+source_modules = ["opsteam_ingest"]
+forbidden_modules = ["opsteam_agents", "opsteam_llm"]
+
+[[tool.importlinter.contracts]]
 name = "Services do not import each other"
 type = "independence"
 modules = ["opsteam_api", "opsteam_ingest", "opsteam_worker", "opsteam_executor"]

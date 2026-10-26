@@ -86,6 +86,7 @@ eval:
 DB_URL = postgresql+asyncpg://$(1):$(2)@127.0.0.1:5432/opsteam
 migrate test-integration test-security: export OPSTEAM_APP_DB_PASSWORD := $(OPSTEAM_APP_DB_PASSWORD)
 migrate test-integration test-security: export OPSTEAM_MIGRATOR_DB_PASSWORD := $(OPSTEAM_MIGRATOR_DB_PASSWORD)
+test-integration test-security: export OPSTEAM_SYSTEM_DB_PASSWORD := $(OPSTEAM_SYSTEM_DB_PASSWORD)
 migrate: export OPSTEAM_MIGRATOR_DATABASE_URL ?= $(call DB_URL,opsteam_migrator,$(OPSTEAM_MIGRATOR_DB_PASSWORD))
 
 migrate:
@@ -135,6 +136,12 @@ run-web:
 dev-seed:
 	uv run python -m opsteam_api.devseed
 
-run-ingest:       ; $(call not_implemented,T-2.1)
+run-ingest: export OPSTEAM_ENV ?= dev
+run-ingest: export OPSTEAM_DATABASE_URL ?= $(call DB_URL,opsteam_app,$(OPSTEAM_APP_DB_PASSWORD))
+run-ingest: export OPSTEAM_SYSTEM_DATABASE_URL ?= $(call DB_URL,opsteam_system,$(OPSTEAM_SYSTEM_DB_PASSWORD))
+run-ingest: export OPSTEAM_SECRETS_KEY ?= $(shell printf 'dev-only-secrets-key-32-bytes!!!' | base64)
+run-ingest: export OPSTEAM_REDIS_URL ?= redis://:$(REDIS_PASSWORD)@127.0.0.1:6379/0
+run-ingest:
+	uv run uvicorn --factory opsteam_ingest.app:create_app --host 127.0.0.1 --port 8001
 run-worker:       ; $(call not_implemented,T-3.6)
 run-runner:       ; $(call not_implemented,T-5.2)

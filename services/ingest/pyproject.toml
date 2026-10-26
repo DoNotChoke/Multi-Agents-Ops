@@ -2,7 +2,14 @@
 name = "opsteam-ingest"
 version = "0.0.0"
 requires-python = ">=3.12"
-dependencies = ["opsteam-core"]
+dependencies = [
+    "fastapi>=0.161.1",
+    "opsteam-core",
+    "opsteam-db",
+    "opsteam-incidents",
+    "redis>=8.1.0",
+    "uvicorn>=0.54.0",
+]
 
 [build-system]
 requires = ["hatchling"]

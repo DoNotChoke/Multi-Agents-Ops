@@ -68,3 +68,10 @@ async def app_engine(migrated: URL, test_db: str) -> AsyncIterator[AsyncEngine]:
 @pytest.fixture
 def alembic_cfg(migrated: URL) -> Config:
     return _alembic_config(migrated)
+
+
+@pytest.fixture
+async def system_engine(migrated: URL, test_db: str) -> AsyncIterator[AsyncEngine]:
+    engine = create_engine(_url("opsteam_system", "OPSTEAM_SYSTEM_DB_PASSWORD", test_db))
+    yield engine
+    await engine.dispose()

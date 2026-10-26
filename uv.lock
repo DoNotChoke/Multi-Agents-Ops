@@ -1492,11 +1492,23 @@ name = "opsteam-ingest"
 version = "0.0.0"
 source = { editable = "services/ingest" }
 dependencies = [
+    { name = "fastapi" },
     { name = "opsteam-core" },
+    { name = "opsteam-db" },
+    { name = "opsteam-incidents" },
+    { name = "redis" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "opsteam-core", editable = "packages/core" }]
+requires-dist = [
+    { name = "fastapi", specifier = ">=0.161.1" },
+    { name = "opsteam-core", editable = "packages/core" },
+    { name = "opsteam-db", editable = "packages/db" },
+    { name = "opsteam-incidents", editable = "packages/incidents" },
+    { name = "redis", specifier = ">=8.1.0" },
+    { name = "uvicorn", specifier = ">=0.54.0" },
+]
 
 [[package]]
 name = "opsteam-llm"

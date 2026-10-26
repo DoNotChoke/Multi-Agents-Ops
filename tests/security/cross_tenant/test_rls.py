@@ -118,6 +118,22 @@ async def _evidence(s: AsyncSession, t: str) -> Row:
     )
 
 
+async def _events(s: AsyncSession, t: str) -> Row:
+    return (
+        "insert into events (event_id, tenant_id, source_type, fingerprint, status, title,"
+        " labels, annotations, starts_at, received_at)"
+        " values (:id, :t, 'alertmanager', :fp, 'firing', 'x', '{}', '{}', now(), now())",
+        {"id": new_id("evt"), "t": t, "fp": "0" * 64},
+    )
+
+
+async def _outbox(s: AsyncSession, t: str) -> Row:
+    return (
+        "insert into outbox (tenant_id, topic, payload) values (:t, 'event.received', '{}')",
+        {"t": t},
+    )
+
+
 FACTORIES: dict[str, Factory] = {
     "tenants": _tenants,
     "memberships": _memberships,
@@ -129,6 +145,8 @@ FACTORIES: dict[str, Factory] = {
     "secrets": _secrets,
     "tool_calls": _tool_calls,
     "evidence": _evidence,
+    "events": _events,
+    "outbox": _outbox,
 }
 
 
