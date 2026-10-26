@@ -1,4 +1,6 @@
 import os
+import statistics
+import time
 from collections.abc import AsyncIterator, Iterator
 from contextlib import contextmanager
 from typing import Any
@@ -204,8 +206,29 @@ async def test_secrets_never_reach_the_database(
     assert token not in str(row) and "dev-only-key-123" not in str(row)
 
 
-@pytest.mark.parametrize("table", ["integrations", "secrets", "events", "outbox", "memberships"])
+@pytest.mark.parametrize("table", ["integrations", "secrets", "events", "memberships", "tenants"])
 async def test_system_role_only_reaches_the_lookup(system_engine: AsyncEngine, table: str) -> None:
     async with system_engine.connect() as conn:
         with pytest.raises(DBAPIError, match="permission denied"):
             await conn.execute(text(f"select * from {table}"))  # noqa: S608
+
+
+async def test_intake_p95_and_metrics(app_engine: AsyncEngine, system_engine: AsyncEngine) -> None:
+    _, iid, secret = await _alertmanager(app_engine)
+    timings = []
+    with ingest(app_engine, system_engine, rate_per_minute=1000) as client:
+        for i in range(200):
+            started = time.perf_counter()
+            resp = _post(
+                client,
+                iid,
+                secret,
+                json=_payload(_alert(f"svc-{i % 20}", startsAt=f"2026-10-26T07:{i % 60:02}:00Z")),
+            )
+            timings.append(time.perf_counter() - started)
+            assert resp.status_code == 200
+        metrics = client.get("/metrics").text
+    p95 = statistics.quantiles(timings, n=20)[-1]
+    print(f"webhook intake p95 over 200 requests: {p95 * 1000:.1f} ms")  # noqa: T201
+    assert p95 <= 2.0
+    assert 'ingest_requests_total{outcome="accepted",source="alertmanager"}' in metrics

@@ -1,6 +1,7 @@
 """Event Gateway HTTP intake: authenticated, size- and rate-limited webhooks written to Postgres."""
 
 import asyncio
+import contextlib
 import hmac
 import json
 import re
@@ -14,9 +15,12 @@ import structlog
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 from opsteam_core.context import Principal, RequestContext
+from opsteam_core.events import EventPublisher, InProcessPublisher
 from opsteam_core.logging import configure_logging
 from opsteam_db import create_engine, ping, tenant_session
 from opsteam_db.secrets import DbSecretStore, SecretNotFound, SecretStore, SecretUnreadable
+from opsteam_obs.metrics import INGEST_REQUESTS
+from prometheus_client import make_asgi_app
 from pydantic import ValidationError
 from redis.asyncio import Redis
 from redis.exceptions import RedisError
@@ -24,6 +28,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from opsteam_ingest import relay
 from opsteam_ingest.alertmanager import Payload, to_events
 from opsteam_ingest.settings import IngestSettings
 
@@ -73,14 +78,23 @@ def _problem(rejected: Rejected) -> JSONResponse:
     )
 
 
+async def _log_event(ctx: RequestContext, payload: dict[str, Any]) -> None:
+    # TODO(T-2.3): replace with the Incident Manager's consumer.
+    log.info("event.received", tenant_id=ctx.tenant_id, event_id=payload.get("event_id"))
+
+
 def create_app(
     engine: AsyncEngine | None = None,
     system_engine: AsyncEngine | None = None,
     secrets: SecretStore | None = None,
     redis: Redis | None = None,
     rate_per_minute: int = 60,
+    publisher: EventPublisher | None = None,
 ) -> FastAPI:
-    """Build the ingest app; whatever is not injected is created from IngestSettings at startup."""
+    """Build the ingest app; whatever is not injected is created from IngestSettings at startup.
+
+    The outbox relay runs in the background only when a publisher is given or built here.
+    """
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -102,12 +116,22 @@ def create_app(
             )
             state.secrets = state.secrets or DbSecretStore(state.engine, settings.secrets_key)
             state.redis = state.redis or Redis.from_url(settings.redis_url.get_secret_value())
+        relayed = publisher
+        if relayed is None and engine is None:
+            relayed = InProcessPublisher({"event.received": _log_event})
+        task = asyncio.create_task(relay.run(state.system_engine, relayed)) if relayed else None
         yield
+        if task is not None:
+            task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await task
         await state.redis.aclose()
         await state.engine.dispose()
         await state.system_engine.dispose()
 
     app = FastAPI(title="opsteam-ingest", lifespan=lifespan, openapi_url=None)
+    # shortcut: served on the public webhook port; move to an internal port before production.
+    app.mount("/metrics", make_asgi_app())
 
     @app.post("/webhooks/alertmanager/{integration_id}")
     async def alertmanager(integration_id: str, request: Request) -> Response:
@@ -117,7 +141,9 @@ def create_app(
             payload = await _payload(request)
             accepted, duplicates = await _store(request, ctx, integration_id, config, payload)
         except Rejected as rejected:
+            INGEST_REQUESTS.labels("alertmanager", rejected.code).inc()
             return _problem(rejected)
+        INGEST_REQUESTS.labels("alertmanager", "accepted").inc()
         return JSONResponse({"accepted": accepted, "duplicates": duplicates})
 
     @app.get("/healthz")

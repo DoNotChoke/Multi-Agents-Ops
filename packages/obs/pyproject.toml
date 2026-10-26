@@ -2,7 +2,7 @@
 name = "opsteam-obs"
 version = "0.0.0"
 requires-python = ">=3.12"
-dependencies = ["opsteam-core"]
+dependencies = ["opsteam-core", "prometheus-client>=0.22"]
 
 [build-system]
 requires = ["hatchling"]
