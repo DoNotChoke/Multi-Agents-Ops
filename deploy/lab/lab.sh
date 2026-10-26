@@ -16,9 +16,9 @@ need() {
   if [ -n "$missing" ]; then echo "missing tools:$missing" >&2; exit 1; fi
 }
 
-chart() { # release repo chart version values
+chart() { # release repo chart version values [extra helm args]
   helm upgrade --install "$1" "$3" --repo "$2" --version "$4" --kube-context "$CTX" \
-    --namespace monitoring --create-namespace -f "observability/$5" --wait --timeout 10m
+    --namespace monitoring --create-namespace -f "observability/$5" --wait --timeout 10m "${@:6}"
 }
 
 up() {
@@ -26,7 +26,9 @@ up() {
   kind get clusters | grep -qx "$CLUSTER" || kind create cluster --config kind.yaml --wait 120s
   docker build -t "$IMAGE" demo-app
   kind load docker-image "$IMAGE" --name "$CLUSTER"
-  chart prometheus https://prometheus-community.github.io/helm-charts prometheus "$PROMETHEUS_CHART" prometheus-values.yaml
+  # The secret stays out of the values file; dev-seed stores the same one for the webhook.
+  chart prometheus https://prometheus-community.github.io/helm-charts prometheus "$PROMETHEUS_CHART" prometheus-values.yaml \
+    --set-string "alertmanager.config.receivers[0].webhook_configs[0].http_config.authorization.credentials=${LAB_WEBHOOK_SECRET:-dev-only-lab-webhook-secret}"
   chart loki https://grafana.github.io/helm-charts loki "$LOKI_CHART" loki-values.yaml
   chart alloy https://grafana.github.io/helm-charts alloy "$ALLOY_CHART" alloy-values.yaml
   kubectl --context "$CTX" apply -k base

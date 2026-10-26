@@ -60,8 +60,12 @@ dev-down:
 # Also deletes the volumes (all local data).
 dev-reset:
 	$(COMPOSE) --profile llm-obs down -v
+
+# Fake shared secret: dev-seed stores it, the lab Alertmanager sends it to run-ingest.
+LAB_WEBHOOK_SECRET ?= dev-only-lab-webhook-secret
+
 lab-up:
-	bash deploy/lab/lab.sh up
+	LAB_WEBHOOK_SECRET=$(LAB_WEBHOOK_SECRET) bash deploy/lab/lab.sh up
 
 lab-down:
 	bash deploy/lab/lab.sh down
@@ -133,6 +137,7 @@ run-web:
 	pnpm -C web dev
 
 # Dev tenant acme-dev with the four realm users; needs `make dev-up migrate`.
+dev-seed: export OPSTEAM_LAB_WEBHOOK_SECRET ?= $(LAB_WEBHOOK_SECRET)
 dev-seed:
 	uv run python -m opsteam_api.devseed
 

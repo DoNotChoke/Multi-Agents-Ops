@@ -46,7 +46,8 @@ Baseline: ~30 rps per service, p95 ~0.1–0.2 s, no 5xx, no alerts.
 | `PodCrashLooping` | a container sits in `CrashLoopBackOff` for 1 m | critical |
 | `ContainerOOMKilled` | last termination was `OOMKilled` and it restarted in the last 10 m | warning |
 
-Alertmanager routes everything to a `null` receiver until the Event Gateway exists (T-2.1).
+Alertmanager sends every alert to `make run-ingest` on the host (`host.docker.internal:8001`),
+as the `lab-alertmanager` integration that `make dev-seed` creates.
 
 ## Faults (`faults/<name>/`)
 

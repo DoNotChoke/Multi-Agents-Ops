@@ -20,14 +20,18 @@ alertmanager:
     nodePort: 30093
   config:
     route:
-      receiver: "null"
+      receiver: opsteam
       group_by: [alertname, namespace, service]
       group_wait: 10s
       group_interval: 1m
       repeat_interval: 1h
-    # TODO(T-2.1): send to the Event Gateway webhook once it exists.
     receivers:
-      - name: "null"
+      # make run-ingest on the host; the integration id is fixed by make dev-seed.
+      # lab.sh sets http_config.authorization.credentials from LAB_WEBHOOK_SECRET.
+      - name: opsteam
+        webhook_configs:
+          - url: http://host.docker.internal:8001/webhooks/alertmanager/int_01JDEVSEED00000000000000AM
+            send_resolved: true
 
 prometheus-node-exporter:
   enabled: false
