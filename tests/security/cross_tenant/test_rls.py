@@ -134,6 +134,46 @@ async def _outbox(s: AsyncSession, t: str) -> Row:
     )
 
 
+async def _incidents(s: AsyncSession, t: str) -> Row:
+    return (
+        "insert into incidents (incident_id, tenant_id, source, title, status, severity,"
+        " opened_at, detected_at, created_by)"
+        " values (:id, :t, 'alert', 'x', 'NEW', 'medium', now(), now(), 'system:test')",
+        {"id": new_id("inc"), "t": t},
+    )
+
+
+async def _own_incident(s: AsyncSession, t: str) -> str:
+    sql, params = await _incidents(s, t)
+    await s.execute(text(sql), params)
+    return str(params["id"])
+
+
+async def _incident_events(s: AsyncSession, t: str) -> Row:
+    incident = await _own_incident(s, t)
+    sql, params = await _events(s, t)
+    await s.execute(text(sql), params)
+    return (
+        "insert into incident_events (incident_id, event_id, tenant_id) values (:i, :e, :t)",
+        {"i": incident, "e": params["id"], "t": t},
+    )
+
+
+async def _incident_transitions(s: AsyncSession, t: str) -> Row:
+    return (
+        "insert into incident_transitions (tenant_id, incident_id, to_status, reason, actor, at)"
+        " values (:t, :i, 'NEW', 'x', '{}', now())",
+        {"t": t, "i": await _own_incident(s, t)},
+    )
+
+
+async def _incident_activity(s: AsyncSession, t: str) -> Row:
+    return (
+        "insert into incident_activity (tenant_id, incident_id, type) values (:t, :i, 'x')",
+        {"t": t, "i": await _own_incident(s, t)},
+    )
+
+
 FACTORIES: dict[str, Factory] = {
     "tenants": _tenants,
     "memberships": _memberships,
@@ -147,6 +187,10 @@ FACTORIES: dict[str, Factory] = {
     "evidence": _evidence,
     "events": _events,
     "outbox": _outbox,
+    "incidents": _incidents,
+    "incident_events": _incident_events,
+    "incident_transitions": _incident_transitions,
+    "incident_activity": _incident_activity,
 }
 
 
