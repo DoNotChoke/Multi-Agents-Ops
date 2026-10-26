@@ -6,12 +6,18 @@ type Reply = unknown | ((request: Request, body: unknown) => unknown);
 
 /** Answers fetches from a "METHOD /path" table; a Response is returned as is, anything else as JSON. */
 export function mockApi(routes: Record<string, Reply>) {
-  const calls: { method: string; path: string; body: unknown }[] = [];
+  const calls: {
+    method: string;
+    path: string;
+    query: URLSearchParams;
+    body: unknown;
+  }[] = [];
   const fetch = vi.fn(async (request: Request) => {
-    const path = new URL(request.url).pathname;
+    const url = new URL(request.url);
+    const path = url.pathname;
     const text = request.method === "GET" ? "" : await request.text();
     const body = text ? JSON.parse(text) : undefined;
-    calls.push({ method: request.method, path, body });
+    calls.push({ method: request.method, path, query: url.searchParams, body });
     const reply = routes[`${request.method} ${path}`];
     if (reply === undefined) return new Response(null, { status: 404 });
     const value = typeof reply === "function" ? reply(request, body) : reply;

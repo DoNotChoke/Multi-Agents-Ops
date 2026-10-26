@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 
 const NAV = [
   { href: "/", label: "Overview" },
+  { href: "/incidents", label: "Incidents" },
   { group: "Settings" },
   { href: "/integrations", label: "Integrations" },
   { href: "/services", label: "Services" },
   { group: "Coming later" },
-  { label: "Incidents", soon: "P2" },
   { label: "AI usage", soon: "P4" },
   { label: "Approvals", soon: "P6" },
 ] as const;
