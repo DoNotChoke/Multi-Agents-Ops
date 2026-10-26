@@ -153,3 +153,77 @@ test("text from the customer server is shown, never interpreted", async () => {
   ).toBeDefined();
   expect(container.querySelector("img")).toBeNull();
 });
+
+const AM = {
+  integration_id: "int_01AM",
+  type: "alertmanager",
+  name: "lab-alertmanager",
+  mode: "direct",
+  status: "active",
+  config: { endpoint: null, collapse_replica_labels: true },
+  has_credentials: true,
+  last_tested_at: null,
+  created_at: "2026-10-26T07:00:00Z",
+  webhook_url: "http://127.0.0.1:8001/webhooks/alertmanager/int_01AM",
+};
+const SECRET = "dev-only-webhook-secret-shown-once";
+
+test("an Alertmanager shows its webhook secret once, in a ready-to-paste receiver", async () => {
+  const calls = mockApi({
+    "GET /api/v1/integrations": { items: [] },
+    "POST /api/v1/integrations": { ...AM, webhook_secret: SECRET },
+  });
+  renderWithQuery(<IntegrationsScreen />);
+  fireEvent.click(
+    (await screen.findAllByRole("button", { name: "Add integration" }))[0],
+  );
+  fireEvent.click(screen.getByLabelText("Alertmanager"));
+  const dialog = within(
+    screen.getByRole("dialog", { name: "Add Alertmanager" }),
+  );
+  expect(dialog.queryByLabelText("Endpoint")).toBeNull();
+  fireEvent.change(dialog.getByLabelText("Name"), {
+    target: { value: "lab-alertmanager" },
+  });
+  fireEvent.click(dialog.getByRole("button", { name: "Create webhook" }));
+  const shown = within(
+    await screen.findByRole("dialog", { name: "Webhook secret" }),
+  );
+  const receiver = shown.getByLabelText("Alertmanager receiver").textContent;
+  expect(receiver).toContain(`url: ${AM.webhook_url}`);
+  expect(receiver).toContain(`credentials: ${SECRET}`);
+  expect(
+    calls.find((c) => c.method === "POST" && c.path === "/api/v1/integrations")
+      ?.body,
+  ).toEqual({ type: "alertmanager", mode: "direct", name: "lab-alertmanager" });
+  expect(calls.some((c) => c.path.endsWith("/test"))).toBe(false);
+  fireEvent.click(shown.getByRole("button", { name: "Done" }));
+  expect(screen.queryByText(SECRET, { exact: false })).toBeNull();
+});
+
+test("rotating asks first, then shows the new secret", async () => {
+  const calls = mockApi({
+    "GET /api/v1/integrations": { items: [AM] },
+    "POST /api/v1/integrations/int_01AM/webhook-secret/rotate": {
+      webhook_url: AM.webhook_url,
+      webhook_secret: SECRET,
+    },
+  });
+  renderWithQuery(<IntegrationsScreen />);
+  const webhook = within(
+    await screen.findByRole("region", { name: "Webhook" }),
+  );
+  expect(webhook.getByText(AM.webhook_url)).toBeDefined();
+  fireEvent.click(webhook.getByRole("button", { name: "Rotate secret" }));
+  const confirm = within(
+    screen.getByRole("dialog", { name: "Rotate webhook secret" }),
+  );
+  expect(calls.some((c) => c.path.endsWith("/rotate"))).toBe(false);
+  fireEvent.click(confirm.getByRole("button", { name: "Rotate secret" }));
+  const shown = within(
+    await screen.findByRole("dialog", { name: "Webhook secret" }),
+  );
+  expect(shown.getByLabelText("Alertmanager receiver").textContent).toContain(
+    SECRET,
+  );
+});

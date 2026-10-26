@@ -75,6 +75,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/integrations/{integration_id}/webhook-secret/rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rotate Webhook Secret
+         * @description Replace an Alertmanager's webhook secret; the old one stops working at once.
+         */
+        post: operations["rotate_webhook_secret_api_v1_integrations__integration_id__webhook_secret_rotate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -254,6 +274,16 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AlertmanagerConfig */
+        AlertmanagerConfig: {
+            /**
+             * Collapse Replica Labels
+             * @default true
+             */
+            collapse_replica_labels: boolean;
+            /** Endpoint */
+            endpoint?: string | null;
+        };
         /** AuditEvent */
         AuditEvent: {
             /** Action */
@@ -294,14 +324,35 @@ export interface components {
             /** Ok */
             ok: boolean;
         };
-        /** Config */
-        Config: {
-            /** Endpoint */
-            endpoint: string;
-            /** Metric Mapping */
-            metric_mapping?: {
-                [key: string]: string;
+        /** CreatedIntegration */
+        CreatedIntegration: {
+            /** Config */
+            config: {
+                [key: string]: unknown;
             };
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Has Credentials */
+            has_credentials: boolean;
+            /** Integration Id */
+            integration_id: string;
+            /** Last Tested At */
+            last_tested_at: string | null;
+            /** Mode */
+            mode: string;
+            /** Name */
+            name: string;
+            /** Status */
+            status: string;
+            /** Type */
+            type: string;
+            /** Webhook Secret */
+            webhook_secret?: string | null;
+            /** Webhook Url */
+            webhook_url?: string | null;
         };
         /** Edge */
         Edge: {
@@ -345,10 +396,13 @@ export interface components {
             status: string;
             /** Type */
             type: string;
+            /** Webhook Url */
+            webhook_url?: string | null;
         };
         /** IntegrationChange */
         IntegrationChange: {
-            config?: components["schemas"]["Config"] | null;
+            /** Config */
+            config?: components["schemas"]["PrometheusConfig"] | components["schemas"]["AlertmanagerConfig"] | null;
             /** Name */
             name?: string | null;
             /** Status */
@@ -387,14 +441,40 @@ export interface components {
             /** Tenant Id */
             tenant_id: string;
         };
+        /**
+         * NewAlertmanager
+         * @description The server generates the webhook secret, so there are no credentials to send.
+         */
+        NewAlertmanager: {
+            config?: components["schemas"]["AlertmanagerConfig"];
+            /**
+             * Mode
+             * @constant
+             */
+            mode: "direct";
+            /** Name */
+            name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "alertmanager";
+        };
         /** NewDependency */
         NewDependency: {
             /** Depends On Service Id */
             depends_on_service_id: string;
         };
-        /** NewIntegration */
-        NewIntegration: {
-            config: components["schemas"]["Config"];
+        /** NewMember */
+        NewMember: {
+            /** Email */
+            email: string;
+            /** Roles */
+            roles: ("viewer" | "responder" | "approver" | "admin" | "owner")[];
+        };
+        /** NewPrometheus */
+        NewPrometheus: {
+            config: components["schemas"]["PrometheusConfig"];
             /** Credentials */
             credentials?: string | null;
             /**
@@ -405,17 +485,10 @@ export interface components {
             /** Name */
             name: string;
             /**
-             * Type
-             * @constant
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
              */
             type: "prometheus";
-        };
-        /** NewMember */
-        NewMember: {
-            /** Email */
-            email: string;
-            /** Roles */
-            roles: ("viewer" | "responder" | "approver" | "admin" | "owner")[];
         };
         /** NewService */
         NewService: {
@@ -429,6 +502,15 @@ export interface components {
             owner?: string | null;
             /** Repository */
             repository?: string | null;
+        };
+        /** PrometheusConfig */
+        PrometheusConfig: {
+            /** Endpoint */
+            endpoint: string;
+            /** Metric Mapping */
+            metric_mapping?: {
+                [key: string]: string;
+            };
         };
         /** RoleChange */
         RoleChange: {
@@ -528,6 +610,13 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /** WebhookSecret */
+        WebhookSecret: {
+            /** Webhook Secret */
+            webhook_secret: string;
+            /** Webhook Url */
+            webhook_url: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -535,10 +624,11 @@ export interface components {
     headers: never;
     pathItems: never;
 }
+export type SchemaAlertmanagerConfig = components['schemas']['AlertmanagerConfig'];
 export type SchemaAuditEvent = components['schemas']['AuditEvent'];
 export type SchemaAuditPage = components['schemas']['AuditPage'];
 export type SchemaCheck = components['schemas']['Check'];
-export type SchemaConfig = components['schemas']['Config'];
+export type SchemaCreatedIntegration = components['schemas']['CreatedIntegration'];
 export type SchemaEdge = components['schemas']['Edge'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
 export type SchemaImportRequest = components['schemas']['ImportRequest'];
@@ -549,10 +639,12 @@ export type SchemaMe = components['schemas']['Me'];
 export type SchemaMember = components['schemas']['Member'];
 export type SchemaMemberList = components['schemas']['MemberList'];
 export type SchemaMembership = components['schemas']['Membership'];
+export type SchemaNewAlertmanager = components['schemas']['NewAlertmanager'];
 export type SchemaNewDependency = components['schemas']['NewDependency'];
-export type SchemaNewIntegration = components['schemas']['NewIntegration'];
 export type SchemaNewMember = components['schemas']['NewMember'];
+export type SchemaNewPrometheus = components['schemas']['NewPrometheus'];
 export type SchemaNewService = components['schemas']['NewService'];
+export type SchemaPrometheusConfig = components['schemas']['PrometheusConfig'];
 export type SchemaRoleChange = components['schemas']['RoleChange'];
 export type SchemaService = components['schemas']['Service'];
 export type SchemaServiceChange = components['schemas']['ServiceChange'];
@@ -563,6 +655,7 @@ export type SchemaTenant = components['schemas']['Tenant'];
 export type SchemaTestReport = components['schemas']['TestReport'];
 export type SchemaTopology = components['schemas']['Topology'];
 export type SchemaValidationError = components['schemas']['ValidationError'];
+export type SchemaWebhookSecret = components['schemas']['WebhookSecret'];
 export type $defs = Record<string, never>;
 export interface operations {
     list_audit_api_v1_audit_get: {
@@ -645,7 +738,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["NewIntegration"];
+                "application/json": components["schemas"]["NewPrometheus"] | components["schemas"]["NewAlertmanager"];
             };
         };
         responses: {
@@ -655,7 +748,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Integration"];
+                    "application/json": components["schemas"]["CreatedIntegration"];
                 };
             };
             /** @description Validation Error */
@@ -794,6 +887,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TestReport"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rotate_webhook_secret_api_v1_integrations__integration_id__webhook_secret_rotate_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-tenant-id"?: string | null;
+                authorization?: string | null;
+            };
+            path: {
+                integration_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebhookSecret"];
                 };
             };
             /** @description Validation Error */

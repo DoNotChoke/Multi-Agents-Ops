@@ -1,6 +1,30 @@
 {
   "components": {
     "schemas": {
+      "AlertmanagerConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "collapse_replica_labels": {
+            "default": true,
+            "title": "Collapse Replica Labels",
+            "type": "boolean"
+          },
+          "endpoint": {
+            "anyOf": [
+              {
+                "maxLength": 2048,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Endpoint"
+          }
+        },
+        "title": "AlertmanagerConfig",
+        "type": "object"
+      },
       "AuditEvent": {
         "properties": {
           "action": {
@@ -105,27 +129,89 @@
         "title": "Check",
         "type": "object"
       },
-      "Config": {
-        "additionalProperties": false,
+      "CreatedIntegration": {
         "properties": {
-          "endpoint": {
-            "maxLength": 2048,
-            "title": "Endpoint",
+          "config": {
+            "additionalProperties": true,
+            "title": "Config",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
             "type": "string"
           },
-          "metric_mapping": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "maxProperties": 50,
-            "title": "Metric Mapping",
-            "type": "object"
+          "has_credentials": {
+            "title": "Has Credentials",
+            "type": "boolean"
+          },
+          "integration_id": {
+            "title": "Integration Id",
+            "type": "string"
+          },
+          "last_tested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Tested At"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "webhook_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Webhook Secret"
+          },
+          "webhook_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Webhook Url"
           }
         },
         "required": [
-          "endpoint"
+          "integration_id",
+          "type",
+          "name",
+          "mode",
+          "status",
+          "config",
+          "has_credentials",
+          "last_tested_at",
+          "created_at"
         ],
-        "title": "Config",
+        "title": "CreatedIntegration",
         "type": "object"
       },
       "Edge": {
@@ -221,6 +307,17 @@
           "type": {
             "title": "Type",
             "type": "string"
+          },
+          "webhook_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Webhook Url"
           }
         },
         "required": [
@@ -243,12 +340,16 @@
           "config": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/Config"
+                "$ref": "#/components/schemas/PrometheusConfig"
+              },
+              {
+                "$ref": "#/components/schemas/AlertmanagerConfig"
               },
               {
                 "type": "null"
               }
-            ]
+            ],
+            "title": "Config"
           },
           "name": {
             "anyOf": [
@@ -388,6 +489,37 @@
         "title": "Membership",
         "type": "object"
       },
+      "NewAlertmanager": {
+        "additionalProperties": false,
+        "description": "The server generates the webhook secret, so there are no credentials to send.",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/AlertmanagerConfig"
+          },
+          "mode": {
+            "const": "direct",
+            "title": "Mode",
+            "type": "string"
+          },
+          "name": {
+            "pattern": "^[A-Za-z0-9_.\\-]{1,100}$",
+            "title": "Name",
+            "type": "string"
+          },
+          "type": {
+            "const": "alertmanager",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "mode"
+        ],
+        "title": "NewAlertmanager",
+        "type": "object"
+      },
       "NewDependency": {
         "additionalProperties": false,
         "properties": {
@@ -403,11 +535,44 @@
         "title": "NewDependency",
         "type": "object"
       },
-      "NewIntegration": {
+      "NewMember": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "maxLength": 254,
+            "minLength": 3,
+            "title": "Email",
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "enum": [
+                "viewer",
+                "responder",
+                "approver",
+                "admin",
+                "owner"
+              ],
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Roles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "email",
+          "roles"
+        ],
+        "title": "NewMember",
+        "type": "object"
+      },
+      "NewPrometheus": {
         "additionalProperties": false,
         "properties": {
           "config": {
-            "$ref": "#/components/schemas/Config"
+            "$ref": "#/components/schemas/PrometheusConfig"
           },
           "credentials": {
             "anyOf": [
@@ -445,40 +610,7 @@
           "mode",
           "config"
         ],
-        "title": "NewIntegration",
-        "type": "object"
-      },
-      "NewMember": {
-        "additionalProperties": false,
-        "properties": {
-          "email": {
-            "maxLength": 254,
-            "minLength": 3,
-            "title": "Email",
-            "type": "string"
-          },
-          "roles": {
-            "items": {
-              "enum": [
-                "viewer",
-                "responder",
-                "approver",
-                "admin",
-                "owner"
-              ],
-              "type": "string"
-            },
-            "maxItems": 5,
-            "minItems": 1,
-            "title": "Roles",
-            "type": "array"
-          }
-        },
-        "required": [
-          "email",
-          "roles"
-        ],
-        "title": "NewMember",
+        "title": "NewPrometheus",
         "type": "object"
       },
       "NewService": {
@@ -541,6 +673,29 @@
           "environment"
         ],
         "title": "NewService",
+        "type": "object"
+      },
+      "PrometheusConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "endpoint": {
+            "maxLength": 2048,
+            "title": "Endpoint",
+            "type": "string"
+          },
+          "metric_mapping": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "maxProperties": 50,
+            "title": "Metric Mapping",
+            "type": "object"
+          }
+        },
+        "required": [
+          "endpoint"
+        ],
+        "title": "PrometheusConfig",
         "type": "object"
       },
       "RoleChange": {
@@ -890,6 +1045,24 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "WebhookSecret": {
+        "properties": {
+          "webhook_secret": {
+            "title": "Webhook Secret",
+            "type": "string"
+          },
+          "webhook_url": {
+            "title": "Webhook Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "webhook_url",
+          "webhook_secret"
+        ],
+        "title": "WebhookSecret",
+        "type": "object"
       }
     }
   },
@@ -1114,7 +1287,22 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewIntegration"
+                "discriminator": {
+                  "mapping": {
+                    "alertmanager": "#/components/schemas/NewAlertmanager",
+                    "prometheus": "#/components/schemas/NewPrometheus"
+                  },
+                  "propertyName": "type"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/NewPrometheus"
+                  },
+                  {
+                    "$ref": "#/components/schemas/NewAlertmanager"
+                  }
+                ],
+                "title": "Body"
               }
             }
           },
@@ -1125,7 +1313,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Integration"
+                  "$ref": "#/components/schemas/CreatedIntegration"
                 }
               }
             },
@@ -1442,6 +1630,82 @@
           }
         },
         "summary": "Test Integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/integrations/{integration_id}/webhook-secret/rotate": {
+      "post": {
+        "description": "Replace an Alertmanager's webhook secret; the old one stops working at once.",
+        "operationId": "rotate_webhook_secret_api_v1_integrations__integration_id__webhook_secret_rotate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "integration_id",
+            "required": true,
+            "schema": {
+              "pattern": "^int_[0-9A-HJKMNP-TV-Z]{26}$",
+              "title": "Integration Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Tenant-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookSecret"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rotate Webhook Secret",
         "tags": [
           "integrations"
         ]

@@ -13,6 +13,14 @@ import { api, errorMessage, unwrap } from "@/lib/api/client";
 
 type Integration = components["schemas"]["Integration"];
 type TestReport = components["schemas"]["TestReport"];
+type Created = components["schemas"]["CreatedIntegration"];
+type Webhook = components["schemas"]["WebhookSecret"];
+type Kind = "prometheus" | "alertmanager";
+
+const KIND_LABELS: Record<Kind, string> = {
+  prometheus: "Prometheus",
+  alertmanager: "Alertmanager",
+};
 
 const CHECK_LABELS: Record<string, string> = {
   endpoint_allowed: "Endpoint allowed",
@@ -33,6 +41,8 @@ export function IntegrationsScreen() {
   const [selected, setSelected] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [reports, setReports] = useState<Record<string, TestReport>>({});
+  const [revealed, setRevealed] = useState<Webhook | null>(null);
+  const [rotating, setRotating] = useState<Integration | null>(null);
 
   const test = useMutation({
     mutationFn: async (id: string) =>
@@ -124,19 +134,38 @@ export function IntegrationsScreen() {
                 test.variables === current.integration_id ? test.error : null
               }
               onTest={() => test.mutate(current.integration_id)}
+              onRotate={() => setRotating(current)}
             />
           )}
         </div>
       )}
       {adding && (
-        <AddPrometheus
+        <AddIntegration
           onClose={() => setAdding(false)}
           onCreated={(created) => {
             setAdding(false);
             setSelected(created.integration_id);
-            test.mutate(created.integration_id);
+            if (created.webhook_url && created.webhook_secret)
+              setRevealed({
+                webhook_url: created.webhook_url,
+                webhook_secret: created.webhook_secret,
+              });
+            else test.mutate(created.integration_id);
           }}
         />
+      )}
+      {rotating && (
+        <RotateSecret
+          integration={rotating}
+          onClose={() => setRotating(null)}
+          onRotated={(webhook) => {
+            setRotating(null);
+            setRevealed(webhook);
+          }}
+        />
+      )}
+      {revealed && (
+        <RevealSecret webhook={revealed} onClose={() => setRevealed(null)} />
       )}
     </>
   );
@@ -148,12 +177,14 @@ function Detail({
   testing,
   error,
   onTest,
+  onRotate,
 }: {
   integration: Integration;
   report?: TestReport;
   testing: boolean;
   error: unknown;
   onTest: () => void;
+  onRotate: () => void;
 }) {
   const mapping = (integration.config.metric_mapping ?? {}) as Record<
     string,
@@ -202,38 +233,54 @@ function Detail({
             <p className="text-muted">Not tested yet.</p>
           )}
         </section>
-        <section className="flex items-center justify-between">
-          <div>
-            <h3 className="text-xs font-semibold tracking-wider text-ink-2 uppercase">
-              Metric mapping
+        {integration.webhook_url ? (
+          <section aria-label="Webhook">
+            <h3 className="mb-1 text-xs font-semibold tracking-wider text-ink-2 uppercase">
+              Webhook
             </h3>
-            <div className="text-[12.5px] text-muted">
-              {Object.keys(mapping).length} of 6 templates mapped
+            <div className="mb-2 font-mono text-xs break-all">
+              {integration.webhook_url}
             </div>
-          </div>
-          <Badge tone={integration.has_credentials ? "info" : "off"}>
-            {integration.has_credentials
-              ? "Credentials stored"
-              : "No credentials"}
-          </Badge>
-        </section>
+            <Button onClick={onRotate}>Rotate secret</Button>
+          </section>
+        ) : (
+          <section className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xs font-semibold tracking-wider text-ink-2 uppercase">
+                Metric mapping
+              </h3>
+              <div className="text-[12.5px] text-muted">
+                {Object.keys(mapping).length} of 6 templates mapped
+              </div>
+            </div>
+            <Badge tone={integration.has_credentials ? "info" : "off"}>
+              {integration.has_credentials
+                ? "Credentials stored"
+                : "No credentials"}
+            </Badge>
+          </section>
+        )}
       </div>
     </Card>
   );
 }
 
-function AddPrometheus({
+function AddIntegration({
   onClose,
   onCreated,
 }: {
   onClose: () => void;
-  onCreated: (i: Integration) => void;
+  onCreated: (i: Created) => void;
 }) {
   const client = useQueryClient();
+  const [kind, setKind] = useState<Kind>("prometheus");
   const [mappingError, setMappingError] = useState<string | null>(null);
   const create = useMutation({
-    mutationFn: async (body: components["schemas"]["NewIntegration"]) =>
-      unwrap(await api.POST("/api/v1/integrations", { body })),
+    mutationFn: async (
+      body:
+        | components["schemas"]["NewPrometheus"]
+        | components["schemas"]["NewAlertmanager"],
+    ) => unwrap(await api.POST("/api/v1/integrations", { body })),
     onSuccess: async (created) => {
       await client.invalidateQueries({ queryKey: ["integrations"] });
       onCreated(created);
@@ -243,6 +290,11 @@ function AddPrometheus({
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); // keep the typed values when the server refuses them
     const form = new FormData(event.currentTarget);
+    const name = String(form.get("name") ?? "").trim();
+    if (kind === "alertmanager") {
+      create.mutate({ type: "alertmanager", mode: "direct", name });
+      return;
+    }
     const raw = String(form.get("mapping") ?? "").trim();
     let mapping: Record<string, string> = {};
     if (raw) {
@@ -258,7 +310,7 @@ function AddPrometheus({
     create.mutate({
       type: "prometheus",
       mode: "direct",
-      name: String(form.get("name") ?? "").trim(),
+      name,
       config: {
         endpoint: String(form.get("endpoint") ?? "").trim(),
         metric_mapping: mapping,
@@ -268,9 +320,27 @@ function AddPrometheus({
   }
 
   return (
-    <Dialog title="Add Prometheus" onClose={onClose}>
+    <Dialog title={`Add ${KIND_LABELS[kind]}`} onClose={onClose}>
       <form onSubmit={submit}>
         <div className="p-[18px]">
+          <fieldset className="mb-3.5 flex gap-2">
+            <legend className="sr-only">Type</legend>
+            {(Object.keys(KIND_LABELS) as Kind[]).map((k) => (
+              <label
+                key={k}
+                className="flex cursor-pointer items-center gap-1.5 rounded-md border border-line px-2.5 py-1.5 has-checked:border-brand-700 has-checked:bg-brand-50"
+              >
+                <input
+                  type="radio"
+                  name="kind"
+                  value={k}
+                  checked={kind === k}
+                  onChange={() => setKind(k)}
+                />
+                {KIND_LABELS[k]}
+              </label>
+            ))}
+          </fieldset>
           <Field label="Name">
             <Input
               name="name"
@@ -279,30 +349,39 @@ function AddPrometheus({
               autoFocus
             />
           </Field>
-          <Field label="Endpoint">
-            <Input
-              name="endpoint"
-              required
-              placeholder="https://prometheus.example.com"
-              className="font-mono text-[13px]"
-            />
-          </Field>
-          <Field
-            label="Bearer token (optional)"
-            hint="Encrypted at rest and never shown again."
-          >
-            <Input name="token" type="password" autoComplete="off" />
-          </Field>
-          <Field
-            label="Metric mapping (optional)"
-            hint="JSON: template name to PromQL using ${service} and ${environment}."
-          >
-            <textarea
-              name="mapping"
-              rows={3}
-              className="w-full rounded-md border border-[#cfd7e0] px-2.5 py-2 font-mono text-xs"
-            />
-          </Field>
+          {kind === "alertmanager" ? (
+            <p className="text-[12.5px] text-muted">
+              You get a webhook URL and secret to put in your Alertmanager
+              config.
+            </p>
+          ) : (
+            <>
+              <Field label="Endpoint">
+                <Input
+                  name="endpoint"
+                  required
+                  placeholder="https://prometheus.example.com"
+                  className="font-mono text-[13px]"
+                />
+              </Field>
+              <Field
+                label="Bearer token (optional)"
+                hint="Encrypted at rest and never shown again."
+              >
+                <Input name="token" type="password" autoComplete="off" />
+              </Field>
+              <Field
+                label="Metric mapping (optional)"
+                hint="JSON: template name to PromQL using ${service} and ${environment}."
+              >
+                <textarea
+                  name="mapping"
+                  rows={3}
+                  className="w-full rounded-md border border-[#cfd7e0] px-2.5 py-2 font-mono text-xs"
+                />
+              </Field>
+            </>
+          )}
           {mappingError && <FormError error={null} message={mappingError} />}
           {create.isError && (
             <FormError
@@ -314,10 +393,105 @@ function AddPrometheus({
         <div className="flex justify-between rounded-b-[10px] border-t border-line-2 bg-[#fbfcfd] px-[18px] py-3">
           <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="primary" disabled={create.isPending}>
-            {create.isPending ? "Saving…" : "Save and test"}
+            {create.isPending
+              ? "Saving…"
+              : kind === "alertmanager"
+                ? "Create webhook"
+                : "Save and test"}
           </Button>
         </div>
       </form>
+    </Dialog>
+  );
+}
+
+function RotateSecret({
+  integration,
+  onClose,
+  onRotated,
+}: {
+  integration: Integration;
+  onClose: () => void;
+  onRotated: (webhook: Webhook) => void;
+}) {
+  const rotate = useMutation({
+    mutationFn: async () =>
+      unwrap(
+        await api.POST(
+          "/api/v1/integrations/{integration_id}/webhook-secret/rotate",
+          { params: { path: { integration_id: integration.integration_id } } },
+        ),
+      ),
+    onSuccess: onRotated,
+  });
+  return (
+    <Dialog title="Rotate webhook secret" onClose={onClose}>
+      <div className="p-[18px]">
+        <p>
+          The current secret stops working at once. Alerts from{" "}
+          <strong>{integration.name}</strong> are refused until you put the new
+          secret in your Alertmanager config.
+        </p>
+        {rotate.isError && (
+          <FormError
+            error={rotate.error}
+            message={errorMessage(rotate.error)}
+          />
+        )}
+      </div>
+      <div className="flex justify-between rounded-b-[10px] border-t border-line-2 bg-[#fbfcfd] px-[18px] py-3">
+        <Button onClick={onClose}>Cancel</Button>
+        <Button
+          variant="primary"
+          disabled={rotate.isPending}
+          onClick={() => rotate.mutate()}
+        >
+          {rotate.isPending ? "Rotating…" : "Rotate secret"}
+        </Button>
+      </div>
+    </Dialog>
+  );
+}
+
+function RevealSecret({
+  webhook,
+  onClose,
+}: {
+  webhook: Webhook;
+  onClose: () => void;
+}) {
+  const config = `receivers:
+  - name: opsteam
+    webhook_configs:
+      - url: ${webhook.webhook_url}
+        send_resolved: true
+        http_config:
+          authorization:
+            credentials: ${webhook.webhook_secret}`;
+  return (
+    <Dialog title="Webhook secret" onClose={onClose}>
+      <div className="p-[18px]">
+        <p className="mb-3 rounded-md border border-warn/40 bg-warn/10 px-3 py-2 text-[12.5px]">
+          Copy it now. It won&apos;t be shown again.
+        </p>
+        <h3 className="mb-1.5 text-[13px] font-medium">
+          Alertmanager receiver
+        </h3>
+        <pre
+          aria-label="Alertmanager receiver"
+          className="overflow-x-auto rounded-md border border-line bg-wash px-3 py-2 font-mono text-xs"
+        >
+          {config}
+        </pre>
+      </div>
+      <div className="flex justify-between rounded-b-[10px] border-t border-line-2 bg-[#fbfcfd] px-[18px] py-3">
+        <Button onClick={() => navigator.clipboard.writeText(config)}>
+          Copy
+        </Button>
+        <Button variant="primary" onClick={onClose}>
+          Done
+        </Button>
+      </div>
     </Dialog>
   );
 }

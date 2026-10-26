@@ -40,10 +40,12 @@ def create_app(
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.engine, app.state.verifier, app.state.secrets = engine, verifier, secrets
         app.state.dev_allow, app.state.http_transport = dev_allow, http_transport
+        app.state.ingest_url = ApiSettings.model_fields["ingest_url"].default
         if engine is None or verifier is None or secrets is None:
             settings = ApiSettings()  # type: ignore[call-arg]  # values come from the environment
             configure_logging(settings.log_level)
             app.state.dev_allow = settings.netguard_dev_allow
+            app.state.ingest_url = settings.ingest_url
             if engine is None:
                 app.state.engine = create_engine(settings.database_url.get_secret_value())
             if verifier is None:
