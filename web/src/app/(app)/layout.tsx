@@ -47,9 +47,12 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       <Empty
         title="Your session has ended"
         action={
-          <a href="/sign-in" className="text-brand-700 hover:underline">
-            Sign in again
-          </a>
+          // Our cookie outlives the Keycloak tokens inside it; clear it first or /sign-in sends us straight back.
+          <form action={leave}>
+            <button type="submit" className="text-brand-700 hover:underline">
+              Sign in again
+            </button>
+          </form>
         }
       />
     );
