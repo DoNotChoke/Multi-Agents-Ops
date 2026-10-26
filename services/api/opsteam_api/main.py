@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from opsteam_api import problems
 from opsteam_api.auth import TokenVerifier, jwks_verifier
 from opsteam_api.edge import MAX_BODY_BYTES, EdgeMiddleware
-from opsteam_api.routers import audit, identity, integrations, members, services
+from opsteam_api.routers import audit, identity, incidents, integrations, members, services
 from opsteam_api.settings import ApiSettings
 
 __all__ = ["MAX_BODY_BYTES", "create_app"]
@@ -66,6 +66,7 @@ def create_app(
     app.include_router(members.router)
     app.include_router(services.router)
     app.include_router(integrations.router)
+    app.include_router(incidents.router)
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz() -> dict[str, str]:

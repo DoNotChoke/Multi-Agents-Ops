@@ -21,6 +21,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/incidents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Incidents
+         * @description Newest first; ids are ULIDs, so the last id of a page is the cursor for the next.
+         */
+        get: operations["list_incidents_api_v1_incidents_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/incidents/{incident_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Incident */
+        get: operations["get_incident_api_v1_incidents__incident_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/integrations": {
         parameters: {
             query?: never;
@@ -371,6 +408,114 @@ export interface components {
             /** Integration Id */
             integration_id: string;
         };
+        /** Incident */
+        Incident: {
+            /**
+             * Detected At
+             * Format: date-time
+             */
+            detected_at: string;
+            /** Event Count */
+            event_count: number;
+            /** Events */
+            events: components["schemas"]["IncidentEvent"][];
+            /** Events Truncated */
+            events_truncated: boolean;
+            /** First Notified At */
+            first_notified_at: string | null;
+            /** Incident Id */
+            incident_id: string;
+            /**
+             * Opened At
+             * Format: date-time
+             */
+            opened_at: string;
+            /** Resolved At */
+            resolved_at: string | null;
+            service: components["schemas"]["ServiceRef"] | null;
+            /** Severity */
+            severity: string;
+            /** Started At */
+            started_at: string | null;
+            /** Status */
+            status: string;
+            /** Time To Detect Seconds */
+            time_to_detect_seconds: number | null;
+            /** Timeline */
+            timeline: components["schemas"]["Transition"][];
+            /** Title */
+            title: string;
+            /** Unmapped Service */
+            unmapped_service: {
+                [key: string]: string;
+            } | null;
+        };
+        /**
+         * IncidentEvent
+         * @description An alert attached to the incident; labels and annotations come from the customer.
+         */
+        IncidentEvent: {
+            /** Annotations */
+            annotations: {
+                [key: string]: string;
+            };
+            /** Ends At */
+            ends_at: string | null;
+            /** Event Id */
+            event_id: string;
+            /** Labels */
+            labels: {
+                [key: string]: string;
+            };
+            /**
+             * Received At
+             * Format: date-time
+             */
+            received_at: string;
+            /** Severity Hint */
+            severity_hint: string | null;
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+            /** Status */
+            status: string;
+            /** Title */
+            title: string;
+        };
+        /** IncidentPage */
+        IncidentPage: {
+            /** Items */
+            items: components["schemas"]["IncidentSummary"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** IncidentSummary */
+        IncidentSummary: {
+            /** Event Count */
+            event_count: number;
+            /** Incident Id */
+            incident_id: string;
+            /**
+             * Opened At
+             * Format: date-time
+             */
+            opened_at: string;
+            /** Resolved At */
+            resolved_at: string | null;
+            service: components["schemas"]["ServiceRef"] | null;
+            /** Severity */
+            severity: string;
+            /** Status */
+            status: string;
+            /** Title */
+            title: string;
+            /** Unmapped Service */
+            unmapped_service: {
+                [key: string]: string;
+            } | null;
+        };
         /** Integration */
         Integration: {
             /** Config */
@@ -550,6 +695,15 @@ export interface components {
             /** Items */
             items: components["schemas"]["Service"][];
         };
+        /** ServiceRef */
+        ServiceRef: {
+            /** Environment */
+            environment: string;
+            /** Name */
+            name: string;
+            /** Service Id */
+            service_id: string;
+        };
         /** Suggestion */
         Suggestion: {
             /** Environment */
@@ -597,6 +751,24 @@ export interface components {
             /** Nodes */
             nodes: components["schemas"]["Service"][];
         };
+        /** Transition */
+        Transition: {
+            /** Actor */
+            actor: {
+                [key: string]: unknown;
+            };
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+            /** From Status */
+            from_status: string | null;
+            /** Reason */
+            reason: string;
+            /** To Status */
+            to_status: string;
+        };
         /** ValidationError */
         ValidationError: {
             /** Context */
@@ -632,6 +804,10 @@ export type SchemaCreatedIntegration = components['schemas']['CreatedIntegration
 export type SchemaEdge = components['schemas']['Edge'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
 export type SchemaImportRequest = components['schemas']['ImportRequest'];
+export type SchemaIncident = components['schemas']['Incident'];
+export type SchemaIncidentEvent = components['schemas']['IncidentEvent'];
+export type SchemaIncidentPage = components['schemas']['IncidentPage'];
+export type SchemaIncidentSummary = components['schemas']['IncidentSummary'];
 export type SchemaIntegration = components['schemas']['Integration'];
 export type SchemaIntegrationChange = components['schemas']['IntegrationChange'];
 export type SchemaIntegrationList = components['schemas']['IntegrationList'];
@@ -649,11 +825,13 @@ export type SchemaRoleChange = components['schemas']['RoleChange'];
 export type SchemaService = components['schemas']['Service'];
 export type SchemaServiceChange = components['schemas']['ServiceChange'];
 export type SchemaServiceList = components['schemas']['ServiceList'];
+export type SchemaServiceRef = components['schemas']['ServiceRef'];
 export type SchemaSuggestion = components['schemas']['Suggestion'];
 export type SchemaSuggestions = components['schemas']['Suggestions'];
 export type SchemaTenant = components['schemas']['Tenant'];
 export type SchemaTestReport = components['schemas']['TestReport'];
 export type SchemaTopology = components['schemas']['Topology'];
+export type SchemaTransition = components['schemas']['Transition'];
 export type SchemaValidationError = components['schemas']['ValidationError'];
 export type SchemaWebhookSecret = components['schemas']['WebhookSecret'];
 export type $defs = Record<string, never>;
@@ -681,6 +859,80 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AuditPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_incidents_api_v1_incidents_get: {
+        parameters: {
+            query?: {
+                status?: ("NEW" | "TRIAGED" | "INVESTIGATING" | "DIAGNOSED" | "INCONCLUSIVE" | "REMEDIATION_PROPOSED" | "AWAITING_APPROVAL" | "EXECUTING" | "VERIFYING" | "MANUAL_ACTION_REQUIRED" | "RESOLVED" | "CLOSED")[] | null;
+                severity?: ("info" | "low" | "medium" | "high" | "critical")[] | null;
+                service_id?: string | null;
+                since?: string | null;
+                until?: string | null;
+                limit?: number;
+                cursor?: string | null;
+            };
+            header?: {
+                "x-tenant-id"?: string | null;
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncidentPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_incident_api_v1_incidents__incident_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-tenant-id"?: string | null;
+                authorization?: string | null;
+            };
+            path: {
+                incident_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Incident"];
                 };
             };
             /** @description Validation Error */
