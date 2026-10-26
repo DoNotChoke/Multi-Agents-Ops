@@ -43,6 +43,7 @@ const MESSAGES: Record<string, string> = {
     "Private and cloud metadata addresses are blocked. Use a public address.",
   "integration.exists": "An integration with this name already exists.",
   "service.exists": "A service with this name and environment already exists.",
+  "service_mapping.exists": "A mapping with these labels already exists.",
   "integration.unavailable": "The integration could not be reached.",
   "request.invalid": "Some fields are not valid.",
   "authz.forbidden": "You don't have permission to do this.",

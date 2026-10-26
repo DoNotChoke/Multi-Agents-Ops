@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import type { components } from "@/generated/api";
 import { api, errorMessage, unwrap } from "@/lib/api/client";
 import { useIntegrations } from "../integrations/integrations-screen";
+import { MappingsCard } from "./mappings";
 
 type Service = components["schemas"]["Service"];
 type Criticality = NonNullable<
@@ -127,6 +128,9 @@ export function ServicesScreen() {
         />
       )}
       {importing && <ImportDrawer onClose={() => setImporting(false)} />}
+      <div className="mt-4">
+        <MappingsCard />
+      </div>
     </>
   );
 }

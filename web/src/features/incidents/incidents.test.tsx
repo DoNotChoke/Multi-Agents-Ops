@@ -163,15 +163,18 @@ test("customer text in alerts is shown as text, never as markup or links", async
   expect(screen.queryByRole("link", { name: "Source" })).toBeNull();
 });
 
-test("an unmapped incident offers to add the service to the catalog", async () => {
+test("an unmapped incident offers to map it to a service", async () => {
   mockApi({
-    "GET /api/v1/incidents/inc_01CART": { ...DETAIL, ...CART, events: [] },
+    "GET /api/v1/incidents/inc_01CART": { ...DETAIL, ...CART },
+    "GET /api/v1/services": { items: [] },
   });
   renderWithQuery(<IncidentScreen incidentId="inc_01CART" />);
-  const hint = await screen.findByText(/cart in shop is not in the catalog/);
-  expect(hint.closest("div")?.querySelector("a")?.getAttribute("href")).toBe(
-    "/services",
-  );
+  expect(
+    await screen.findByText(/cart in shop is not in the catalog/),
+  ).toBeDefined();
+  fireEvent.click(screen.getByRole("button", { name: "Map to service…" }));
+  const dialog = within(screen.getByRole("dialog", { name: "Map to service" }));
+  expect(dialog.getByLabelText("service = checkout")).toBeDefined();
 });
 
 test("another tenant's incident reads as no access", async () => {

@@ -2,10 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { useState } from "react";
 import { ErrorState, Loading } from "@/components/states";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { components } from "@/generated/api";
+import { MapServiceDialog } from "@/features/catalog/mappings";
 import { api, unwrap } from "@/lib/api/client";
 import { SeverityBadge, StatusBadge, utc } from "./incidents-screen";
 
@@ -18,6 +20,7 @@ function safeHref(value: string | undefined) {
 }
 
 export function IncidentScreen({ incidentId }: { incidentId: string }) {
+  const [mapping, setMapping] = useState(false);
   const incident = useQuery({
     queryKey: ["incident", incidentId],
     queryFn: async () =>
@@ -77,13 +80,21 @@ export function IncidentScreen({ incidentId }: { incidentId: string }) {
             ` in ${i.unmapped_service.environment}`}{" "}
           is not in the catalog, so this incident has no topology or
           criticality.{" "}
-          <Link
-            href="/services"
+          <button
+            type="button"
+            onClick={() => setMapping(true)}
             className="font-medium text-brand-700 hover:underline"
           >
-            Add it to Services
-          </Link>
+            Map to service…
+          </button>
         </div>
+      )}
+      {mapping && (
+        <MapServiceDialog
+          incidentId={i.incident_id}
+          labels={i.events[0]?.labels ?? {}}
+          onClose={() => setMapping(false)}
+        />
       )}
 
       <div className="grid grid-cols-[1fr_320px] items-start gap-4">
