@@ -50,6 +50,7 @@
       "lastName": "Viewer",
       "email": "dev-viewer@example.com",
       "emailVerified": true,
+      "realmRoles": ["default-roles-opsteam"],
       "enabled": true,
       "credentials": [{ "type": "password", "value": "${KEYCLOAK_DEV_USER_PASSWORD}" }]
     },
@@ -60,6 +61,7 @@
       "lastName": "Responder",
       "email": "dev-responder@example.com",
       "emailVerified": true,
+      "realmRoles": ["default-roles-opsteam"],
       "enabled": true,
       "credentials": [{ "type": "password", "value": "${KEYCLOAK_DEV_USER_PASSWORD}" }]
     },
@@ -70,6 +72,7 @@
       "lastName": "Approver",
       "email": "dev-approver@example.com",
       "emailVerified": true,
+      "realmRoles": ["default-roles-opsteam"],
       "enabled": true,
       "credentials": [{ "type": "password", "value": "${KEYCLOAK_DEV_USER_PASSWORD}" }]
     },
@@ -80,6 +83,7 @@
       "lastName": "Admin",
       "email": "dev-admin@example.com",
       "emailVerified": true,
+      "realmRoles": ["default-roles-opsteam"],
       "enabled": true,
       "credentials": [{ "type": "password", "value": "${KEYCLOAK_DEV_USER_PASSWORD}" }]
     }
