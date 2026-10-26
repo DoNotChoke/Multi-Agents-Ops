@@ -1,3 +1,4 @@
+import asyncio
 import importlib.abc
 import json
 import sys
@@ -5,10 +6,12 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import pytest
+from opsteam_core.clock import FakeClock
 from opsteam_core.events import InProcessPublisher
 from opsteam_core.ids import new_id
 from opsteam_db import tenant_session
 from opsteam_incidents.fingerprint import fingerprint
+from opsteam_incidents.lifecycle import Windows, sweep
 from opsteam_incidents.manager import event_consumer
 from opsteam_ingest.relay import relay_once
 from sqlalchemy import text
@@ -285,3 +288,95 @@ async def test_detection_runs_with_llm_forbidden(
     while await relay_once(system_engine, publisher):
         pass
     assert len(await shop.incidents()) == 1
+
+
+async def _sweep(shop: Shop, system_engine: AsyncEngine, at: datetime) -> None:
+    await sweep(shop.engine, system_engine, FakeClock(at), Windows())
+
+
+async def test_auto_resolve_waits_for_every_alert_to_stay_quiet(
+    app_engine: AsyncEngine, system_engine: AsyncEngine
+) -> None:
+    shop = await Shop.create(app_engine)
+    await shop.process(await shop.event("checkout"))
+    await shop.process(
+        await shop.event("checkout", "HighErrorRate", starts=T0 + timedelta(minutes=1))
+    )
+    quiet = T0 + timedelta(minutes=5)
+    await shop.process(await shop.event("checkout", status="resolved", received=quiet))
+    await _sweep(shop, system_engine, quiet + timedelta(hours=1))
+    assert (await shop.incidents())[0].status == "NEW"  # HighErrorRate still firing
+    await shop.process(
+        await shop.event(
+            "checkout",
+            "HighErrorRate",
+            status="resolved",
+            starts=T0 + timedelta(minutes=1),
+            received=quiet,
+        )
+    )
+    await _sweep(shop, system_engine, quiet + timedelta(minutes=9, seconds=59))
+    assert (await shop.incidents())[0].status == "NEW"
+    await _sweep(shop, system_engine, quiet + timedelta(minutes=10))
+    [incident] = await shop.incidents()
+    assert (incident.status, incident.resolved_at) == ("RESOLVED", quiet + timedelta(minutes=10))
+    [why] = await shop.rows("select reason from incident_transitions where to_status = 'RESOLVED'")
+    assert why.reason == "auto_resolved"
+
+
+async def test_a_resolved_incident_closes_after_a_day(
+    app_engine: AsyncEngine, system_engine: AsyncEngine
+) -> None:
+    shop = await Shop.create(app_engine)
+    await shop.process(await shop.event("checkout"))
+    await shop.process(await shop.event("checkout", status="resolved", received=T0))
+    resolved = T0 + timedelta(minutes=10)
+    await _sweep(shop, system_engine, resolved)
+    await _sweep(shop, system_engine, resolved + timedelta(hours=23, minutes=59))
+    assert (await shop.incidents())[0].status == "RESOLVED"
+    await _sweep(shop, system_engine, resolved + timedelta(hours=24))
+    assert (await shop.incidents())[0].status == "CLOSED"
+
+
+async def test_a_refire_soon_after_resolving_reopens_the_same_incident(
+    app_engine: AsyncEngine, system_engine: AsyncEngine
+) -> None:
+    shop = await Shop.create(app_engine)
+    await shop.process(await shop.event("checkout"))
+    await shop.process(await shop.event("checkout", status="resolved", received=T0))
+    resolved = T0 + timedelta(minutes=10)
+    await _sweep(shop, system_engine, resolved)
+    refire = resolved + timedelta(minutes=29)
+    await shop.process(await shop.event("checkout", starts=refire, received=refire))
+    [incident] = await shop.incidents()
+    assert (incident.status, incident.events, incident.resolved_at) == ("INVESTIGATING", 3, None)
+    [why] = await shop.rows(
+        "select reason from incident_transitions where to_status = 'INVESTIGATING'"
+    )
+    assert why.reason.startswith("reopened")
+
+
+async def test_a_late_refire_opens_a_new_incident(
+    app_engine: AsyncEngine, system_engine: AsyncEngine
+) -> None:
+    shop = await Shop.create(app_engine)
+    await shop.process(await shop.event("checkout"))
+    await shop.process(await shop.event("checkout", status="resolved", received=T0))
+    resolved = T0 + timedelta(minutes=10)
+    await _sweep(shop, system_engine, resolved)
+    late = resolved + timedelta(minutes=31)
+    await shop.process(await shop.event("checkout", starts=late, received=late))
+    assert [i.status for i in await shop.incidents()] == ["RESOLVED", "NEW"]
+
+
+async def test_two_sweeps_at_once_resolve_once(
+    app_engine: AsyncEngine, system_engine: AsyncEngine
+) -> None:
+    shop = await Shop.create(app_engine)
+    await shop.process(await shop.event("checkout"))
+    await shop.process(await shop.event("checkout", status="resolved", received=T0))
+    at = T0 + timedelta(minutes=10)
+    await asyncio.gather(*(_sweep(shop, system_engine, at) for _ in range(3)))
+    assert (
+        len(await shop.rows("select 1 from incident_transitions where to_status = 'RESOLVED'")) == 1
+    )

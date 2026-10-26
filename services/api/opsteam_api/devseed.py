@@ -6,6 +6,7 @@ import os
 import sys
 
 from opsteam_core.context import Principal, RequestContext
+from opsteam_core.ids import new_id
 from opsteam_db import create_engine, identify, tenant_session
 from opsteam_db.secrets import DbSecretStore, SecretStore
 from pydantic import SecretStr
@@ -17,6 +18,8 @@ from opsteam_api.settings import ApiSettings
 DEV_TENANT = "tnt_01JDEVSEED0000000000000000"
 # Fixed so deploy/lab can point its Alertmanager webhook here before the seed runs.
 LAB_ALERTMANAGER = "int_01JDEVSEED00000000000000AM"
+# The demo app in deploy/lab, filed the way the Prometheus import files them.
+LAB_SERVICES = ("frontend", "checkout", "payment")
 # Keycloak user ids fixed in deploy/compose/keycloak/opsteam-realm.json.
 DEV_USERS = {
     "00000000-0000-4000-8000-000000000001": ("dev-viewer@example.com", "viewer"),
@@ -58,6 +61,29 @@ async def seed(
                 """),
                 {"t": DEV_TENANT, "u": user_id, "r": roles},
             )
+        for name in LAB_SERVICES:
+            await session.execute(
+                text("""
+                    insert into services (service_id, tenant_id, name, environment)
+                    values (:id, :t, :n, 'shop')
+                    on conflict (tenant_id, name, environment) do nothing
+                """),
+                {"id": new_id("svc"), "t": DEV_TENANT, "n": name},
+            )
+        # The lab's call graph, so alerts on neighbouring services fold into one incident.
+        await session.execute(
+            text("""
+                insert into service_dependencies (tenant_id, service_id, depends_on_service_id)
+                select :t, caller.service_id, callee.service_id
+                from services caller join services callee
+                  on callee.environment = caller.environment
+                where caller.environment = 'shop'
+                  and (caller.name, callee.name)
+                      in (('frontend', 'checkout'), ('checkout', 'payment'))
+                on conflict do nothing
+            """),
+            {"t": DEV_TENANT},
+        )
         exists = await session.scalar(
             text("select 1 from integrations where integration_id = :i"), {"i": LAB_ALERTMANAGER}
         )

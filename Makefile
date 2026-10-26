@@ -146,6 +146,8 @@ run-ingest: export OPSTEAM_DATABASE_URL ?= $(call DB_URL,opsteam_app,$(OPSTEAM_A
 run-ingest: export OPSTEAM_SYSTEM_DATABASE_URL ?= $(call DB_URL,opsteam_system,$(OPSTEAM_SYSTEM_DB_PASSWORD))
 run-ingest: export OPSTEAM_SECRETS_KEY ?= $(shell printf 'dev-only-secrets-key-32-bytes!!!' | base64)
 run-ingest: export OPSTEAM_REDIS_URL ?= redis://:$(REDIS_PASSWORD)@127.0.0.1:6379/0
+# Short so the lab shows auto-resolve within minutes of `make lab-heal`.
+run-ingest: export OPSTEAM_INCIDENT_STABLE_WINDOW_SECONDS ?= 120
 run-ingest:
 	uv run uvicorn --factory opsteam_ingest.app:create_app --host 127.0.0.1 --port 8001
 run-worker:       ; $(call not_implemented,T-3.6)

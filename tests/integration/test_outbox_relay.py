@@ -54,7 +54,8 @@ async def test_relay_publishes_in_order_under_each_rows_tenant(
     while await relay_once(system_engine, fake):
         pass
     assert _mine(fake, tenant) == ids and _mine(fake, other) == other_ids
-    assert {topic for _, topic, _ in fake.published} == {"event.received"}
+    mine = {topic for ctx, topic, _ in fake.published if ctx.tenant_id in (tenant, other)}
+    assert mine == {"event.received"}
     assert await _pending(app_engine, tenant) == 0
 
 

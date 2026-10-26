@@ -13,10 +13,17 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 from opsteam_incidents.normalize import resolve_service
 from opsteam_incidents.severity import severity
+from opsteam_incidents.state import transition
 
 CORRELATION_WINDOW = timedelta(minutes=15)
 PROPAGATION_WINDOW = timedelta(minutes=5)
+REOPEN_WINDOW = timedelta(minutes=30)
 PRODUCTION = frozenset({"production", "prod"})
+_REOPENABLE = text("""
+    select incident_id from incidents
+    where root_fingerprint = :fp and status = 'RESOLVED' and resolved_at >= :since
+    order by resolved_at desc limit 1
+""")
 _SAME_FINGERPRINT = text("""
     select incident_id from incidents
     where root_fingerprint = :fp and status not in ('RESOLVED', 'CLOSED')
@@ -118,11 +125,27 @@ async def _firing(
     session: AsyncSession, ctx: RequestContext, event: Row[Any], ref: dict[str, str]
 ) -> None:
     service_id = ref.get("service_id")
-    incident_id, rule = await _correlate(session, event, service_id)
+    incident_id, rule = await _reopen(session, ctx, event)
+    if incident_id is None:
+        incident_id, rule = await _correlate(session, event, service_id)
     if incident_id is None:
         incident_id, rule = await _open(session, ctx, event, ref), "new"
     await _attach(session, ctx, incident_id, event, rule)
     await _rescore(session, incident_id)
+
+
+async def _reopen(
+    session: AsyncSession, ctx: RequestContext, event: Row[Any]
+) -> tuple[str | None, str]:
+    """Reopen the incident this alert started if it was resolved only moments ago."""
+    since = event.received_at - REOPEN_WINDOW
+    incident_id = await session.scalar(_REOPENABLE, {"fp": event.fingerprint, "since": since})
+    if incident_id is None:
+        return None, ""
+    # No investigation runs yet in this phase; the lifecycle table still names the state.
+    reason = "reopened: the alert that opened it fired again"
+    await transition(session, ctx, incident_id, "INVESTIGATING", reason, event.received_at)
+    return incident_id, "reopened"
 
 
 async def _correlate(

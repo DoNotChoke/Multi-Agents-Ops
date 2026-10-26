@@ -93,7 +93,19 @@ async def test_dev_seed_is_idempotent(app_engine: AsyncEngine) -> None:
             )
         ).one()
         assert await s.scalar(text("select count(*) from secrets")) == 1
+        edges = (
+            await s.execute(
+                text("""
+                    select a.name, b.name from service_dependencies d
+                    join services a on a.service_id = d.service_id
+                    join services b on b.service_id = d.depends_on_service_id
+                    order by 1
+                """)
+            )
+        ).all()
+        assert await s.scalar(text("select count(*) from services")) == 3
     assert (row.type, row.name) == ("alertmanager", "lab-alertmanager")
+    assert [tuple(e) for e in edges] == [("checkout", "payment"), ("frontend", "checkout")]
     assert (await store.get(ctx, row.credentials_ref)).get_secret_value() == "dev-only-lab-webhook"
 
 

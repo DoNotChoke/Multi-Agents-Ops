@@ -8,17 +8,20 @@ import re
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import structlog
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
+from opsteam_core.clock import SystemClock
 from opsteam_core.context import Principal, RequestContext
 from opsteam_core.events import EventPublisher, InProcessPublisher
 from opsteam_core.logging import configure_logging
 from opsteam_db import create_engine, ping, tenant_session
 from opsteam_db.secrets import DbSecretStore, SecretNotFound, SecretStore, SecretUnreadable
+from opsteam_incidents import lifecycle
+from opsteam_incidents.lifecycle import Windows
 from opsteam_incidents.manager import event_consumer
 from opsteam_obs.metrics import INGEST_REQUESTS
 from prometheus_client import make_asgi_app
@@ -117,14 +120,25 @@ def create_app(
             )
             state.secrets = state.secrets or DbSecretStore(state.engine, settings.secrets_key)
             state.redis = state.redis or Redis.from_url(settings.redis_url.get_secret_value())
+        tasks = []
         relayed = publisher
         if relayed is None and engine is None:
             relayed = InProcessPublisher(
                 {"event.received": event_consumer(state.engine), "incident.opened": _log_opened}
             )
-        task = asyncio.create_task(relay.run(state.system_engine, relayed)) if relayed else None
+            windows = Windows(
+                stable=timedelta(seconds=settings.incident_stable_window_seconds),
+                close_after=timedelta(seconds=settings.incident_close_after_seconds),
+            )
+            tasks.append(
+                asyncio.create_task(
+                    lifecycle.run(state.engine, state.system_engine, SystemClock(), windows)
+                )
+            )
+        if relayed is not None:
+            tasks.append(asyncio.create_task(relay.run(state.system_engine, relayed)))
         yield
-        if task is not None:
+        for task in tasks:
             task.cancel()
             with contextlib.suppress(asyncio.CancelledError):
                 await task

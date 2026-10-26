@@ -13,3 +13,6 @@ class IngestSettings(Settings):
     secrets_key: SecretStr
     redis_url: SecretStr
     webhook_rate_per_minute: int = 60
+    # How long every alert must stay resolved before the incident is, and when it closes.
+    incident_stable_window_seconds: int = 600
+    incident_close_after_seconds: int = 86400
