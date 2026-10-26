@@ -1,4 +1,6 @@
-from opsteam_incidents.fingerprint import fingerprint
+from hypothesis import assume, given
+from hypothesis import strategies as st
+from opsteam_incidents.fingerprint import REPLICA_LABELS, fingerprint
 
 BASE = ("tnt_A", "int_A", "alertmanager", "HighLatencyP95")
 
@@ -31,4 +33,32 @@ def test_identity_fields_and_meaningful_labels_change_it() -> None:
 def test_separator_cannot_be_forged_across_fields() -> None:
     assert fingerprint("tnt_A", "int_A|x", "alertmanager", "y", {}, collapse=True) != fingerprint(
         "tnt_A", "int_A", "x|alertmanager", "y", {}, collapse=True
+    )
+
+
+labels_st = st.dictionaries(st.text(min_size=1, max_size=20), st.text(max_size=40), max_size=12)
+
+
+@given(labels_st)
+def test_order_never_matters(labels: dict[str, str]) -> None:
+    shuffled = dict(reversed(list(labels.items())))
+    assert fingerprint(*BASE, labels, collapse=True) == fingerprint(*BASE, shuffled, collapse=True)
+
+
+@given(labels_st, st.sampled_from(sorted(REPLICA_LABELS)), st.text(max_size=40))
+def test_replica_noise_never_matters_when_collapsing(
+    labels: dict[str, str], noisy: str, value: str
+) -> None:
+    assert fingerprint(*BASE, labels | {noisy: value}, collapse=True) == fingerprint(
+        *BASE, {k: v for k, v in labels.items() if k != noisy}, collapse=True
+    )
+
+
+@given(labels_st, st.text(min_size=1, max_size=20), st.text(max_size=40))
+def test_a_changed_meaningful_label_changes_it(
+    labels: dict[str, str], key: str, value: str
+) -> None:
+    assume(key not in REPLICA_LABELS and labels.get(key) != value)
+    assert fingerprint(*BASE, labels, collapse=True) != fingerprint(
+        *BASE, labels | {key: value}, collapse=True
     )
