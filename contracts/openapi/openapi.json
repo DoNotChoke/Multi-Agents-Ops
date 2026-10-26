@@ -724,6 +724,58 @@
         "title": "IntegrationList",
         "type": "object"
       },
+      "Mapping": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "mapping_id": {
+            "title": "Mapping Id",
+            "type": "string"
+          },
+          "matchers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Matchers",
+            "type": "object"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "integer"
+          },
+          "service": {
+            "$ref": "#/components/schemas/ServiceRef"
+          }
+        },
+        "required": [
+          "mapping_id",
+          "matchers",
+          "service",
+          "priority",
+          "created_at"
+        ],
+        "title": "Mapping",
+        "type": "object"
+      },
+      "MappingList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Mapping"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "MappingList",
+        "type": "object"
+      },
       "Me": {
         "properties": {
           "memberships": {
@@ -859,6 +911,55 @@
           "depends_on_service_id"
         ],
         "title": "NewDependency",
+        "type": "object"
+      },
+      "NewMapping": {
+        "additionalProperties": false,
+        "properties": {
+          "incident_id": {
+            "anyOf": [
+              {
+                "pattern": "^inc_[0-9A-HJKMNP-TV-Z]{26}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "matchers": {
+            "additionalProperties": {
+              "maxLength": 256,
+              "type": "string"
+            },
+            "maxProperties": 10,
+            "minProperties": 1,
+            "propertyNames": {
+              "maxLength": 128,
+              "minLength": 1
+            },
+            "title": "Matchers",
+            "type": "object"
+          },
+          "priority": {
+            "default": 0,
+            "maximum": 1000.0,
+            "minimum": -1000.0,
+            "title": "Priority",
+            "type": "integer"
+          },
+          "service_id": {
+            "pattern": "^svc_[0-9A-HJKMNP-TV-Z]{26}$",
+            "title": "Service Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "matchers",
+          "service_id"
+        ],
+        "title": "NewMapping",
         "type": "object"
       },
       "NewMember": {
@@ -2651,6 +2752,213 @@
         "summary": "Change Roles",
         "tags": [
           "members"
+        ]
+      }
+    },
+    "/api/v1/service-mappings": {
+      "get": {
+        "description": "The order is the one the Incident Manager tries them in.",
+        "operationId": "list_mappings_api_v1_service_mappings_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Tenant-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MappingList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Mappings",
+        "tags": [
+          "catalog"
+        ]
+      },
+      "post": {
+        "operationId": "create_mapping_api_v1_service_mappings_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Tenant-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewMapping"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mapping"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Mapping",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/api/v1/service-mappings/{mapping_id}": {
+      "delete": {
+        "operationId": "delete_mapping_api_v1_service_mappings__mapping_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "mapping_id",
+            "required": true,
+            "schema": {
+              "pattern": "^rule_[0-9A-HJKMNP-TV-Z]{26}$",
+              "title": "Mapping Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Tenant-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Mapping",
+        "tags": [
+          "catalog"
         ]
       }
     },

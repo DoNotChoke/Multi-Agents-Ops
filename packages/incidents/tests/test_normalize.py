@@ -41,3 +41,39 @@ def test_resolve_service(labels: dict[str, str], expected: dict[str, str]) -> No
 def test_names_match_exactly() -> None:
     assert "service_id" not in resolve_service({"service": "Checkout", "env": "prod"}, CATALOG)
     assert "service_id" not in resolve_service({"service": "checkout ", "env": "prod"}, CATALOG)
+
+
+MAPPINGS = [
+    # (matchers, service_id, name, environment), most specific first
+    ({"service": "cart", "namespace": "shop"}, "svc_CHECKOUT", "checkout", "shop"),
+    ({"job": "payment-api"}, "svc_PROD", "checkout", "prod"),
+]
+
+
+def test_a_mapping_maps_what_labels_alone_cannot() -> None:
+    ref = resolve_service({"service": "cart", "namespace": "shop"}, CATALOG, MAPPINGS)
+    assert ref == {"service_id": "svc_CHECKOUT", "name": "checkout", "environment": "shop"}
+    ref = resolve_service({"job": "payment-api", "alertname": "X"}, CATALOG, MAPPINGS)
+    assert ref == {"service_id": "svc_PROD", "name": "checkout", "environment": "prod"}
+
+
+def test_every_matcher_must_match_and_the_catalog_wins() -> None:
+    assert "service_id" not in resolve_service({"service": "cart"}, CATALOG, MAPPINGS)
+    assert "service_id" not in resolve_service(
+        {"service": "cart", "namespace": "other"}, CATALOG, MAPPINGS
+    )
+    # A label match on the catalog is used before any mapping.
+    ref = resolve_service(
+        {"service": "checkout", "env": "prod", "job": "payment-api"},
+        CATALOG,
+        [
+            ({"job": "payment-api"}, "svc_CHECKOUT", "checkout", "shop"),
+        ],
+    )
+    assert ref["service_id"] == "svc_PROD"
+
+
+def test_the_first_matching_mapping_wins() -> None:
+    labels = {"service": "cart", "namespace": "shop", "job": "payment-api"}
+    assert resolve_service(labels, CATALOG, MAPPINGS)["service_id"] == "svc_CHECKOUT"
+    assert resolve_service(labels, CATALOG, MAPPINGS[::-1])["service_id"] == "svc_PROD"

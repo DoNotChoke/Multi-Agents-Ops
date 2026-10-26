@@ -184,6 +184,44 @@ export interface paths {
         patch: operations["change_roles_api_v1_members__user_id__patch"];
         trace?: never;
     };
+    "/api/v1/service-mappings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Mappings
+         * @description The order is the one the Incident Manager tries them in.
+         */
+        get: operations["list_mappings_api_v1_service_mappings_get"];
+        put?: never;
+        /** Create Mapping */
+        post: operations["create_mapping_api_v1_service_mappings_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-mappings/{mapping_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Mapping */
+        delete: operations["delete_mapping_api_v1_service_mappings__mapping_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/services": {
         parameters: {
             query?: never;
@@ -558,6 +596,28 @@ export interface components {
             /** Items */
             items: components["schemas"]["Integration"][];
         };
+        /** Mapping */
+        Mapping: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Mapping Id */
+            mapping_id: string;
+            /** Matchers */
+            matchers: {
+                [key: string]: string;
+            };
+            /** Priority */
+            priority: number;
+            service: components["schemas"]["ServiceRef"];
+        };
+        /** MappingList */
+        MappingList: {
+            /** Items */
+            items: components["schemas"]["Mapping"][];
+        };
         /** Me */
         Me: {
             /** Memberships */
@@ -609,6 +669,22 @@ export interface components {
         NewDependency: {
             /** Depends On Service Id */
             depends_on_service_id: string;
+        };
+        /** NewMapping */
+        NewMapping: {
+            /** Incident Id */
+            incident_id?: string | null;
+            /** Matchers */
+            matchers: {
+                [key: string]: string;
+            };
+            /**
+             * Priority
+             * @default 0
+             */
+            priority: number;
+            /** Service Id */
+            service_id: string;
         };
         /** NewMember */
         NewMember: {
@@ -811,12 +887,15 @@ export type SchemaIncidentSummary = components['schemas']['IncidentSummary'];
 export type SchemaIntegration = components['schemas']['Integration'];
 export type SchemaIntegrationChange = components['schemas']['IntegrationChange'];
 export type SchemaIntegrationList = components['schemas']['IntegrationList'];
+export type SchemaMapping = components['schemas']['Mapping'];
+export type SchemaMappingList = components['schemas']['MappingList'];
 export type SchemaMe = components['schemas']['Me'];
 export type SchemaMember = components['schemas']['Member'];
 export type SchemaMemberList = components['schemas']['MemberList'];
 export type SchemaMembership = components['schemas']['Membership'];
 export type SchemaNewAlertmanager = components['schemas']['NewAlertmanager'];
 export type SchemaNewDependency = components['schemas']['NewDependency'];
+export type SchemaNewMapping = components['schemas']['NewMapping'];
 export type SchemaNewMember = components['schemas']['NewMember'];
 export type SchemaNewPrometheus = components['schemas']['NewPrometheus'];
 export type SchemaNewService = components['schemas']['NewService'];
@@ -1311,6 +1390,106 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["Member"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_mappings_api_v1_service_mappings_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-tenant-id"?: string | null;
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MappingList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_mapping_api_v1_service_mappings_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-tenant-id"?: string | null;
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewMapping"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Mapping"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_mapping_api_v1_service_mappings__mapping_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-tenant-id"?: string | null;
+                authorization?: string | null;
+            };
+            path: {
+                mapping_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

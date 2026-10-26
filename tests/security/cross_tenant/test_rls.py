@@ -174,6 +174,16 @@ async def _incident_activity(s: AsyncSession, t: str) -> Row:
     )
 
 
+async def _service_mappings(s: AsyncSession, t: str) -> Row:
+    sql, params = await _services(s, t)
+    await s.execute(text(sql), params)
+    return (
+        "insert into service_mappings (mapping_id, tenant_id, matchers, service_id, created_by)"
+        " values (:id, :t, :m, :svc, 'system:test')",
+        {"id": new_id("rule"), "t": t, "m": '{"service": "x"}', "svc": params["id"]},
+    )
+
+
 FACTORIES: dict[str, Factory] = {
     "tenants": _tenants,
     "memberships": _memberships,
@@ -191,6 +201,7 @@ FACTORIES: dict[str, Factory] = {
     "incident_events": _incident_events,
     "incident_transitions": _incident_transitions,
     "incident_activity": _incident_activity,
+    "service_mappings": _service_mappings,
 }
 
 

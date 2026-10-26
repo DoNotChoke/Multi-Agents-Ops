@@ -380,3 +380,10 @@ async def test_two_sweeps_at_once_resolve_once(
     assert (
         len(await shop.rows("select 1 from incident_transitions where to_status = 'RESOLVED'")) == 1
     )
+
+
+async def test_a_malformed_payload_is_skipped_not_raised(app_engine: AsyncEngine) -> None:
+    shop = await Shop.create(app_engine)
+    await shop.consume(shop.ctx, {})
+    await shop.consume(shop.ctx, {"event_id": 42})
+    assert await shop.incidents() == []

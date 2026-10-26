@@ -4,6 +4,7 @@ import json
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+import structlog
 from opsteam_core.context import RequestContext
 from opsteam_core.events import Handler
 from opsteam_core.ids import new_id
@@ -11,7 +12,7 @@ from opsteam_db import audit, tenant_session
 from sqlalchemy import Row, text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
-from opsteam_incidents.normalize import resolve_service
+from opsteam_incidents.normalize import MAPPINGS_SQL, resolve_service
 from opsteam_incidents.severity import severity
 from opsteam_incidents.state import transition
 
@@ -19,6 +20,8 @@ CORRELATION_WINDOW = timedelta(minutes=15)
 PROPAGATION_WINDOW = timedelta(minutes=5)
 REOPEN_WINDOW = timedelta(minutes=30)
 PRODUCTION = frozenset({"production", "prod"})
+
+log = structlog.get_logger()
 _REOPENABLE = text("""
     select incident_id from incidents
     where root_fingerprint = :fp and status = 'RESOLVED' and resolved_at >= :since
@@ -80,8 +83,13 @@ def event_consumer(engine: AsyncEngine) -> Handler:
     """Return the `event.received` handler; redelivered events are skipped."""
 
     async def consume(ctx: RequestContext, payload: dict[str, Any]) -> None:
+        event_id = payload.get("event_id")
+        if not isinstance(event_id, str):
+            # Retrying cannot fix a malformed row, and raising would stall the whole outbox.
+            log.warning("incident.bad_payload", tenant_id=ctx.tenant_id)
+            return
         async with tenant_session(engine, ctx) as session:
-            await _process(session, ctx, str(payload["event_id"]))
+            await _process(session, ctx, event_id)
 
     return consume
 
@@ -105,7 +113,12 @@ async def _process(session: AsyncSession, ctx: RequestContext, event_id: str) ->
     if event is None or event.processed_at is not None:
         return
     services = await session.execute(text("select service_id, name, environment from services"))
-    ref = resolve_service(event.labels, {(n, e): i for i, n, e in services})
+    mappings = await session.execute(text(MAPPINGS_SQL))
+    ref = resolve_service(
+        event.labels,
+        {(n, e): i for i, n, e in services},
+        [(m.matchers, m.service_id, m.name, m.environment) for m in mappings],
+    )
     await session.execute(
         text(
             "update events set service_ref = cast(:ref as jsonb), processed_at = :now"
