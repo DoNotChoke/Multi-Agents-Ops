@@ -19,6 +19,7 @@ from opsteam_core.events import EventPublisher, InProcessPublisher
 from opsteam_core.logging import configure_logging
 from opsteam_db import create_engine, ping, tenant_session
 from opsteam_db.secrets import DbSecretStore, SecretNotFound, SecretStore, SecretUnreadable
+from opsteam_incidents.manager import event_consumer
 from opsteam_obs.metrics import INGEST_REQUESTS
 from prometheus_client import make_asgi_app
 from pydantic import ValidationError
@@ -78,9 +79,9 @@ def _problem(rejected: Rejected) -> JSONResponse:
     )
 
 
-async def _log_event(ctx: RequestContext, payload: dict[str, Any]) -> None:
-    # TODO(T-2.3): replace with the Incident Manager's consumer.
-    log.info("event.received", tenant_id=ctx.tenant_id, event_id=payload.get("event_id"))
+async def _log_opened(ctx: RequestContext, payload: dict[str, Any]) -> None:
+    # TODO(T-2.5): replace with the notifier's consumer.
+    log.info("incident.opened", tenant_id=ctx.tenant_id, incident_id=payload.get("incident_id"))
 
 
 def create_app(
@@ -118,7 +119,9 @@ def create_app(
             state.redis = state.redis or Redis.from_url(settings.redis_url.get_secret_value())
         relayed = publisher
         if relayed is None and engine is None:
-            relayed = InProcessPublisher({"event.received": _log_event})
+            relayed = InProcessPublisher(
+                {"event.received": event_consumer(state.engine), "incident.opened": _log_opened}
+            )
         task = asyncio.create_task(relay.run(state.system_engine, relayed)) if relayed else None
         yield
         if task is not None:
