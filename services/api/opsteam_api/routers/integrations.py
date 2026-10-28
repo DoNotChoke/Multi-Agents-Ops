@@ -75,11 +75,21 @@ class AlertmanagerConfig(BaseModel):
     collapse_replica_labels: bool = True
 
 
-CONFIGS: dict[str, type[PrometheusConfig | AlertmanagerConfig]] = {
+class WebhookConfig(BaseModel):
+    """A notification channel: incidents are POSTed here, signed with the generated secret."""
+
+    model_config = ConfigDict(extra="forbid")
+    endpoint: str = Field(max_length=2048)
+
+
+Config = PrometheusConfig | AlertmanagerConfig | WebhookConfig
+CONFIGS: dict[str, type[Config]] = {
     "prometheus": PrometheusConfig,
     "alertmanager": AlertmanagerConfig,
+    "webhook": WebhookConfig,
 }
-PORTS = {"prometheus": PROMETHEUS_PORTS, "alertmanager": frozenset({9093})}
+PORTS = {"prometheus": PROMETHEUS_PORTS, "alertmanager": frozenset({9093}), "webhook": frozenset()}
+SIGNED = ("alertmanager", "webhook")
 
 
 class NewPrometheus(BaseModel):
@@ -101,14 +111,24 @@ class NewAlertmanager(BaseModel):
     config: AlertmanagerConfig = Field(default_factory=AlertmanagerConfig)
 
 
-NewIntegration = Annotated[NewPrometheus | NewAlertmanager, Field(discriminator="type")]
+class NewWebhook(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["webhook"]
+    name: Name
+    mode: Literal["direct"]
+    config: WebhookConfig
+
+
+NewIntegration = Annotated[
+    NewPrometheus | NewAlertmanager | NewWebhook, Field(discriminator="type")
+]
 
 
 class IntegrationChange(BaseModel):
     model_config = ConfigDict(extra="forbid")
     name: Name | None = None
     # Checked against the stored integration's type before it is saved.
-    config: PrometheusConfig | AlertmanagerConfig | None = None
+    config: Config | None = None
     status: Literal["active", "disabled"] | None = None
 
 
@@ -162,7 +182,7 @@ def _out(request: Request, row: Any) -> Integration:
     return Integration.model_validate(fields)
 
 
-def _stored(config: PrometheusConfig | AlertmanagerConfig) -> tuple[str | None, str]:
+def _stored(config: Config) -> tuple[str | None, str]:
     """Split a config into the endpoint column and the jsonb settings."""
     settings = config.model_dump()
     return settings.pop("endpoint"), json.dumps(settings)
@@ -206,11 +226,11 @@ async def create_integration(
     await _vet(request, body.type, body.config.endpoint)
     store = request.app.state.secrets
     webhook_secret = None
-    if isinstance(body, NewAlertmanager):
+    if isinstance(body, NewPrometheus):
+        ref = await store.put(ctx, body.credentials) if body.credentials else None
+    else:
         webhook_secret = secrets.token_urlsafe(32)
         ref = await store.put(ctx, SecretStr(webhook_secret))
-    else:
-        ref = await store.put(ctx, body.credentials) if body.credentials else None
     integration_id = new_id("int")
     endpoint, settings = _stored(body.config)
     try:
@@ -309,7 +329,7 @@ async def _kind(request: Request, ctx: RequestContext, integration_id: str) -> s
 async def rotate_webhook_secret(
     request: Request, ctx: Writer, integration_id: IntegrationId
 ) -> WebhookSecret:
-    """Replace an Alertmanager's webhook secret; the old one stops working at once."""
+    """Replace a webhook's inbound bearer or outbound signing secret; the old one stops at once."""
     store = request.app.state.secrets
     webhook_secret = secrets.token_urlsafe(32)
     ref = await store.put(ctx, SecretStr(webhook_secret))
@@ -318,7 +338,7 @@ async def rotate_webhook_secret(
             old = (
                 await session.execute(
                     text(
-                        "select name, type, credentials_ref from integrations"
+                        "select name, type, endpoint, credentials_ref from integrations"
                         " where integration_id = :id for update"
                     ),
                     {"id": integration_id},
@@ -326,8 +346,8 @@ async def rotate_webhook_secret(
             ).one_or_none()
             if old is None:
                 raise IntegrationNotFound("integration not found")
-            if old.type != "alertmanager":
-                raise NoWebhook("only Alertmanager integrations have a webhook secret")
+            if old.type not in SIGNED:
+                raise NoWebhook("only webhook integrations have a webhook secret")
             await session.execute(
                 text("update integrations set credentials_ref = :ref where integration_id = :id"),
                 {"ref": ref, "id": integration_id},
@@ -340,9 +360,8 @@ async def rotate_webhook_secret(
     if old.credentials_ref is not None:
         with contextlib.suppress(SecretNotFound):
             await store.delete(ctx, old.credentials_ref)
-    return WebhookSecret(
-        webhook_url=_webhook_url(request, integration_id), webhook_secret=webhook_secret
-    )
+    url = old.endpoint if old.type == "webhook" else _webhook_url(request, integration_id)
+    return WebhookSecret(webhook_url=url, webhook_secret=webhook_secret)
 
 
 @router.delete("/integrations/{integration_id}", status_code=204)

@@ -123,7 +123,7 @@ export interface paths {
         put?: never;
         /**
          * Rotate Webhook Secret
-         * @description Replace an Alertmanager's webhook secret; the old one stops working at once.
+         * @description Replace a webhook's inbound bearer or outbound signing secret; the old one stops at once.
          */
         post: operations["rotate_webhook_secret_api_v1_integrations__integration_id__webhook_secret_rotate_post"];
         delete?: never;
@@ -585,7 +585,7 @@ export interface components {
         /** IntegrationChange */
         IntegrationChange: {
             /** Config */
-            config?: components["schemas"]["PrometheusConfig"] | components["schemas"]["AlertmanagerConfig"] | null;
+            config?: components["schemas"]["PrometheusConfig"] | components["schemas"]["AlertmanagerConfig"] | components["schemas"]["WebhookConfig"] | null;
             /** Name */
             name?: string | null;
             /** Status */
@@ -724,6 +724,22 @@ export interface components {
             /** Repository */
             repository?: string | null;
         };
+        /** NewWebhook */
+        NewWebhook: {
+            config: components["schemas"]["WebhookConfig"];
+            /**
+             * Mode
+             * @constant
+             */
+            mode: "direct";
+            /** Name */
+            name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "webhook";
+        };
         /** PrometheusConfig */
         PrometheusConfig: {
             /** Endpoint */
@@ -858,6 +874,14 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /**
+         * WebhookConfig
+         * @description A notification channel: incidents are POSTed here, signed with the generated secret.
+         */
+        WebhookConfig: {
+            /** Endpoint */
+            endpoint: string;
+        };
         /** WebhookSecret */
         WebhookSecret: {
             /** Webhook Secret */
@@ -899,6 +923,7 @@ export type SchemaNewMapping = components['schemas']['NewMapping'];
 export type SchemaNewMember = components['schemas']['NewMember'];
 export type SchemaNewPrometheus = components['schemas']['NewPrometheus'];
 export type SchemaNewService = components['schemas']['NewService'];
+export type SchemaNewWebhook = components['schemas']['NewWebhook'];
 export type SchemaPrometheusConfig = components['schemas']['PrometheusConfig'];
 export type SchemaRoleChange = components['schemas']['RoleChange'];
 export type SchemaService = components['schemas']['Service'];
@@ -912,6 +937,7 @@ export type SchemaTestReport = components['schemas']['TestReport'];
 export type SchemaTopology = components['schemas']['Topology'];
 export type SchemaTransition = components['schemas']['Transition'];
 export type SchemaValidationError = components['schemas']['ValidationError'];
+export type SchemaWebhookConfig = components['schemas']['WebhookConfig'];
 export type SchemaWebhookSecret = components['schemas']['WebhookSecret'];
 export type $defs = Record<string, never>;
 export interface operations {
@@ -1069,7 +1095,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["NewPrometheus"] | components["schemas"]["NewAlertmanager"];
+                "application/json": components["schemas"]["NewPrometheus"] | components["schemas"]["NewAlertmanager"] | components["schemas"]["NewWebhook"];
             };
         };
         responses: {

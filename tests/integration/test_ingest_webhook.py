@@ -145,6 +145,23 @@ async def test_every_auth_failure_looks_the_same(
     assert await _rows(app_engine, tenant, "select 1 from events") == []
 
 
+async def test_a_notification_channels_signing_secret_cannot_send_alerts(
+    app_engine: AsyncEngine, system_engine: AsyncEngine
+) -> None:
+    subject = new_id("usr")
+    tenant = await member(app_engine, subject, ["admin"])
+    body = {"type": "webhook", "name": "w", "mode": "direct"}
+    body["config"] = {"endpoint": "https://93.184.216.34/hook"}
+    with api_client(app_engine) as api:
+        created = api.post("/api/v1/integrations", json=body, headers=auth(subject, tenant)).json()
+    with ingest(app_engine, system_engine) as client:
+        resp = _post(
+            client, created["integration_id"], created["webhook_secret"], json=_payload(_alert())
+        )
+    assert (resp.status_code, resp.json()) == (401, UNAUTHORIZED)
+    assert await _rows(app_engine, tenant, "select 1 from events") == []
+
+
 async def test_disabled_and_rotated_secrets_stop_working(
     app_engine: AsyncEngine, system_engine: AsyncEngine
 ) -> None:

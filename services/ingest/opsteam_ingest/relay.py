@@ -18,32 +18,58 @@ BACKOFF_S = 5.0
 
 log = structlog.get_logger()
 
+MAX_ATTEMPTS = 10
+MAX_BACKOFF_S = 300
+
+# A row waits while an older row of the same tenant and topic is backing off, so each
+# tenant's events stay in order without one tenant's failures holding up anyone else.
 _CLAIM = text("""
-    select outbox_id, tenant_id, topic, payload from outbox
-    where published_at is null
-    order by outbox_id
+    select o.outbox_id, o.tenant_id, o.topic, o.payload, o.attempts from outbox o
+    where o.published_at is null
+      and (o.next_attempt_at is null or o.next_attempt_at <= now())
+      and not exists (
+        select 1 from outbox b
+        where b.published_at is null and b.tenant_id = o.tenant_id and b.topic = o.topic
+          and b.outbox_id < o.outbox_id and b.next_attempt_at > now()
+      )
+    order by o.outbox_id
     for update skip locked
     limit :limit
 """)
 _DONE = text("update outbox set published_at = now() where outbox_id = :id")
+_RETRY = text("""
+    update outbox set attempts = attempts + 1,
+      next_attempt_at = now() + make_interval(secs => :delay)
+    where outbox_id = :id
+""")
+_DEAD = text(
+    "update outbox set attempts = attempts + 1, published_at = now() where outbox_id = :id"
+)
 
 
 async def relay_once(engine: AsyncEngine, publisher: EventPublisher, limit: int = BATCH) -> int:
-    """Publish up to `limit` rows and return how many; stops at the first failing row."""
+    """Publish up to `limit` rows and return how many; a failing row backs off and retries."""
     published = 0
+    blocked: set[tuple[str, str]] = set()
     async with engine.begin() as conn:
         for row in (await conn.execute(_CLAIM, {"limit": limit})).all():
+            if (row.tenant_id, row.topic) in blocked:
+                continue
             ctx = RequestContext(
                 tenant_id=row.tenant_id, principal=PRINCIPAL, roles=(), scopes=frozenset()
             )
             try:
                 await publisher.publish(ctx, row.topic, row.payload)
             except (OpsteamError, SQLAlchemyError, OSError) as exc:
-                # Later rows wait so a tenant's events are never handled out of order.
-                # shortcut: a row that always fails blocks the queue; add attempts and a
-                # dead-letter state once consumers have real failure modes (T-2.3).
+                blocked.add((row.tenant_id, row.topic))
+                if row.attempts + 1 >= MAX_ATTEMPTS:
+                    log.error("outbox.dead_letter", outbox_id=row.outbox_id, topic=row.topic)
+                    await conn.execute(_DEAD, {"id": row.outbox_id})
+                    continue
+                delay = min(BACKOFF_S * 2**row.attempts, MAX_BACKOFF_S)
                 log.warning("outbox.publish_failed", outbox_id=row.outbox_id, error=str(exc))
-                break
+                await conn.execute(_RETRY, {"id": row.outbox_id, "delay": delay})
+                continue
             await conn.execute(_DONE, {"id": row.outbox_id})
             published += 1
     return published

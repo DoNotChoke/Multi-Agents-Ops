@@ -1498,6 +1498,7 @@ dependencies = [
     { name = "opsteam-core" },
     { name = "opsteam-db" },
     { name = "opsteam-incidents" },
+    { name = "opsteam-notify" },
     { name = "opsteam-obs" },
     { name = "prometheus-client" },
     { name = "redis" },
@@ -1510,6 +1511,7 @@ requires-dist = [
     { name = "opsteam-core", editable = "packages/core" },
     { name = "opsteam-db", editable = "packages/db" },
     { name = "opsteam-incidents", editable = "packages/incidents" },
+    { name = "opsteam-notify", editable = "packages/notify" },
     { name = "opsteam-obs", editable = "packages/obs" },
     { name = "prometheus-client", specifier = ">=0.22" },
     { name = "redis", specifier = ">=8.1.0" },
@@ -1536,14 +1538,18 @@ name = "opsteam-notify"
 version = "0.0.0"
 source = { editable = "packages/notify" }
 dependencies = [
+    { name = "httpx" },
     { name = "opsteam-contracts" },
     { name = "opsteam-core" },
+    { name = "redis" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "opsteam-contracts", editable = "packages/generated" },
     { name = "opsteam-core", editable = "packages/core" },
+    { name = "redis", specifier = ">=8.1.0" },
 ]
 
 [[package]]

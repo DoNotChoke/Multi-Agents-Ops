@@ -77,6 +77,13 @@ async def check_url(
     return CheckedTarget(scheme, host, port, tuple(ips))
 
 
+def host_header(target: CheckedTarget) -> str:
+    """The Host header naming the original host, for a request sent to one of its vetted IPs."""
+    default = 443 if target.scheme == "https" else 80
+    host = f"[{target.host}]" if ":" in target.host else target.host
+    return host if target.port == default else f"{host}:{target.port}"
+
+
 def _is_ip(host: str) -> bool:
     try:
         ipaddress.ip_address(host)

@@ -672,6 +672,9 @@
                 "$ref": "#/components/schemas/AlertmanagerConfig"
               },
               {
+                "$ref": "#/components/schemas/WebhookConfig"
+              },
+              {
                 "type": "null"
               }
             ],
@@ -1100,6 +1103,37 @@
           "environment"
         ],
         "title": "NewService",
+        "type": "object"
+      },
+      "NewWebhook": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/WebhookConfig"
+          },
+          "mode": {
+            "const": "direct",
+            "title": "Mode",
+            "type": "string"
+          },
+          "name": {
+            "pattern": "^[A-Za-z0-9_.\\-]{1,100}$",
+            "title": "Name",
+            "type": "string"
+          },
+          "type": {
+            "const": "webhook",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "mode",
+          "config"
+        ],
+        "title": "NewWebhook",
         "type": "object"
       },
       "PrometheusConfig": {
@@ -1536,6 +1570,22 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "WebhookConfig": {
+        "additionalProperties": false,
+        "description": "A notification channel: incidents are POSTed here, signed with the generated secret.",
+        "properties": {
+          "endpoint": {
+            "maxLength": 2048,
+            "title": "Endpoint",
+            "type": "string"
+          }
+        },
+        "required": [
+          "endpoint"
+        ],
+        "title": "WebhookConfig",
         "type": "object"
       },
       "WebhookSecret": {
@@ -2062,7 +2112,8 @@
                 "discriminator": {
                   "mapping": {
                     "alertmanager": "#/components/schemas/NewAlertmanager",
-                    "prometheus": "#/components/schemas/NewPrometheus"
+                    "prometheus": "#/components/schemas/NewPrometheus",
+                    "webhook": "#/components/schemas/NewWebhook"
                   },
                   "propertyName": "type"
                 },
@@ -2072,6 +2123,9 @@
                   },
                   {
                     "$ref": "#/components/schemas/NewAlertmanager"
+                  },
+                  {
+                    "$ref": "#/components/schemas/NewWebhook"
                   }
                 ],
                 "title": "Body"
@@ -2409,7 +2463,7 @@
     },
     "/api/v1/integrations/{integration_id}/webhook-secret/rotate": {
       "post": {
-        "description": "Replace an Alertmanager's webhook secret; the old one stops working at once.",
+        "description": "Replace a webhook's inbound bearer or outbound signing secret; the old one stops at once.",
         "operationId": "rotate_webhook_secret_api_v1_integrations__integration_id__webhook_secret_rotate_post",
         "parameters": [
           {

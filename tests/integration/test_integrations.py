@@ -312,3 +312,53 @@ async def test_service_import_refuses_an_alertmanager(app_engine: AsyncEngine) -
     body = {"integration_id": iid}
     resp = _call(app_engine, "POST", "/services/import/prometheus", who, json=body)
     assert (resp.status_code, resp.json()["code"]) == (404, "integration.not_found")
+
+
+def _webhook(endpoint: str = "https://93.184.216.34/hooks/opsteam") -> dict[str, Any]:
+    return {
+        "type": "webhook",
+        "name": "on-call",
+        "mode": "direct",
+        "config": {"endpoint": endpoint},
+    }
+
+
+async def test_webhook_channel_gets_a_signing_secret_shown_once(app_engine: AsyncEngine) -> None:
+    who = await _who(app_engine)
+    resp = _call(app_engine, "POST", "/integrations", who, json=_webhook())
+    assert resp.status_code == 201, resp.text
+    created = resp.json()
+    iid, secret = created["integration_id"], created["webhook_secret"]
+    assert len(secret) >= 43 and created["has_credentials"] is True
+    assert created["config"] == {"endpoint": "https://93.184.216.34/hooks/opsteam"}
+    assert created["webhook_url"] is None  # ours is for inbound alerts; this one only sends
+    listed = _call(app_engine, "GET", "/integrations", who)
+    assert secret not in listed.text
+    resp = _call(app_engine, "POST", f"/integrations/{iid}/webhook-secret/rotate", who)
+    assert resp.status_code == 200, resp.text
+    rotated = resp.json()
+    assert rotated["webhook_secret"] != secret
+    assert rotated["webhook_url"] == "https://93.184.216.34/hooks/opsteam"
+
+
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        "https://10.0.0.5/hook",
+        "https://169.254.169.254/latest",
+        "https://127.0.0.1/hook",
+        "http://93.184.216.34/hook",  # signed payloads only travel over TLS
+        "https://93.184.216.34:9093/hook",
+    ],
+)
+async def test_internal_webhook_urls_are_refused(app_engine: AsyncEngine, endpoint: str) -> None:
+    resp = _call(
+        app_engine, "POST", "/integrations", await _who(app_engine), json=_webhook(endpoint)
+    )
+    assert (resp.status_code, resp.json()["code"]) == (422, "netguard.blocked")
+
+
+async def test_webhook_needs_an_endpoint(app_engine: AsyncEngine) -> None:
+    body = _webhook() | {"config": {}}
+    resp = _call(app_engine, "POST", "/integrations", await _who(app_engine), json=body)
+    assert (resp.status_code, resp.json()["code"]) == (422, "request.invalid")

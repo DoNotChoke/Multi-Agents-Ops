@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 
 import httpx
 from opsteam_core.errors import OpsteamError
-from opsteam_core.netguard import CheckedTarget, Resolver, check_url
+from opsteam_core.netguard import CheckedTarget, Resolver, check_url, host_header
 from pydantic import SecretStr
 
 # Prometheus listens on 9090 by default; anything else must sit behind 80/443.
@@ -86,7 +86,7 @@ class PrometheusConnector:
             path=prefix + path,
             params=params,
         )
-        headers = {"Host": _host_header(target)}
+        headers = {"Host": host_header(target)}
         if self.token is not None:
             headers["Authorization"] = f"Bearer {self.token.get_secret_value()}"
         extensions: dict[str, Any] = {}
@@ -126,9 +126,3 @@ class PrometheusConnector:
         if not isinstance(payload, dict) or payload.get("status") != "success":
             raise ConnectorError("prometheus reported an error")
         return payload.get("data")
-
-
-def _host_header(target: CheckedTarget) -> str:
-    default = 443 if target.scheme == "https" else 80
-    host = f"[{target.host}]" if ":" in target.host else target.host
-    return host if target.port == default else f"{host}:{target.port}"

@@ -23,6 +23,8 @@ from opsteam_db.secrets import DbSecretStore, SecretNotFound, SecretStore, Secre
 from opsteam_incidents import lifecycle
 from opsteam_incidents.lifecycle import Windows
 from opsteam_incidents.manager import event_consumer
+from opsteam_notify.throttle import Throttle
+from opsteam_notify.webhook import WebhookNotifier
 from opsteam_obs.metrics import INGEST_REQUESTS
 from prometheus_client import make_asgi_app
 from pydantic import ValidationError
@@ -34,6 +36,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from opsteam_ingest import relay
 from opsteam_ingest.alertmanager import Payload, to_events
+from opsteam_ingest.notify import opened_consumer
 from opsteam_ingest.settings import IngestSettings
 
 __all__ = ["MAX_BODY_BYTES", "create_app"]
@@ -82,11 +85,6 @@ def _problem(rejected: Rejected) -> JSONResponse:
     )
 
 
-async def _log_opened(ctx: RequestContext, payload: dict[str, Any]) -> None:
-    # TODO(T-2.5): replace with the notifier's consumer.
-    log.info("incident.opened", tenant_id=ctx.tenant_id, incident_id=payload.get("incident_id"))
-
-
 def create_app(
     engine: AsyncEngine | None = None,
     system_engine: AsyncEngine | None = None,
@@ -123,8 +121,15 @@ def create_app(
         tasks = []
         relayed = publisher
         if relayed is None and engine is None:
+            notifier = WebhookNotifier(SystemClock(), dev_allow=settings.netguard_dev_allow)
+            first_notice = opened_consumer(
+                state.engine, state.secrets, notifier, Throttle(state.redis), SystemClock(),
+                settings.app_url,
+            )  # fmt: skip
+            # shortcut: webhooks are sent inline by the relay, so a slow channel delays the
+            # queue by up to its 5 s timeout; move notify to its own consumer with a broker.
             relayed = InProcessPublisher(
-                {"event.received": event_consumer(state.engine), "incident.opened": _log_opened}
+                {"event.received": event_consumer(state.engine), "incident.opened": first_notice}
             )
             windows = Windows(
                 stable=timedelta(seconds=settings.incident_stable_window_seconds),

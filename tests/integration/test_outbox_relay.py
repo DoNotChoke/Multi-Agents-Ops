@@ -8,7 +8,7 @@ from opsteam_core.errors import OpsteamError
 from opsteam_core.events import FakePublisher
 from opsteam_core.ids import new_id
 from opsteam_db import tenant_session
-from opsteam_ingest.relay import outbox_backlog, relay_once
+from opsteam_ingest.relay import MAX_ATTEMPTS, outbox_backlog, relay_once
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
@@ -98,29 +98,61 @@ async def test_a_crash_before_commit_republishes(
     assert await _pending(app_engine, tenant) == 0
 
 
-async def test_a_failing_handler_keeps_the_row_and_the_order(
+class Flaky(FakePublisher):
+    """Fails the given event ids, each `times` times."""
+
+    def __init__(self, failing: set[str], times: int = 1) -> None:
+        super().__init__()
+        self.left = dict.fromkeys(failing, times)
+
+    async def publish(self, ctx: RequestContext, topic: str, payload: dict[str, Any]) -> None:
+        if self.left.get(payload["event_id"]):
+            self.left[payload["event_id"]] -= 1
+            raise OpsteamError("consumer down")
+        await super().publish(ctx, topic, payload)
+
+
+async def _drain(system_engine: AsyncEngine, fake: FakePublisher) -> None:
+    while await relay_once(system_engine, fake):
+        pass
+
+
+async def _due_now(system_engine: AsyncEngine, tenant: str) -> None:
+    async with system_engine.begin() as conn:
+        await conn.execute(
+            text("update outbox set next_attempt_at = now() where tenant_id = :t"), {"t": tenant}
+        )
+
+
+async def test_a_failing_row_backs_off_and_holds_only_its_tenants_later_rows(
     app_engine: AsyncEngine, system_engine: AsyncEngine
 ) -> None:
     tenant, ids = await _queue(app_engine, 3)
-
-    class Flaky(FakePublisher):
-        failures = 1
-
-        async def publish(self, ctx: RequestContext, topic: str, payload: dict[str, Any]) -> None:
-            if payload["event_id"] == ids[1] and self.failures:
-                self.failures -= 1
-                raise OpsteamError("consumer down")
-            await super().publish(ctx, topic, payload)
-
-    fake = Flaky()
-    while fake.failures:
-        await relay_once(system_engine, fake)
-    # The failing call stopped at ids[1]; what it handed over before that is committed.
-    assert _mine(fake, tenant) == ids[:1]
+    other, other_ids = await _queue(app_engine, 1)
+    fake = Flaky({ids[1]})
+    await _drain(system_engine, fake)
+    # ids[2] waits behind ids[1]; the other tenant is not held up.
+    assert _mine(fake, tenant) == ids[:1] and _mine(fake, other) == other_ids
     assert await _pending(app_engine, tenant) == 2
-    while await relay_once(system_engine, fake):
-        pass
+    await _due_now(system_engine, tenant)
+    await _drain(system_engine, fake)
     assert _mine(fake, tenant) == ids
+    async with tenant_session(app_engine, system_ctx(tenant)) as s:
+        attempts = (await s.execute(text("select attempts from outbox order by outbox_id"))).all()
+    assert [a for (a,) in attempts] == [0, 1, 0]
+
+
+async def test_a_row_that_keeps_failing_is_dead_lettered(
+    app_engine: AsyncEngine, system_engine: AsyncEngine
+) -> None:
+    tenant, ids = await _queue(app_engine, 2)
+    fake = Flaky({ids[0]}, times=MAX_ATTEMPTS)
+    for _ in range(MAX_ATTEMPTS):
+        await _due_now(system_engine, tenant)
+        await relay_once(system_engine, fake)
+    await _drain(system_engine, fake)
+    assert _mine(fake, tenant) == ids[1:]
+    assert await _pending(app_engine, tenant) == 0
 
 
 async def test_backlog_reports_count_and_age(
