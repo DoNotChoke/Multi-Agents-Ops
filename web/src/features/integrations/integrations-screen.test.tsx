@@ -317,3 +317,22 @@ test("testing a webhook reports whether the sample was accepted", async () => {
   expect(await checks.findByText("Sample sent")).toBeDefined();
   expect(checks.getByText("webhook returned HTTP 500")).toBeDefined();
 });
+
+test("an Alertmanager shows when its Watchdog last arrived", async () => {
+  mockApi({
+    "GET /api/v1/integrations": {
+      items: [{ ...AM, last_heartbeat_at: "2026-10-29T09:00:00Z" }],
+    },
+  });
+  renderWithQuery(<IntegrationsScreen />);
+  const webhook = within(
+    await screen.findByRole("region", { name: "Webhook" }),
+  );
+  expect(webhook.getByText(/Last Watchdog 2026-10-29 09:00/)).toBeDefined();
+  cleanup();
+  mockApi({
+    "GET /api/v1/integrations": { items: [{ ...AM, last_heartbeat_at: null }] },
+  });
+  renderWithQuery(<IntegrationsScreen />);
+  expect(await screen.findByText(/No Watchdog heartbeat yet/)).toBeDefined();
+});

@@ -48,7 +48,17 @@ def test_every_node_port_is_mapped_by_kind() -> None:
 def test_alert_rules_cover_the_lab_faults() -> None:
     groups = _load("observability/prometheus-values.yaml")["serverFiles"]["alerting_rules.yml"]
     names = {r["alert"] for g in groups["groups"] for r in g["rules"]}
-    assert names == EXPECTED_ALERTS
+    assert names == EXPECTED_ALERTS | {"Watchdog"}
+
+
+def test_the_watchdog_always_fires_and_repeats_every_minute() -> None:
+    values = _load("observability/prometheus-values.yaml")
+    groups = values["serverFiles"]["alerting_rules.yml"]["groups"]
+    [rule] = [r for g in groups for r in g["rules"] if r["alert"] == "Watchdog"]
+    assert rule["expr"] == "vector(1)"
+    [route] = values["alertmanager"]["config"]["route"]["routes"]
+    assert route["matchers"] == ['alertname="Watchdog"']
+    assert (route["receiver"], route["repeat_interval"]) == ("opsteam", "1m")
 
 
 def test_shop_images_are_pinned_or_local() -> None:

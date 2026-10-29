@@ -37,7 +37,7 @@ Writer = Annotated[RequestContext, Depends(require_scope("integration:write"))]
 
 _SELECT = """
     select integration_id, type, name, mode, status, endpoint, config, last_tested_at,
-           created_at, credentials_ref is not null as has_credentials
+           last_heartbeat_at, created_at, credentials_ref is not null as has_credentials
     from integrations
 """
 
@@ -75,6 +75,8 @@ class AlertmanagerConfig(BaseModel):
     # Optional: only needed to read active alerts back for reconciliation.
     endpoint: str | None = Field(default=None, max_length=2048)
     collapse_replica_labels: bool = True
+    # How often the Watchdog alert repeats; three missed in a row open `visibility_lost`.
+    watchdog_interval_seconds: int = Field(default=300, ge=30, le=3600)
 
 
 class WebhookConfig(BaseModel):
@@ -143,6 +145,7 @@ class Integration(BaseModel):
     config: dict[str, Any]
     has_credentials: bool
     last_tested_at: datetime | None
+    last_heartbeat_at: datetime | None
     created_at: datetime
     webhook_url: str | None = None
 
@@ -246,7 +249,7 @@ async def create_integration(
                                 cast(:config as jsonb), :ref)
                         on conflict (tenant_id, name) do nothing
                         returning integration_id, type, name, mode, status, endpoint, config,
-                                  last_tested_at, created_at,
+                                  last_tested_at, last_heartbeat_at, created_at,
                                   credentials_ref is not null as has_credentials
                     """),
                     {
@@ -300,7 +303,7 @@ async def update_integration(
                           config = coalesce(cast(:config as jsonb), config)
                         where integration_id = :id
                         returning integration_id, type, name, mode, status, endpoint, config,
-                                  last_tested_at, created_at,
+                                  last_tested_at, last_heartbeat_at, created_at,
                                   credentials_ref is not null as has_credentials
                     """),
                     params,

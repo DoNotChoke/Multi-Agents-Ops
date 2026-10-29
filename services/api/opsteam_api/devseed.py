@@ -18,6 +18,7 @@ from opsteam_api.settings import ApiSettings
 DEV_TENANT = "tnt_01JDEVSEED0000000000000000"
 # Fixed so deploy/lab can point its Alertmanager webhook here before the seed runs.
 LAB_ALERTMANAGER = "int_01JDEVSEED00000000000000AM"
+LAB_WATCHDOG = {"watchdog_interval_seconds": 60}
 # The demo app in deploy/lab, filed the way the Prometheus import files them.
 LAB_SERVICES = ("frontend", "checkout", "payment")
 # Keycloak user ids fixed in deploy/compose/keycloak/opsteam-realm.json.
@@ -84,8 +85,13 @@ async def seed(
             """),
             {"t": DEV_TENANT},
         )
+        # The lab repeats its Watchdog every minute; older seeds get the setting too.
         exists = await session.scalar(
-            text("select 1 from integrations where integration_id = :i"), {"i": LAB_ALERTMANAGER}
+            text(
+                "update integrations set config = config || cast(:c as jsonb)"
+                " where integration_id = :i returning 1"
+            ),
+            {"i": LAB_ALERTMANAGER, "c": json.dumps(LAB_WATCHDOG)},
         )
     if exists or secrets is None or webhook_secret is None:
         return
@@ -101,7 +107,7 @@ async def seed(
             {
                 "i": LAB_ALERTMANAGER,
                 "t": DEV_TENANT,
-                "config": json.dumps({"collapse_replica_labels": True}),
+                "config": json.dumps({"collapse_replica_labels": True} | LAB_WATCHDOG),
                 "ref": ref,
             },
         )

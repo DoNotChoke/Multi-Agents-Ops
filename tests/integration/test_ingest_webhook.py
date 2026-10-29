@@ -200,6 +200,20 @@ async def test_rate_limit(app_engine: AsyncEngine, system_engine: AsyncEngine) -
     assert 1 <= int(codes[2].headers["retry-after"]) <= 60
 
 
+async def test_a_watchdog_alert_is_a_heartbeat_not_an_event(
+    app_engine: AsyncEngine, system_engine: AsyncEngine
+) -> None:
+    tenant, iid, secret = await _alertmanager(app_engine)
+    watchdog = _alert(labels={"alertname": "Watchdog", "severity": "none"})
+    with ingest(app_engine, system_engine) as client:
+        resp = _post(client, iid, secret, json=_payload(watchdog, _alert("checkout")))
+    assert resp.json() == {"accepted": 1, "duplicates": 0}
+    [event] = await _rows(app_engine, tenant, "select labels from events")
+    assert event.labels["alertname"] == "HighLatencyP95"
+    [(beat,)] = await _rows(app_engine, tenant, "select last_heartbeat_at from integrations")
+    assert beat is not None
+
+
 async def test_store_failure_is_503(app_engine: AsyncEngine, system_engine: AsyncEngine) -> None:
     _, iid, secret = await _alertmanager(app_engine)
     down = create_engine(app_engine.url.set(port=1), poolclass=NullPool)  # nothing listens there

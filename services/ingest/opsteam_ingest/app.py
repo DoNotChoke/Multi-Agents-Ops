@@ -20,7 +20,7 @@ from opsteam_core.events import EventPublisher, InProcessPublisher
 from opsteam_core.logging import configure_logging
 from opsteam_db import create_engine, ping, tenant_session
 from opsteam_db.secrets import DbSecretStore, SecretNotFound, SecretStore, SecretUnreadable
-from opsteam_incidents import lifecycle
+from opsteam_incidents import lifecycle, watchdog
 from opsteam_incidents.lifecycle import Windows
 from opsteam_incidents.manager import event_consumer
 from opsteam_notify.throttle import Throttle
@@ -45,6 +45,7 @@ MAX_BODY_BYTES = 1 << 20
 READY_TIMEOUT_S = 2.0
 INTEGRATION_ID = re.compile(r"int_[0-9A-HJKMNP-TV-Z]{26}")
 PRINCIPAL = Principal(type="system", id="ingest")
+WATCHDOG = "Watchdog"
 # Compared against when there is no real secret, so unknown ids do the same work.
 _NO_SECRET = "x" * 43
 
@@ -139,6 +140,9 @@ def create_app(
                 asyncio.create_task(
                     lifecycle.run(state.engine, state.system_engine, SystemClock(), windows)
                 )
+            )
+            tasks.append(
+                asyncio.create_task(watchdog.run(state.engine, state.system_engine, SystemClock()))
             )
         if relayed is not None:
             tasks.append(asyncio.create_task(relay.run(state.system_engine, relayed)))
@@ -256,9 +260,16 @@ async def _store(
     config: dict[str, Any],
     payload: Payload,
 ) -> tuple[int, int]:
-    """Insert new events and their outbox rows in one transaction; return accepted, duplicates."""
+    """Insert new events and their outbox rows in one transaction; return accepted, duplicates.
+
+    A firing Watchdog is only a heartbeat: it stamps the integration and opens no incident.
+    """
+    beat = any(
+        a.labels.get("alertname") == WATCHDOG and a.status == "firing" for a in payload.alerts
+    )
+    alerts = [a for a in payload.alerts if a.labels.get("alertname") != WATCHDOG]
     events, dropped = to_events(
-        payload,
+        payload.model_copy(update={"alerts": alerts}),
         ctx.tenant_id,
         integration_id,
         collapse=bool(config.get("collapse_replica_labels", True)),
@@ -269,6 +280,14 @@ async def _store(
     accepted = 0
     try:
         async with tenant_session(request.app.state.engine, ctx) as session:
+            if beat:
+                await session.execute(
+                    text(
+                        "update integrations set last_heartbeat_at = now()"
+                        " where integration_id = :i"
+                    ),
+                    {"i": integration_id},
+                )
             for event in events:
                 params = event | {
                     "labels": json.dumps(event["labels"]),

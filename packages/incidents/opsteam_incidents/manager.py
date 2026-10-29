@@ -197,13 +197,41 @@ async def _correlate(
 async def _open(
     session: AsyncSession, ctx: RequestContext, event: Row[Any], ref: dict[str, str]
 ) -> str:
+    return await open_incident(
+        session,
+        ctx,
+        ref=ref,
+        source="alert",
+        title=event.title,
+        severity="info",  # rescored once the event is attached
+        fingerprint=event.fingerprint,
+        at=event.received_at,
+        reason="opened from an alert",
+        resource={"event_id": event.event_id},
+    )
+
+
+async def open_incident(
+    session: AsyncSession,
+    ctx: RequestContext,
+    *,
+    ref: dict[str, str],
+    source: str,
+    title: str,
+    severity: str,
+    fingerprint: str,
+    at: datetime,
+    reason: str,
+    resource: dict[str, Any],
+) -> str:
+    """Insert a NEW incident with its first transition, activity, audit and `incident.opened`."""
     incident_id = new_id("inc")
     await session.execute(
         text("""
             insert into incidents (incident_id, tenant_id, service_id, unmapped_service, source,
                                    title, status, severity, root_fingerprint, opened_at,
                                    detected_at, created_by)
-            values (:id, :t, :svc, cast(:unmapped as jsonb), 'alert', :title, 'NEW', 'info',
+            values (:id, :t, :svc, cast(:unmapped as jsonb), :source, :title, 'NEW', :severity,
                     :fp, :at, :at, :by)
         """),
         {
@@ -211,21 +239,23 @@ async def _open(
             "t": ctx.tenant_id,
             "svc": ref.get("service_id"),
             "unmapped": json.dumps(ref) if ref and "service_id" not in ref else None,
-            "title": event.title,
-            "fp": event.fingerprint,
-            "at": event.received_at,
+            "source": source,
+            "title": title[:200],
+            "severity": severity,
+            "fp": fingerprint,
+            "at": at,
             "by": f"{ctx.principal.type}:{ctx.principal.id}",
         },
     )
     actor = json.dumps({"type": ctx.principal.type, "id": ctx.principal.id})
-    params = {"t": ctx.tenant_id, "id": incident_id, "at": event.received_at, "actor": actor}
+    params = {"t": ctx.tenant_id, "id": incident_id, "at": at, "actor": actor}
     await session.execute(
         text("""
             insert into incident_transitions
               (tenant_id, incident_id, from_status, to_status, reason, actor, at)
-            values (:t, :id, null, 'NEW', 'opened from an alert', cast(:actor as jsonb), :at)
+            values (:t, :id, null, 'NEW', :reason, cast(:actor as jsonb), :at)
         """),
-        params,
+        params | {"reason": reason},
     )
     await session.execute(
         text("""
@@ -241,7 +271,7 @@ async def _open(
         """),
         {"t": ctx.tenant_id, "payload": json.dumps({"incident_id": incident_id})},
     )
-    resource = {"type": "incident", "incident_id": incident_id, "event_id": event.event_id}
+    resource = {"type": "incident", "incident_id": incident_id} | resource
     await audit.record(session, ctx, "incident.opened", resource, "allowed")
     return incident_id
 

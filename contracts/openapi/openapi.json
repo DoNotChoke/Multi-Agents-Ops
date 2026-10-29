@@ -20,6 +20,13 @@
               }
             ],
             "title": "Endpoint"
+          },
+          "watchdog_interval_seconds": {
+            "default": 300,
+            "maximum": 3600.0,
+            "minimum": 30.0,
+            "title": "Watchdog Interval Seconds",
+            "type": "integer"
           }
         },
         "title": "AlertmanagerConfig",
@@ -149,6 +156,18 @@
             "title": "Integration Id",
             "type": "string"
           },
+          "last_heartbeat_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Heartbeat At"
+          },
           "last_tested_at": {
             "anyOf": [
               {
@@ -209,6 +228,7 @@
           "config",
           "has_credentials",
           "last_tested_at",
+          "last_heartbeat_at",
           "created_at"
         ],
         "title": "CreatedIntegration",
@@ -606,6 +626,18 @@
             "title": "Integration Id",
             "type": "string"
           },
+          "last_heartbeat_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Heartbeat At"
+          },
           "last_tested_at": {
             "anyOf": [
               {
@@ -655,6 +687,7 @@
           "config",
           "has_credentials",
           "last_tested_at",
+          "last_heartbeat_at",
           "created_at"
         ],
         "title": "Integration",

@@ -222,7 +222,12 @@ async def test_alertmanager_secret_is_shown_once(app_engine: AsyncEngine) -> Non
     iid, secret = created["integration_id"], created["webhook_secret"]
     assert len(secret) >= 43  # 32 random bytes
     assert created["webhook_url"].endswith(f"/webhooks/alertmanager/{iid}")
-    assert created["config"] == {"endpoint": None, "collapse_replica_labels": True}
+    assert created["config"] == {
+        "endpoint": None,
+        "collapse_replica_labels": True,
+        "watchdog_interval_seconds": 300,
+    }
+    assert created["last_heartbeat_at"] is None
     assert created["has_credentials"] is True
     for r in (
         _call(app_engine, "GET", "/integrations", who),
@@ -289,7 +294,11 @@ async def test_alertmanager_endpoint_is_optional_but_vetted(app_engine: AsyncEng
     assert (resp.status_code, resp.json()["code"]) == (422, "request.invalid")
     good = {"config": {"collapse_replica_labels": True}}
     resp = _call(app_engine, "PATCH", f"/integrations/{iid}", who, json=good)
-    assert resp.json()["config"] == {"endpoint": None, "collapse_replica_labels": True}
+    assert resp.json()["config"] == {
+        "endpoint": None,
+        "collapse_replica_labels": True,
+        "watchdog_interval_seconds": 300,
+    }
 
 
 @pytest.mark.parametrize(
@@ -298,6 +307,8 @@ async def test_alertmanager_endpoint_is_optional_but_vetted(app_engine: AsyncEng
         {"credentials": "dev-only-chosen-secret"},  # the server picks webhook secrets
         {"config": {"metric_mapping": {}}},
         {"mode": "runner"},
+        {"config": {"watchdog_interval_seconds": 10}},
+        {"config": {"watchdog_interval_seconds": 7200}},
     ],
 )
 async def test_invalid_alertmanager_bodies(app_engine: AsyncEngine, extra: dict[str, Any]) -> None:

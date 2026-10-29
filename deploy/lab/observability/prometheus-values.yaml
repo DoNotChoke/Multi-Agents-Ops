@@ -25,6 +25,13 @@ alertmanager:
       group_wait: 10s
       group_interval: 1m
       repeat_interval: 1h
+      routes:
+        # Dead man's switch: opsteam opens visibility_lost after 3 missed minutes.
+        - matchers: ['alertname="Watchdog"']
+          receiver: opsteam
+          group_wait: 0s
+          group_interval: 30s
+          repeat_interval: 1m
     receivers:
       # make run-ingest on the host; the integration id is fixed by make dev-seed.
       # lab.sh sets http_config.authorization.credentials from LAB_WEBHOOK_SECRET.
@@ -41,6 +48,13 @@ prometheus-pushgateway:
 serverFiles:
   alerting_rules.yml:
     groups:
+      - name: meta
+        rules:
+          - alert: Watchdog
+            expr: vector(1)
+            labels: { severity: none }
+            annotations:
+              summary: "Always firing, so opsteam can tell the alerting pipeline is alive"
       - name: shop
         rules:
           - alert: HighLatencyP95

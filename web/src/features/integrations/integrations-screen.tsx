@@ -9,6 +9,7 @@ import { Card, PageHeader } from "@/components/ui/card";
 import { Dialog, Field, FormError } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import type { components } from "@/generated/api";
+import { utc } from "@/features/incidents/incidents-screen";
 import { api, errorMessage, unwrap } from "@/lib/api/client";
 
 type Integration = components["schemas"]["Integration"];
@@ -255,6 +256,11 @@ function Detail({
             <div className="mb-2 font-mono text-xs break-all">
               {integration.webhook_url}
             </div>
+            <p className="mb-2 text-[12.5px] text-muted">
+              {integration.last_heartbeat_at
+                ? `Last Watchdog ${utc(integration.last_heartbeat_at)}`
+                : "No Watchdog heartbeat yet, so a silent Alertmanager goes unnoticed."}
+            </p>
             <Button onClick={onRotate}>Rotate secret</Button>
           </section>
         ) : (

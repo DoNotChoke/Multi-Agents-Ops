@@ -215,3 +215,25 @@ test("overview counts open incidents by severity and lists recent ones", async (
   expect(recent.getByRole("link", { name: CHECKOUT.title })).toBeDefined();
   expect(recent.getByRole("link", { name: "cart errors" })).toBeDefined();
 });
+
+test("a visibility_lost incident is not offered for mapping", async () => {
+  mockApi({
+    "GET /api/v1/incidents/inc_01LOST": {
+      ...DETAIL,
+      incident_id: "inc_01LOST",
+      title: "Visibility lost: no Watchdog heartbeat from lab-am",
+      service: null,
+      unmapped_service: { name: "platform:lab-am", environment: null },
+      events: [],
+    },
+  });
+  renderWithQuery(<IncidentScreen incidentId="inc_01LOST" />);
+  expect(
+    await screen.findByRole("heading", {
+      name: "Visibility lost: no Watchdog heartbeat from lab-am",
+    }),
+  ).toBeDefined();
+  expect(screen.getByText("platform:lab-am")).toBeDefined();
+  expect(screen.queryByText(/is not in the catalog/)).toBeNull();
+  expect(screen.queryByRole("button", { name: "Map to service…" })).toBeNull();
+});

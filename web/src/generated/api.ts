@@ -358,6 +358,11 @@ export interface components {
             collapse_replica_labels: boolean;
             /** Endpoint */
             endpoint?: string | null;
+            /**
+             * Watchdog Interval Seconds
+             * @default 300
+             */
+            watchdog_interval_seconds: number;
         };
         /** AuditEvent */
         AuditEvent: {
@@ -414,6 +419,8 @@ export interface components {
             has_credentials: boolean;
             /** Integration Id */
             integration_id: string;
+            /** Last Heartbeat At */
+            last_heartbeat_at: string | null;
             /** Last Tested At */
             last_tested_at: string | null;
             /** Mode */
@@ -569,6 +576,8 @@ export interface components {
             has_credentials: boolean;
             /** Integration Id */
             integration_id: string;
+            /** Last Heartbeat At */
+            last_heartbeat_at: string | null;
             /** Last Tested At */
             last_tested_at: string | null;
             /** Mode */

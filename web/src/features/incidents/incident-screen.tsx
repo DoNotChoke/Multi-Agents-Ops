@@ -73,22 +73,25 @@ export function IncidentScreen({ incidentId }: { incidentId: string }) {
         <StatusBadge status={i.status} />
       </div>
 
-      {!i.service && i.unmapped_service?.name && (
-        <div className="mb-4 rounded-md border border-warn/40 bg-warn-bg px-3 py-2 text-[13px]">
-          {i.unmapped_service.name}
-          {i.unmapped_service.environment &&
-            ` in ${i.unmapped_service.environment}`}{" "}
-          is not in the catalog, so this incident has no topology or
-          criticality.{" "}
-          <button
-            type="button"
-            onClick={() => setMapping(true)}
-            className="font-medium text-brand-700 hover:underline"
-          >
-            Map to service…
-          </button>
-        </div>
-      )}
+      {/* platform:<integration> names opsteam's own visibility_lost incidents: nothing to map. */}
+      {!i.service &&
+        i.unmapped_service?.name &&
+        !i.unmapped_service.name.startsWith("platform:") && (
+          <div className="mb-4 rounded-md border border-warn/40 bg-warn-bg px-3 py-2 text-[13px]">
+            {i.unmapped_service.name}
+            {i.unmapped_service.environment &&
+              ` in ${i.unmapped_service.environment}`}{" "}
+            is not in the catalog, so this incident has no topology or
+            criticality.{" "}
+            <button
+              type="button"
+              onClick={() => setMapping(true)}
+              className="font-medium text-brand-700 hover:underline"
+            >
+              Map to service…
+            </button>
+          </div>
+        )}
       {mapping && (
         <MapServiceDialog
           incidentId={i.incident_id}
