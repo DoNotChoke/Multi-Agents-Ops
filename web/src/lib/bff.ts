@@ -65,11 +65,15 @@ export async function forward(req: NextRequest): Promise<Response> {
       );
   }
 
+  // Live updates stream as server-sent events; everything else is JSON.
+  const stream = req.headers.get("accept") === "text/event-stream";
   const headers = new Headers({
     authorization: `Bearer ${session.accessToken}`,
-    accept: "application/json",
+    accept: stream ? "text/event-stream" : "application/json",
   });
   if (tenant) headers.set("x-tenant-id", tenant);
+  const resume = req.headers.get("last-event-id");
+  if (stream && resume) headers.set("last-event-id", resume);
   const type = req.headers.get("content-type");
   if (type) headers.set("content-type", type);
   const upstream = await fetch(
@@ -80,9 +84,11 @@ export async function forward(req: NextRequest): Promise<Response> {
       body: safe ? undefined : await req.arrayBuffer(),
       redirect: "manual",
       cache: "no-store",
+      // Closing the tab ends the upstream stream too.
+      signal: req.signal,
     },
   );
-  for (const name of ["content-type", "x-request-id"]) {
+  for (const name of ["content-type", "x-request-id", "x-accel-buffering"]) {
     const value = upstream.headers.get(name);
     if (value) out.set(name, value);
   }

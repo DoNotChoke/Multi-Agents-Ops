@@ -106,3 +106,41 @@ test("without a tenant cookie the first membership is used and remembered", asyn
   ).toBe(true);
   expect(cookies).toContain("authjs.session-token=new");
 });
+
+test("an event stream passes through with its resume point, unbuffered", async () => {
+  fetch.mockResolvedValue(
+    new Response("id: 7\nevent: incident.opened\ndata: {}\n\n", {
+      headers: {
+        "content-type": "text/event-stream",
+        "x-accel-buffering": "no",
+      },
+    }),
+  );
+  const response = await forward(
+    request("/api/v1/stream", {
+      headers: {
+        cookie: "opsteam_tenant=tnt_a",
+        accept: "text/event-stream",
+        "last-event-id": "6",
+      },
+    }),
+  );
+  const [, init] = fetch.mock.calls[0];
+  expect(init.headers.get("accept")).toBe("text/event-stream");
+  expect(init.headers.get("last-event-id")).toBe("6");
+  expect(init.signal).toBeInstanceOf(AbortSignal);
+  expect(response.headers.get("content-type")).toBe("text/event-stream");
+  expect(response.headers.get("x-accel-buffering")).toBe("no");
+  expect(await response.text()).toContain("event: incident.opened");
+});
+
+test("an ordinary call still asks for JSON and sends no resume point", async () => {
+  await forward(
+    request("/api/v1/incidents", {
+      headers: { cookie: "opsteam_tenant=tnt_a", "last-event-id": "6" },
+    }),
+  );
+  const [, init] = fetch.mock.calls[0];
+  expect(init.headers.get("accept")).toBe("application/json");
+  expect(init.headers.get("last-event-id")).toBeNull();
+});

@@ -24,6 +24,8 @@ export type Account = {
 
 type Props = {
   account?: Account;
+  /** Live status next to the logo: the new-incident bell. */
+  live?: React.ReactNode;
   tenants?: { id: string; name: string }[];
   onSwitchTenant?: (form: FormData) => Promise<void>;
   onSignOut?: () => Promise<void>;
@@ -57,6 +59,7 @@ export function Shell({
   tenants = [],
   onSwitchTenant,
   onSignOut,
+  live,
   children,
 }: Props) {
   const path = usePathname();
@@ -68,6 +71,7 @@ export function Shell({
           <span className="text-[15px] font-semibold tracking-tight">
             opsteam
           </span>
+          {live}
         </div>
         {account && (
           <div className="m-3 rounded-md border border-line px-2.5 py-2">

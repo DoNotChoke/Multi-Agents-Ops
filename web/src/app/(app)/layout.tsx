@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { auth, signOut } from "@/auth";
 import { Shell } from "@/components/shell";
 import { Empty } from "@/components/states";
+import { LiveIncidents } from "@/features/incidents/live";
 import { apiGet } from "@/lib/bff";
 import { freshToken } from "@/lib/session";
 import { pickTenant, TENANT_COOKIE, type Membership } from "@/lib/tenant";
@@ -93,6 +94,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         tenants={tenants}
         onSwitchTenant={switchTenant}
         onSignOut={leave}
+        live={account ? <LiveIncidents /> : undefined}
       >
         {account ? (
           children
