@@ -1,4 +1,6 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, cleanup, fireEvent, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { mockApi, renderWithQuery } from "@/test-utils";
 import { LiveIncidents } from "./live";
@@ -154,4 +156,17 @@ test("the stream is closed when the page goes away", () => {
   const { unmount } = renderWithQuery(<LiveIncidents />);
   unmount();
   expect(FakeEventSource.last.closed).toBe(true);
+});
+
+test("the server render matches the first client render (no permission yet)", () => {
+  class FakeNotification {
+    static permission = "default";
+  }
+  vi.stubGlobal("Notification", FakeNotification);
+  const html = renderToString(
+    <QueryClientProvider client={new QueryClient()}>
+      <LiveIncidents />
+    </QueryClientProvider>,
+  );
+  expect(html).not.toContain("Enable desktop alerts");
 });

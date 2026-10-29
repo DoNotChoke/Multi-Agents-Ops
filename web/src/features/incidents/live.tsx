@@ -3,7 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import type { components } from "@/generated/api";
 import { api } from "@/lib/api/client";
 import { useEventStream } from "@/lib/sse";
@@ -32,17 +32,23 @@ function notifyDesktop(i: Incident, open: (href: string) => void) {
   };
 }
 
+const noChanges = () => () => {};
+const browserPermission = () =>
+  typeof Notification === "undefined" ? "unsupported" : Notification.permission;
+
 /** Keeps incident data live from the tenant stream and announces new incidents. */
 export function LiveIncidents() {
   const client = useQueryClient();
   const router = useRouter();
   const [toasts, setToasts] = useState<Incident[]>([]);
   const [unseen, setUnseen] = useState(0);
-  const [permission, setPermission] = useState(() =>
-    typeof Notification === "undefined"
-      ? "unsupported"
-      : Notification.permission,
+  // The server has no Notification: its snapshot keeps the first client render identical.
+  const permission = useSyncExternalStore(
+    noChanges,
+    browserPermission,
+    () => "unsupported",
   );
+  const [, asked] = useState(0);
 
   const state = useEventStream("/api/v1/stream", async (event) => {
     void client.invalidateQueries({ queryKey: ["incidents"] });
@@ -74,9 +80,10 @@ export function LiveIncidents() {
         {permission === "default" && (
           <button
             type="button"
-            onClick={async () =>
-              setPermission(await Notification.requestPermission())
-            }
+            onClick={async () => {
+              await Notification.requestPermission();
+              asked((n) => n + 1); // re-read the answer
+            }}
             className="text-[11px] text-brand-700 hover:underline"
           >
             Enable desktop alerts

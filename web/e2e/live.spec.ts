@@ -12,6 +12,10 @@ test("a new incident appears live, without a reload", async ({
   page,
   request,
 }) => {
+  const hydration: string[] = [];
+  page.on("console", (m) => {
+    if (/hydrat/i.test(m.text())) hydration.push(m.text());
+  });
   await page.goto("/incidents");
   await page.getByRole("button", { name: "Continue with email" }).click();
   await page.getByLabel(/username or email/i).fill("dev-admin");
@@ -50,4 +54,5 @@ test("a new incident appears live, without a reload", async ({
   await expect(
     page.getByRole("heading", { name: `${service} returns 5xx` }),
   ).toBeVisible();
+  expect(hydration).toEqual([]);
 });
