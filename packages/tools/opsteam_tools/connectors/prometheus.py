@@ -1,33 +1,31 @@
 """Read-only Prometheus HTTP API client that connects only to addresses netguard has vetted."""
 
-import json
 import ssl
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
-from urllib.parse import urlsplit
 
 import httpx
-from opsteam_core.errors import OpsteamError
-from opsteam_core.netguard import CheckedTarget, Resolver, check_url, host_header
+from opsteam_core.netguard import CheckedTarget, Resolver, check_url
 from pydantic import SecretStr
+
+from opsteam_tools.connectors.http import (
+    ConnectorError,
+    ConnectorTimeout,
+    ResponseTooLarge,
+    get_json,
+)
+
+__all__ = [
+    "PROMETHEUS_PORTS",
+    "ConnectorError",
+    "ConnectorTimeout",
+    "PrometheusConnector",
+    "ResponseTooLarge",
+]
 
 # Prometheus listens on 9090 by default; anything else must sit behind 80/443.
 PROMETHEUS_PORTS = frozenset({9090})
-
-
-class ConnectorError(OpsteamError):
-    """The data source could not be queried; the message never includes the response body."""
-
-    code = "connector.failed"
-
-
-class ConnectorTimeout(ConnectorError):
-    code = "connector.timeout"
-
-
-class ResponseTooLarge(ConnectorError):
-    code = "connector.too_large"
 
 
 @dataclass(frozen=True)
@@ -76,53 +74,21 @@ class PrometheusConnector:
         return await self._request(target, path, params)
 
     async def _request(self, target: CheckedTarget, path: str, params: dict[str, str]) -> Any:
-        """Send one GET to `target`'s vetted IP while TLS and Host still name the original host."""
-        ip = target.ips[0]
-        prefix = urlsplit(self.endpoint).path.rstrip("/")
-        url = httpx.URL(
-            scheme=target.scheme,
-            host=ip,
-            port=target.port,
-            path=prefix + path,
-            params=params,
-        )
-        headers = {"Host": host_header(target)}
+        headers = {}
         if self.token is not None:
             headers["Authorization"] = f"Bearer {self.token.get_secret_value()}"
-        extensions: dict[str, Any] = {}
-        if target.scheme == "https" and target.host != ip:
-            extensions["sni_hostname"] = target.host  # also the name the certificate must match
-
-        # trust_env=False: an environment proxy would bypass the pinned address.
-        async with httpx.AsyncClient(
+        payload = await get_json(
+            "prometheus",
+            self.endpoint,
+            target,
+            path,
+            params,
+            headers,
+            timeout_s=self.timeout_s,
+            max_bytes=self.max_bytes,
             transport=self.transport,
-            timeout=self.timeout_s,
-            follow_redirects=False,
-            trust_env=False,
             verify=self.verify,
-        ) as client:
-            try:
-                async with client.stream(
-                    "GET", url, headers=headers, extensions=extensions
-                ) as resp:
-                    if resp.is_redirect:
-                        raise ConnectorError("prometheus answered with a redirect; not followed")
-                    body = bytearray()
-                    async for chunk in resp.aiter_bytes():
-                        body += chunk
-                        if len(body) > self.max_bytes:
-                            raise ResponseTooLarge(f"response exceeds {self.max_bytes} bytes")
-                    status = resp.status_code
-            except httpx.TimeoutException as exc:
-                raise ConnectorTimeout("prometheus did not answer in time") from exc
-            except httpx.HTTPError as exc:
-                raise ConnectorError("prometheus could not be reached") from exc
-        if status != 200:
-            raise ConnectorError(f"prometheus returned HTTP {status}")
-        try:
-            payload = json.loads(body)
-        except ValueError as exc:
-            raise ConnectorError("prometheus returned invalid JSON") from exc
+        )
         if not isinstance(payload, dict) or payload.get("status") != "success":
             raise ConnectorError("prometheus reported an error")
         return payload.get("data")

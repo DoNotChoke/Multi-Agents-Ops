@@ -3,12 +3,11 @@
 import asyncio
 import contextlib
 import hmac
-import json
 import re
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import UTC, datetime, timedelta
+from datetime import timedelta
 from typing import Any
 
 import structlog
@@ -18,7 +17,7 @@ from opsteam_core.clock import SystemClock
 from opsteam_core.context import Principal, RequestContext
 from opsteam_core.events import EventPublisher, InProcessPublisher
 from opsteam_core.logging import configure_logging
-from opsteam_db import create_engine, ping, tenant_session
+from opsteam_db import create_engine, ping
 from opsteam_db.secrets import DbSecretStore, SecretNotFound, SecretStore, SecretUnreadable
 from opsteam_incidents import lifecycle, watchdog
 from opsteam_incidents.lifecycle import Windows
@@ -34,8 +33,9 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from opsteam_ingest import relay
-from opsteam_ingest.alertmanager import Payload, to_events
+from opsteam_ingest import intake, reconcile, relay
+from opsteam_ingest.alertmanager import Payload
+from opsteam_ingest.intake import WATCHDOG
 from opsteam_ingest.notify import opened_consumer
 from opsteam_ingest.settings import IngestSettings
 
@@ -45,26 +45,10 @@ MAX_BODY_BYTES = 1 << 20
 READY_TIMEOUT_S = 2.0
 INTEGRATION_ID = re.compile(r"int_[0-9A-HJKMNP-TV-Z]{26}")
 PRINCIPAL = Principal(type="system", id="ingest")
-WATCHDOG = "Watchdog"
 # Compared against when there is no real secret, so unknown ids do the same work.
 _NO_SECRET = "x" * 43
 
 log = structlog.get_logger()
-
-_INSERT_EVENT = text("""
-    insert into events (event_id, tenant_id, integration_id, source_type, fingerprint, status,
-                        severity_hint, title, labels, annotations, starts_at, ends_at,
-                        received_at)
-    values (:event_id, :tenant_id, :integration_id, :source_type, :fingerprint, :status,
-            :severity_hint, :title, cast(:labels as jsonb), cast(:annotations as jsonb),
-            :starts_at, :ends_at, :received_at)
-    on conflict (tenant_id, integration_id, fingerprint, status, starts_at) do nothing
-    returning event_id
-""")
-_INSERT_OUTBOX = text("""
-    insert into outbox (tenant_id, topic, payload)
-    values (:tenant_id, 'event.received', cast(:payload as jsonb))
-""")
 
 
 class Rejected(Exception):
@@ -143,6 +127,11 @@ def create_app(
             )
             tasks.append(
                 asyncio.create_task(watchdog.run(state.engine, state.system_engine, SystemClock()))
+            )
+            tasks.append(
+                asyncio.create_task(
+                    reconcile.run(state.engine, state.system_engine, settings.netguard_dev_allow)
+                )
             )
         if relayed is not None:
             tasks.append(asyncio.create_task(relay.run(state.system_engine, relayed)))
@@ -260,49 +249,15 @@ async def _store(
     config: dict[str, Any],
     payload: Payload,
 ) -> tuple[int, int]:
-    """Insert new events and their outbox rows in one transaction; return accepted, duplicates.
-
-    A firing Watchdog is only a heartbeat: it stamps the integration and opens no incident.
-    """
+    """Store the webhook's alerts; a firing Watchdog is only a heartbeat, never an incident."""
     beat = any(
         a.labels.get("alertname") == WATCHDOG and a.status == "firing" for a in payload.alerts
     )
-    alerts = [a for a in payload.alerts if a.labels.get("alertname") != WATCHDOG]
-    events, dropped = to_events(
-        payload.model_copy(update={"alerts": alerts}),
-        ctx.tenant_id,
-        integration_id,
-        collapse=bool(config.get("collapse_replica_labels", True)),
-        received_at=datetime.now(UTC),
-    )
-    if dropped:
-        log.warning("webhook.alerts_dropped", integration_id=integration_id, dropped=dropped)
-    accepted = 0
     try:
-        async with tenant_session(request.app.state.engine, ctx) as session:
-            if beat:
-                await session.execute(
-                    text(
-                        "update integrations set last_heartbeat_at = now()"
-                        " where integration_id = :i"
-                    ),
-                    {"i": integration_id},
-                )
-            for event in events:
-                params = event | {
-                    "labels": json.dumps(event["labels"]),
-                    "annotations": json.dumps(event["annotations"]),
-                }
-                if (await session.execute(_INSERT_EVENT, params)).one_or_none() is None:
-                    continue
-                accepted += 1
-                outbox = {
-                    "tenant_id": ctx.tenant_id,
-                    "payload": json.dumps({"event_id": event["event_id"]}),
-                }
-                await session.execute(_INSERT_OUTBOX, outbox)
+        return await intake.store(
+            request.app.state.engine, ctx, integration_id, config, payload.alerts, heartbeat=beat
+        )
     except (SQLAlchemyError, OSError) as exc:
         # Never a 2xx before the write is durable; Alertmanager retries on 5xx.
         log.warning("webhook.store_failed", error=type(exc).__name__)
         raise Rejected(503, "webhook.store_unavailable") from exc
-    return accepted, len(events) - accepted

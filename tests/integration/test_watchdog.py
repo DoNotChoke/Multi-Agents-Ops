@@ -93,7 +93,7 @@ async def test_a_returning_heartbeat_resolves_it(
     [incident] = await lab.incidents()
     assert incident.status == "RESOLVED"
     [move] = await lab.rows("select reason from incident_transitions where to_status = 'RESOLVED'")
-    assert move.reason == "heartbeat_restored"
+    assert move.reason == "visibility_restored"
     # Losing it again later opens a fresh incident.
     await lab.sweep(system_engine, T0 + timedelta(minutes=20))
     assert [i.status for i in await lab.incidents()] == ["RESOLVED", "NEW"]

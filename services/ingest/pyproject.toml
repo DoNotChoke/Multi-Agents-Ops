@@ -9,6 +9,7 @@ dependencies = [
     "opsteam-incidents",
     "opsteam-notify",
     "opsteam-obs",
+    "opsteam-tools",
     "prometheus-client>=0.22",
     "redis>=8.1.0",
     "uvicorn>=0.54.0",

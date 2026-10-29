@@ -419,3 +419,28 @@ async def test_a_refusing_webhook_fails_the_test(app_engine: AsyncEngine) -> Non
         report["checks"]
     )
     assert "stack trace" not in json.dumps(report)
+
+
+async def test_testing_an_alertmanager_reads_its_alerts(app_engine: AsyncEngine) -> None:
+    who = await _who(app_engine)
+    body = _alertmanager(endpoint="https://93.184.216.34:9093")
+    iid = _call(app_engine, "POST", "/integrations", who, json=body).json()["integration_id"]
+    seen: list[httpx.Request] = []
+
+    def alertmanager(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json=[{"labels": {"alertname": "A"}}] * 3)
+
+    report = _call(app_engine, "POST", f"/integrations/{iid}/test", who, alertmanager).json()
+    assert report["ok"] is True, report
+    assert {"name": "reachable", "ok": True, "detail": "3 active alerts"} in report["checks"]
+    assert [r.url.path for r in seen] == ["/api/v2/alerts"]
+
+    def down(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("refused", request=request)
+
+    report = _call(app_engine, "POST", f"/integrations/{iid}/test", who, down).json()
+    assert report["ok"] is False
+    assert {"name": "reachable", "ok": False, "detail": "alertmanager could not be reached"} in (
+        report["checks"]
+    )

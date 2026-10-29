@@ -7,3 +7,6 @@ OUTBOX_UNPUBLISHED = Gauge("outbox_unpublished_count", "Outbox rows not yet publ
 INGEST_REQUESTS = Counter(
     "ingest_requests_total", "Webhook requests by outcome", ["source", "outcome"]
 )
+RECONCILIATION_GAP = Counter(
+    "reconciliation_gap_total", "Alerts found by reading Alertmanager back that never arrived"
+)

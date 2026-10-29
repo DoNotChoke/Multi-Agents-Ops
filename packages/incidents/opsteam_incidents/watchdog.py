@@ -1,4 +1,4 @@
-"""Dead man's switch: an Alertmanager whose Watchdog stops arriving opens `visibility_lost`."""
+"""Dead man's switch: an Alertmanager we stop hearing from, or cannot read, is `visibility_lost`."""
 
 import asyncio
 from datetime import datetime, timedelta
@@ -19,6 +19,8 @@ from opsteam_incidents.state import transition
 PRINCIPAL = Principal(type="system", id="watchdog")
 INTERVAL_S = 30.0
 MISSED = 3
+# Reconciliation runs every two minutes, so this is about six minutes of unreadable alerts.
+UNREADABLE_AFTER = 3
 _LOCK_KEY = "opsteam:watchdog"
 
 log = structlog.get_logger()
@@ -31,7 +33,7 @@ _OPEN = text("""
 
 
 async def sweep(engine: AsyncEngine, system_engine: AsyncEngine, clock: Clock) -> int:
-    """Check every integration that has sent a Watchdog once; return how many incidents changed."""
+    """Check every integration with a heartbeat or failing reads; return how many changed."""
     changed = 0
     async with system_engine.connect() as conn:
         locked = await conn.scalar(
@@ -69,24 +71,28 @@ async def _check(session: AsyncSession, ctx: RequestContext, row: Any, now: date
     )
     fingerprint = f"watchdog:{row.integration_id}"
     open_id = await session.scalar(_OPEN, {"fp": fingerprint})
-    deadline = row.last_heartbeat_at + timedelta(seconds=MISSED * row.interval_s)
-    silent = row.status == "active" and now > deadline
+    quiet = row.last_heartbeat_at is not None and now > row.last_heartbeat_at + timedelta(
+        seconds=MISSED * row.interval_s
+    )
+    unreadable = row.reconcile_failures >= UNREADABLE_AFTER
+    silent = row.status == "active" and (quiet or unreadable)
     if silent and open_id is None:
+        why = "no Watchdog heartbeat from" if quiet else "cannot read alerts from"
         await open_incident(
             session,
             ctx,
             ref={"name": f"platform:{row.name}"},
             source="watchdog",
-            title=f"Visibility lost: no Watchdog heartbeat from {row.name}",
+            title=f"Visibility lost: {why} {row.name}",
             severity="high",
             fingerprint=fingerprint,
             at=now,
-            reason="watchdog heartbeat missing",
+            reason="watchdog heartbeat missing" if quiet else "reconciliation failing",
             resource={"integration_id": row.integration_id},
         )
         return 1
     if not silent and open_id is not None:
-        reason = "heartbeat_restored" if row.status == "active" else "integration_disabled"
+        reason = "visibility_restored" if row.status == "active" else "integration_disabled"
         await transition(session, ctx, open_id, "RESOLVED", reason, now)
         return 1
     return 0

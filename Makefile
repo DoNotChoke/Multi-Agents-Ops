@@ -111,7 +111,7 @@ run-api dev-seed: export OPSTEAM_OIDC_ISSUER ?= http://localhost:8080/realms/ops
 run-api dev-seed: export OPSTEAM_OIDC_JWKS_URL ?= http://localhost:8080/realms/opsteam/protocol/openid-connect/certs
 # Fake 32-byte key built at run time; the lab Prometheus is the only SSRF exception.
 run-api dev-seed: export OPSTEAM_SECRETS_KEY ?= $(shell printf 'dev-only-secrets-key-32-bytes!!!' | base64)
-run-api dev-seed: export OPSTEAM_NETGUARD_DEV_ALLOW ?= ["127.0.0.1:30090"]
+run-api dev-seed: export OPSTEAM_NETGUARD_DEV_ALLOW ?= ["127.0.0.1:30090","127.0.0.1:30093"]
 run-api:
 	uv run uvicorn --factory opsteam_api.main:create_app --host 127.0.0.1 --port 8000
 
@@ -146,6 +146,8 @@ run-ingest: export OPSTEAM_DATABASE_URL ?= $(call DB_URL,opsteam_app,$(OPSTEAM_A
 run-ingest: export OPSTEAM_SYSTEM_DATABASE_URL ?= $(call DB_URL,opsteam_system,$(OPSTEAM_SYSTEM_DB_PASSWORD))
 run-ingest: export OPSTEAM_SECRETS_KEY ?= $(shell printf 'dev-only-secrets-key-32-bytes!!!' | base64)
 run-ingest: export OPSTEAM_REDIS_URL ?= redis://:$(REDIS_PASSWORD)@127.0.0.1:6379/0
+# The lab Alertmanager, read back by reconciliation.
+run-ingest: export OPSTEAM_NETGUARD_DEV_ALLOW ?= ["127.0.0.1:30093"]
 # Short so the lab shows auto-resolve within minutes of `make lab-heal`.
 run-ingest: export OPSTEAM_INCIDENT_STABLE_WINDOW_SECONDS ?= 120
 run-ingest:

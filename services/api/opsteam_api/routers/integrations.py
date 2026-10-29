@@ -16,6 +16,7 @@ from opsteam_core.netguard import check_url
 from opsteam_db import audit, tenant_session
 from opsteam_db.secrets import SecretNotFound, SecretUnreadable
 from opsteam_notify.webhook import Channel, DeliveryFailed, Message, WebhookNotifier
+from opsteam_tools.connectors.alertmanager import ALERTMANAGER_PORTS, AlertmanagerConnector
 from opsteam_tools.connectors.prometheus import (
     PROMETHEUS_PORTS,
     ConnectorError,
@@ -92,7 +93,11 @@ CONFIGS: dict[str, type[Config]] = {
     "alertmanager": AlertmanagerConfig,
     "webhook": WebhookConfig,
 }
-PORTS = {"prometheus": PROMETHEUS_PORTS, "alertmanager": frozenset({9093}), "webhook": frozenset()}
+PORTS = {
+    "prometheus": PROMETHEUS_PORTS,
+    "alertmanager": ALERTMANAGER_PORTS,
+    "webhook": frozenset(),
+}
 SIGNED = ("alertmanager", "webhook")
 
 
@@ -422,7 +427,8 @@ async def test_integration(
             checks.append(
                 Check(name="credentials_readable", ok=False, detail="credentials unreadable")
             )
-    # TODO(T-2.6): call the Alertmanager API once its reconciliation connector exists.
+    if row.type == "alertmanager" and row.endpoint and all(c.ok for c in checks):
+        checks.append(await _read_alerts(request, row.endpoint))
     if row.type == "prometheus" and all(c.ok for c in checks):
         checks += await _live_checks(request, row.endpoint, token)
     if row.type == "webhook" and all(c.ok for c in checks):
@@ -470,6 +476,18 @@ async def _live_checks(request: Request, endpoint: str, token: SecretStr | None)
         Check(name="reachable", ok=True, detail=f"Prometheus {version}"),
         Check(name="query_up", ok=count > 0, detail=f"{count} scrape targets"),
     ]
+
+
+async def _read_alerts(request: Request, endpoint: str) -> Check:
+    """The read reconciliation makes, so a passing test means gaps can be filled."""
+    alertmanager = AlertmanagerConnector(
+        endpoint, dev_allow=request.app.state.dev_allow, transport=request.app.state.http_transport
+    )
+    try:
+        alerts = await alertmanager.alerts()
+    except (ConnectorError, NetguardBlocked) as exc:
+        return Check(name="reachable", ok=False, detail=str(exc))
+    return Check(name="reachable", ok=True, detail=f"{len(alerts)} active alerts")
 
 
 async def _send_sample(

@@ -87,7 +87,7 @@ async def test_dev_seed_is_idempotent(app_engine: AsyncEngine) -> None:
         row = (
             await s.execute(
                 text(
-                    "select type, name, credentials_ref, config from integrations"
+                    "select type, name, credentials_ref, config, endpoint from integrations"
                     " where integration_id = :i"
                 ),
                 {"i": devseed.LAB_ALERTMANAGER},
@@ -95,6 +95,7 @@ async def test_dev_seed_is_idempotent(app_engine: AsyncEngine) -> None:
         ).one()
         assert await s.scalar(text("select count(*) from secrets")) == 1
         assert row.config["watchdog_interval_seconds"] == 60
+        assert row.endpoint == "http://127.0.0.1:30093"
         edges = (
             await s.execute(
                 text("""

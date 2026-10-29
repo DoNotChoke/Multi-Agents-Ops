@@ -19,6 +19,8 @@ DEV_TENANT = "tnt_01JDEVSEED0000000000000000"
 # Fixed so deploy/lab can point its Alertmanager webhook here before the seed runs.
 LAB_ALERTMANAGER = "int_01JDEVSEED00000000000000AM"
 LAB_WATCHDOG = {"watchdog_interval_seconds": 60}
+# kind's NodePort for the lab Alertmanager, read back by reconciliation.
+LAB_ALERTMANAGER_URL = "http://127.0.0.1:30093"
 # The demo app in deploy/lab, filed the way the Prometheus import files them.
 LAB_SERVICES = ("frontend", "checkout", "payment")
 # Keycloak user ids fixed in deploy/compose/keycloak/opsteam-realm.json.
@@ -85,13 +87,13 @@ async def seed(
             """),
             {"t": DEV_TENANT},
         )
-        # The lab repeats its Watchdog every minute; older seeds get the setting too.
+        # The lab repeats its Watchdog every minute; older seeds get the newer settings too.
         exists = await session.scalar(
             text(
-                "update integrations set config = config || cast(:c as jsonb)"
-                " where integration_id = :i returning 1"
+                "update integrations set config = config || cast(:c as jsonb),"
+                " endpoint = coalesce(endpoint, :e) where integration_id = :i returning 1"
             ),
-            {"i": LAB_ALERTMANAGER, "c": json.dumps(LAB_WATCHDOG)},
+            {"i": LAB_ALERTMANAGER, "c": json.dumps(LAB_WATCHDOG), "e": LAB_ALERTMANAGER_URL},
         )
     if exists or secrets is None or webhook_secret is None:
         return
@@ -99,14 +101,15 @@ async def seed(
     async with tenant_session(engine, ctx) as session:
         await session.execute(
             text("""
-                insert into integrations (integration_id, tenant_id, type, name, mode, config,
-                                          credentials_ref)
-                values (:i, :t, 'alertmanager', 'lab-alertmanager', 'direct',
+                insert into integrations (integration_id, tenant_id, type, name, mode, endpoint,
+                                          config, credentials_ref)
+                values (:i, :t, 'alertmanager', 'lab-alertmanager', 'direct', :e,
                         cast(:config as jsonb), :ref)
             """),
             {
                 "i": LAB_ALERTMANAGER,
                 "t": DEV_TENANT,
+                "e": LAB_ALERTMANAGER_URL,
                 "config": json.dumps({"collapse_replica_labels": True} | LAB_WATCHDOG),
                 "ref": ref,
             },
