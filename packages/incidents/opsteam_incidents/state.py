@@ -42,6 +42,31 @@ class IncidentNotFound(OpsteamError):
     code = "incident.not_found"
 
 
+async def record_activity(
+    session: AsyncSession,
+    ctx: RequestContext,
+    incident_id: str,
+    kind: str,
+    ref_id: str | None,
+    at: datetime | None = None,
+) -> None:
+    """Append to the incident feed that live streams read after a `seq`.
+
+    The tenant's audit lock is taken first, so each tenant's rows commit in `seq` order and a
+    reader that has seen `seq` n can never later miss a smaller one.
+    """
+    await session.execute(
+        text("select pg_advisory_xact_lock(hashtextextended(:t, 0))"), {"t": ctx.tenant_id}
+    )
+    await session.execute(
+        text("""
+            insert into incident_activity (tenant_id, incident_id, type, ref_id, at)
+            values (:t, :i, :kind, :ref, coalesce(:at, now()))
+        """),
+        {"t": ctx.tenant_id, "i": incident_id, "kind": kind, "ref": ref_id, "at": at},
+    )
+
+
 def check_transition(source: str, target: str) -> None:
     """Raise InvalidTransition unless the lifecycle table allows source -> target."""
     if target not in MOVES.get(source, frozenset()):
@@ -91,13 +116,7 @@ async def transition(
             "at": at,
         },
     )
-    await session.execute(
-        text("""
-            insert into incident_activity (tenant_id, incident_id, type, ref_id, at)
-            values (:t, :id, 'incident.transition', :id, :at)
-        """),
-        {"t": ctx.tenant_id, "id": incident_id, "at": at},
-    )
+    await record_activity(session, ctx, incident_id, "incident.transition", incident_id, at)
     resource = {"type": "incident", "incident_id": incident_id, "from": source, "to": target}
     await audit.record(session, ctx, "incident.transitioned", resource, "allowed")
     return str(source)

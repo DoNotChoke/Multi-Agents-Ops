@@ -12,13 +12,14 @@ from opsteam_db.secrets import SecretNotFound, SecretStore, SecretUnreadable
 from opsteam_incidents.state import transition
 from opsteam_notify.throttle import Throttle
 from opsteam_notify.webhook import Channel, DeliveryFailed, Message, Notifier
+from opsteam_obs.metrics import TIME_TO_DETECT, TIME_TO_NOTIFY
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 log = structlog.get_logger()
 
 _INCIDENT = text("""
-    select i.incident_id, i.title, i.severity, i.status, i.first_notified_at,
+    select i.incident_id, i.title, i.severity, i.status, i.first_notified_at, i.detected_at,
            coalesce(s.name, i.unmapped_service->>'name') as service,
            coalesce(s.environment, i.unmapped_service->>'environment') as environment,
            (select min(e.starts_at) from incident_events ie join events e using (event_id)
@@ -56,6 +57,9 @@ def opened_consumer(
             if incident.status == "NEW":
                 reason = "triaged: first notification"
                 await transition(session, ctx, incident_id, "TRIAGED", reason, clock.now())
+                if incident.started_at is not None:  # visibility_lost has no alert to time
+                    detect = (incident.detected_at - incident.started_at).total_seconds()
+                    TIME_TO_DETECT.observe(max(detect, 0.0))
             channels = (await session.execute(_CHANNELS)).all()
         message = Message(
             kind="incident.opened",
@@ -84,14 +88,18 @@ def opened_consumer(
             await throttle.sent(ctx.tenant_id, channel_id, incident_id, digest)
             delivered += 1
         if delivered and incident.first_notified_at is None:
+            now = clock.now()
             async with tenant_session(engine, ctx) as session:
-                await session.execute(
+                first = await session.scalar(
                     text(
                         "update incidents set first_notified_at = :at"
                         " where incident_id = :id and first_notified_at is null"
+                        " returning incident_id"
                     ),
-                    {"at": clock.now(), "id": incident_id},
+                    {"at": now, "id": incident_id},
                 )
+            if first is not None:
+                TIME_TO_NOTIFY.observe(max((now - incident.detected_at).total_seconds(), 0.0))
         if failed:
             raise DeliveryFailed(f"{failed} channel(s) failed")
 

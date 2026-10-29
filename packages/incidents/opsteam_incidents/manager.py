@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 from opsteam_incidents.normalize import MAPPINGS_SQL, resolve_service
 from opsteam_incidents.severity import severity
-from opsteam_incidents.state import transition
+from opsteam_incidents.state import record_activity, transition
 
 CORRELATION_WINDOW = timedelta(minutes=15)
 PROPAGATION_WINDOW = timedelta(minutes=5)
@@ -257,13 +257,7 @@ async def open_incident(
         """),
         params | {"reason": reason},
     )
-    await session.execute(
-        text("""
-            insert into incident_activity (tenant_id, incident_id, type, ref_id, at)
-            values (:t, :id, 'incident.opened', :id, :at)
-        """),
-        params,
-    )
+    await record_activity(session, ctx, incident_id, "incident.opened", incident_id, at)
     await session.execute(
         text("""
             insert into outbox (tenant_id, topic, payload)
@@ -286,13 +280,7 @@ async def _attach(
         """),
         {"i": incident_id, "e": event.event_id, "t": ctx.tenant_id},
     )
-    await session.execute(
-        text("""
-            insert into incident_activity (tenant_id, incident_id, type, ref_id)
-            values (:t, :i, 'incident.event_attached', :e)
-        """),
-        {"t": ctx.tenant_id, "i": incident_id, "e": event.event_id},
-    )
+    await record_activity(session, ctx, incident_id, "incident.event_attached", event.event_id)
     if rule != "new":  # opening already explained itself
         resource = {"type": "incident", "incident_id": incident_id, "event_id": event.event_id}
         await audit.record(

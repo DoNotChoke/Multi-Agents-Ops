@@ -14,6 +14,7 @@ from opsteam_ingest.notify import opened_consumer
 from opsteam_ingest.relay import relay_once
 from opsteam_notify.throttle import Throttle
 from opsteam_notify.webhook import DeliveryFailed, FakeNotifier, Message
+from prometheus_client import REGISTRY
 from pydantic import SecretStr
 from redis.asyncio import Redis
 from sqlalchemy import text
@@ -26,6 +27,11 @@ pytestmark = pytest.mark.integration
 
 REDIS_URL = f"redis://:{os.environ.get('REDIS_PASSWORD', 'dev-only-redis')}@127.0.0.1:6379/0"
 SIGNING = "dev-only-signing-secret"
+DURATIONS = (
+    "time_to_detect_seconds_count",
+    "time_to_detect_seconds_sum",
+    "time_to_notify_seconds_count",
+)
 RAW_LOG = "Traceback: password=hunter2 at db.connect"
 
 
@@ -172,3 +178,22 @@ async def test_notification_goes_out_with_llm_forbidden(
         pass
     assert await notice.state() == ("TRIAGED", T0)
     assert len(notice.fake.sent) == 1 and isinstance(notice.fake.sent[0][1], Message)
+
+
+async def test_detect_and_notify_times_are_measured_once(
+    app_engine: AsyncEngine, redis: Redis
+) -> None:
+    def sample(name: str) -> float:
+        return REGISTRY.get_sample_value(name) or 0.0
+
+    before = {n: sample(n) for n in DURATIONS}
+    notice = Notice(await Shop.create(app_engine), redis)
+    await notice.channel()
+    incident_id = await notice.incident()
+    await notice.opened(incident_id)
+    await notice.opened(incident_id)  # a redelivery measures nothing again
+    delta = {n: sample(n) - before[n] for n in DURATIONS}
+    # The alert started at T0 and was received 30 s later.
+    assert delta["time_to_detect_seconds_count"] == 1
+    assert delta["time_to_detect_seconds_sum"] == 30
+    assert delta["time_to_notify_seconds_count"] == 1

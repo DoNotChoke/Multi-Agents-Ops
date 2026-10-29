@@ -24,6 +24,7 @@ from opsteam_api.routers import (
     members,
     service_mappings,
     services,
+    streams,
 )
 from opsteam_api.settings import ApiSettings
 
@@ -78,6 +79,7 @@ def create_app(
     app.include_router(integrations.router)
     app.include_router(incidents.router)
     app.include_router(service_mappings.router)
+    app.include_router(streams.router)
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz() -> dict[str, str]:

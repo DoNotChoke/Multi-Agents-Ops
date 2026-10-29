@@ -38,6 +38,7 @@ async def get_identity(
     if scheme.lower() != "bearer" or not token:
         raise InvalidToken("missing bearer token")
     claims = await request.app.state.verifier.verify(token)
+    request.state.token_expires_at = claims.expires_at
     identity: Identity = await identify(
         request.app.state.engine, claims.issuer, claims.subject, claims.email
     )

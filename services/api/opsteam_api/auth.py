@@ -25,6 +25,8 @@ class Claims:
     issuer: str
     subject: str
     email: str | None
+    # Unix time; long-lived streams close when it passes.
+    expires_at: float = 0.0
 
 
 class TokenVerifier:
@@ -51,7 +53,12 @@ class TokenVerifier:
             )
         except jwt.PyJWTError as exc:
             raise InvalidToken("invalid bearer token") from exc
-        return Claims(issuer=claims["iss"], subject=claims["sub"], email=claims.get("email"))
+        return Claims(
+            issuer=claims["iss"],
+            subject=claims["sub"],
+            email=claims.get("email"),
+            expires_at=float(claims["exp"]),
+        )
 
 
 def jwks_verifier(issuer: str, audience: str, jwks_url: str) -> TokenVerifier:

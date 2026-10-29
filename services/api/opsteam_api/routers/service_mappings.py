@@ -10,6 +10,7 @@ from opsteam_core.errors import OpsteamError
 from opsteam_core.ids import new_id
 from opsteam_db import audit, tenant_session
 from opsteam_incidents.normalize import MAPPINGS_SQL
+from opsteam_incidents.state import record_activity
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -134,13 +135,7 @@ async def _file_incident(
     )
     if filed is None:  # rolls back the new mapping too
         raise IncidentNotFound("incident not found")
-    await session.execute(
-        text("""
-            insert into incident_activity (tenant_id, incident_id, type, ref_id)
-            values (:t, :i, 'incident.updated', :s)
-        """),
-        {"t": ctx.tenant_id, "i": incident_id, "s": service_id},
-    )
+    await record_activity(session, ctx, incident_id, "incident.updated", service_id)
     resource = {"type": "incident", "incident_id": incident_id, "service_id": service_id}
     await audit.record(session, ctx, "incident.service_mapped", resource, "allowed")
 

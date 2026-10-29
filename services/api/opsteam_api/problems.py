@@ -28,6 +28,7 @@ STATUS_BY_CODE = {
     "member.last_owner": 409,
     "member.not_found": 404,
     "netguard.blocked": 422,
+    "stream.too_many": 429,
     "service.exists": 409,
     "service.not_found": 404,
     "service.self_dependency": 422,
