@@ -34,7 +34,10 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.execute("drop function app_watchdog_candidates()")
+    # RLS is forced even for the owner; lift it just to drop rows the old check cannot hold.
+    op.execute("alter table incidents no force row level security")
     op.execute("delete from incidents where source = 'watchdog'")
+    op.execute("alter table incidents force row level security")
     op.execute("alter table incidents drop constraint incidents_source_check")
     op.execute("""
         alter table incidents add constraint incidents_source_check
