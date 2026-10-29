@@ -16,5 +16,3 @@ class IngestSettings(Settings):
     # How long every alert must stay resolved before the incident is, and when it closes.
     incident_stable_window_seconds: int = 600
     incident_close_after_seconds: int = 86400
-    # Where notification links point: the web app's origin.
-    app_url: str = "http://localhost:3000"

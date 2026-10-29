@@ -14,12 +14,14 @@ import { api, errorMessage, unwrap } from "@/lib/api/client";
 type Integration = components["schemas"]["Integration"];
 type TestReport = components["schemas"]["TestReport"];
 type Created = components["schemas"]["CreatedIntegration"];
-type Webhook = components["schemas"]["WebhookSecret"];
-type Kind = "prometheus" | "alertmanager";
+// The integration type decides how the secret is explained: inbound bearer or outbound signing.
+type Revealed = components["schemas"]["WebhookSecret"] & { type: string };
+type Kind = "prometheus" | "alertmanager" | "webhook";
 
 const KIND_LABELS: Record<Kind, string> = {
   prometheus: "Prometheus",
   alertmanager: "Alertmanager",
+  webhook: "Webhook",
 };
 
 const CHECK_LABELS: Record<string, string> = {
@@ -27,6 +29,7 @@ const CHECK_LABELS: Record<string, string> = {
   credentials_readable: "Credentials",
   reachable: "Reachable",
   query_up: "Query up",
+  delivered: "Sample sent",
 };
 
 export function useIntegrations() {
@@ -41,7 +44,7 @@ export function IntegrationsScreen() {
   const [selected, setSelected] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [reports, setReports] = useState<Record<string, TestReport>>({});
-  const [revealed, setRevealed] = useState<Webhook | null>(null);
+  const [revealed, setRevealed] = useState<Revealed | null>(null);
   const [rotating, setRotating] = useState<Integration | null>(null);
 
   const test = useMutation({
@@ -66,7 +69,7 @@ export function IntegrationsScreen() {
     <>
       <PageHeader
         title="Integrations"
-        subtitle="Data sources agents can read"
+        subtitle="Data sources agents can read, and where incidents are announced"
         actions={add}
       />
       {integrations.isPending ? (
@@ -145,9 +148,10 @@ export function IntegrationsScreen() {
           onCreated={(created) => {
             setAdding(false);
             setSelected(created.integration_id);
-            if (created.webhook_url && created.webhook_secret)
+            if (created.webhook_secret)
               setRevealed({
-                webhook_url: created.webhook_url,
+                type: created.type,
+                webhook_url: created.webhook_url ?? "",
                 webhook_secret: created.webhook_secret,
               });
             else test.mutate(created.integration_id);
@@ -160,7 +164,7 @@ export function IntegrationsScreen() {
           onClose={() => setRotating(null)}
           onRotated={(webhook) => {
             setRotating(null);
-            setRevealed(webhook);
+            setRevealed({ ...webhook, type: rotating.type });
           }}
         />
       )}
@@ -233,7 +237,17 @@ function Detail({
             <p className="text-muted">Not tested yet.</p>
           )}
         </section>
-        {integration.webhook_url ? (
+        {integration.type === "webhook" ? (
+          <section aria-label="Notification channel">
+            <h3 className="mb-1 text-xs font-semibold tracking-wider text-ink-2 uppercase">
+              Notification channel
+            </h3>
+            <div className="mb-2 font-mono text-xs break-all">
+              {String(integration.config.endpoint ?? "")}
+            </div>
+            <Button onClick={onRotate}>Rotate secret</Button>
+          </section>
+        ) : integration.webhook_url ? (
           <section aria-label="Webhook">
             <h3 className="mb-1 text-xs font-semibold tracking-wider text-ink-2 uppercase">
               Webhook
@@ -279,7 +293,8 @@ function AddIntegration({
     mutationFn: async (
       body:
         | components["schemas"]["NewPrometheus"]
-        | components["schemas"]["NewAlertmanager"],
+        | components["schemas"]["NewAlertmanager"]
+        | components["schemas"]["NewWebhook"],
     ) => unwrap(await api.POST("/api/v1/integrations", { body })),
     onSuccess: async (created) => {
       await client.invalidateQueries({ queryKey: ["integrations"] });
@@ -291,6 +306,16 @@ function AddIntegration({
     event.preventDefault(); // keep the typed values when the server refuses them
     const form = new FormData(event.currentTarget);
     const name = String(form.get("name") ?? "").trim();
+    const endpoint = String(form.get("endpoint") ?? "").trim();
+    if (kind === "webhook") {
+      create.mutate({
+        type: "webhook",
+        mode: "direct",
+        name,
+        config: { endpoint },
+      });
+      return;
+    }
     if (kind === "alertmanager") {
       create.mutate({ type: "alertmanager", mode: "direct", name });
       return;
@@ -312,7 +337,7 @@ function AddIntegration({
       mode: "direct",
       name,
       config: {
-        endpoint: String(form.get("endpoint") ?? "").trim(),
+        endpoint,
         metric_mapping: mapping,
       },
       ...(token ? { credentials: token } : {}),
@@ -349,7 +374,22 @@ function AddIntegration({
               autoFocus
             />
           </Field>
-          {kind === "alertmanager" ? (
+          {kind === "webhook" ? (
+            <>
+              <Field label="Endpoint">
+                <Input
+                  name="endpoint"
+                  required
+                  placeholder="https://hooks.example.com/opsteam"
+                  className="font-mono text-[13px]"
+                />
+              </Field>
+              <p className="text-[12.5px] text-muted">
+                HTTPS only. Every new incident is POSTed here as JSON, signed
+                with a secret you get next.
+              </p>
+            </>
+          ) : kind === "alertmanager" ? (
             <p className="text-[12.5px] text-muted">
               You get a webhook URL and secret to put in your Alertmanager
               config.
@@ -397,7 +437,9 @@ function AddIntegration({
               ? "Saving…"
               : kind === "alertmanager"
                 ? "Create webhook"
-                : "Save and test"}
+                : kind === "webhook"
+                  ? "Create channel"
+                  : "Save and test"}
           </Button>
         </div>
       </form>
@@ -412,7 +454,7 @@ function RotateSecret({
 }: {
   integration: Integration;
   onClose: () => void;
-  onRotated: (webhook: Webhook) => void;
+  onRotated: (webhook: components["schemas"]["WebhookSecret"]) => void;
 }) {
   const rotate = useMutation({
     mutationFn: async () =>
@@ -427,11 +469,18 @@ function RotateSecret({
   return (
     <Dialog title="Rotate webhook secret" onClose={onClose}>
       <div className="p-[18px]">
-        <p>
-          The current secret stops working at once. Alerts from{" "}
-          <strong>{integration.name}</strong> are refused until you put the new
-          secret in your Alertmanager config.
-        </p>
+        {integration.type === "webhook" ? (
+          <p>
+            Messages to <strong>{integration.name}</strong> are signed with the
+            new secret at once; update your receiver to verify with it.
+          </p>
+        ) : (
+          <p>
+            The current secret stops working at once. Alerts from{" "}
+            <strong>{integration.name}</strong> are refused until you put the
+            new secret in your Alertmanager config.
+          </p>
+        )}
         {rotate.isError && (
           <FormError
             error={rotate.error}
@@ -457,10 +506,13 @@ function RevealSecret({
   webhook,
   onClose,
 }: {
-  webhook: Webhook;
+  webhook: Revealed;
   onClose: () => void;
 }) {
-  const config = `receivers:
+  const signing = webhook.type === "webhook";
+  const config = signing
+    ? webhook.webhook_secret
+    : `receivers:
   - name: opsteam
     webhook_configs:
       - url: ${webhook.webhook_url}
@@ -468,21 +520,30 @@ function RevealSecret({
         http_config:
           authorization:
             credentials: ${webhook.webhook_secret}`;
+  const label = signing ? "Signing secret" : "Alertmanager receiver";
   return (
-    <Dialog title="Webhook secret" onClose={onClose}>
+    <Dialog
+      title={signing ? "Signing secret" : "Webhook secret"}
+      onClose={onClose}
+    >
       <div className="p-[18px]">
         <p className="mb-3 rounded-md border border-warn/40 bg-warn/10 px-3 py-2 text-[12.5px]">
           Copy it now. It won&apos;t be shown again.
         </p>
-        <h3 className="mb-1.5 text-[13px] font-medium">
-          Alertmanager receiver
-        </h3>
+        <h3 className="mb-1.5 text-[13px] font-medium">{label}</h3>
         <pre
-          aria-label="Alertmanager receiver"
+          aria-label={label}
           className="overflow-x-auto rounded-md border border-line bg-wash px-3 py-2 font-mono text-xs"
         >
           {config}
         </pre>
+        {signing && (
+          <p className="mt-2 text-[12.5px] text-muted">
+            Each request carries <code>X-Opsteam-Timestamp</code> and{" "}
+            <code>X-Opsteam-Signature: sha256=…</code>, an HMAC-SHA256 of the
+            timestamp, a dot and the raw body. Reject old timestamps.
+          </p>
+        )}
       </div>
       <div className="flex justify-between rounded-b-[10px] border-t border-line-2 bg-[#fbfcfd] px-[18px] py-3">
         <Button onClick={() => navigator.clipboard.writeText(config)}>

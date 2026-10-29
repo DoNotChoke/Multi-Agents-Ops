@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
     # Exact "ip:port" pairs (the kind lab's Prometheus) that skip SSRF address checks.
     netguard_dev_allow: frozenset[str] = frozenset()
+    # The web app's origin, for links in notifications.
+    app_url: str = "http://localhost:3000"
 
     @model_validator(mode="after")
     def _no_dev_allow_in_production(self) -> Self:

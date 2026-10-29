@@ -3,17 +3,19 @@
 import contextlib
 import json
 import secrets
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Path, Request, Response
 from fastapi.exceptions import RequestValidationError
+from opsteam_core.clock import SystemClock
 from opsteam_core.context import RequestContext
 from opsteam_core.errors import NetguardBlocked, OpsteamError
 from opsteam_core.ids import new_id
 from opsteam_core.netguard import check_url
 from opsteam_db import audit, tenant_session
 from opsteam_db.secrets import SecretNotFound, SecretUnreadable
+from opsteam_notify.webhook import Channel, DeliveryFailed, Message, WebhookNotifier
 from opsteam_tools.connectors.prometheus import (
     PROMETHEUS_PORTS,
     ConnectorError,
@@ -420,6 +422,8 @@ async def test_integration(
     # TODO(T-2.6): call the Alertmanager API once its reconciliation connector exists.
     if row.type == "prometheus" and all(c.ok for c in checks):
         checks += await _live_checks(request, row.endpoint, token)
+    if row.type == "webhook" and all(c.ok for c in checks):
+        checks.append(await _send_sample(request, integration_id, row.endpoint, token))
     report = TestReport(ok=all(c.ok for c in checks), checks=checks)
     async with tenant_session(request.app.state.engine, ctx) as session:
         await session.execute(
@@ -463,6 +467,32 @@ async def _live_checks(request: Request, endpoint: str, token: SecretStr | None)
         Check(name="reachable", ok=True, detail=f"Prometheus {version}"),
         Check(name="query_up", ok=count > 0, detail=f"{count} scrape targets"),
     ]
+
+
+async def _send_sample(
+    request: Request, integration_id: str, endpoint: str, secret: SecretStr | None
+) -> Check:
+    """POST a signed sample notification, so the receiver can check its signature handling."""
+    sample = Message(
+        kind="test",
+        incident_id="inc_test",
+        title="Test notification from opsteam",
+        severity="info",
+        service=None,
+        environment=None,
+        started_at=datetime.now(UTC),
+        url=f"{request.app.state.app_url}/integrations",
+    )
+    notifier = WebhookNotifier(
+        SystemClock(),
+        dev_allow=request.app.state.dev_allow,
+        transport=request.app.state.http_transport,
+    )
+    try:
+        await notifier.send(Channel(integration_id, endpoint, secret), sample)
+    except (DeliveryFailed, NetguardBlocked) as exc:
+        return Check(name="delivered", ok=False, detail=str(exc))
+    return Check(name="delivered", ok=True, detail="webhook accepted the sample")
 
 
 class IntegrationUnavailable(OpsteamError):

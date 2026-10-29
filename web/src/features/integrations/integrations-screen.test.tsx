@@ -227,3 +227,93 @@ test("rotating asks first, then shows the new secret", async () => {
     SECRET,
   );
 });
+
+const HOOK = {
+  integration_id: "int_01HOOK",
+  type: "webhook",
+  name: "on-call",
+  mode: "direct",
+  status: "active",
+  config: { endpoint: "https://hooks.example.com/opsteam" },
+  has_credentials: true,
+  last_tested_at: null,
+  created_at: "2026-10-29T07:00:00Z",
+  webhook_url: null,
+};
+
+async function openWebhookForm() {
+  fireEvent.click(
+    (await screen.findAllByRole("button", { name: "Add integration" }))[0],
+  );
+  fireEvent.click(screen.getByLabelText("Webhook"));
+  const dialog = within(screen.getByRole("dialog", { name: "Add Webhook" }));
+  fireEvent.change(dialog.getByLabelText("Name"), {
+    target: { value: "on-call" },
+  });
+  fireEvent.change(dialog.getByLabelText("Endpoint"), {
+    target: { value: HOOK.config.endpoint },
+  });
+  return dialog;
+}
+
+test("a webhook channel shows its signing secret once", async () => {
+  const calls = mockApi({
+    "GET /api/v1/integrations": { items: [] },
+    "POST /api/v1/integrations": { ...HOOK, webhook_secret: SECRET },
+  });
+  renderWithQuery(<IntegrationsScreen />);
+  const dialog = await openWebhookForm();
+  fireEvent.click(dialog.getByRole("button", { name: "Create channel" }));
+  const shown = within(
+    await screen.findByRole("dialog", { name: "Signing secret" }),
+  );
+  expect(shown.getByLabelText("Signing secret").textContent).toBe(SECRET);
+  expect(
+    calls.find((c) => c.method === "POST" && c.path === "/api/v1/integrations")
+      ?.body,
+  ).toEqual({
+    type: "webhook",
+    mode: "direct",
+    name: "on-call",
+    config: { endpoint: HOOK.config.endpoint },
+  });
+  fireEvent.click(shown.getByRole("button", { name: "Done" }));
+  expect(screen.queryByText(SECRET, { exact: false })).toBeNull();
+});
+
+test("a blocked webhook URL is explained", async () => {
+  mockApi({
+    "GET /api/v1/integrations": { items: [] },
+    "POST /api/v1/integrations": problem(422, "netguard.blocked"),
+  });
+  renderWithQuery(<IntegrationsScreen />);
+  const dialog = await openWebhookForm();
+  fireEvent.click(dialog.getByRole("button", { name: "Create channel" }));
+  expect((await dialog.findByRole("alert")).textContent).toContain(
+    "Private and cloud metadata addresses are blocked",
+  );
+});
+
+test("testing a webhook reports whether the sample was accepted", async () => {
+  mockApi({
+    "GET /api/v1/integrations": { items: [HOOK] },
+    "POST /api/v1/integrations/int_01HOOK/test": {
+      ok: false,
+      checks: [
+        { name: "endpoint_allowed", ok: true, detail: "ok" },
+        { name: "delivered", ok: false, detail: "webhook returned HTTP 500" },
+      ],
+    },
+  });
+  renderWithQuery(<IntegrationsScreen />);
+  const channel = within(
+    await screen.findByRole("region", { name: "Notification channel" }),
+  );
+  expect(channel.getByText(HOOK.config.endpoint)).toBeDefined();
+  fireEvent.click(screen.getByRole("button", { name: "Test" }));
+  const checks = within(
+    screen.getByRole("region", { name: "Connection test" }),
+  );
+  expect(await checks.findByText("Sample sent")).toBeDefined();
+  expect(checks.getByText("webhook returned HTTP 500")).toBeDefined();
+});

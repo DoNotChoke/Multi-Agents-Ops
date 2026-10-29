@@ -8,6 +8,8 @@ import pytest
 from opsteam_core.ids import new_id
 from opsteam_db import audit, tenant_session
 from opsteam_db.secrets import DbSecretStore
+from opsteam_notify.webhook import signature
+from pydantic import SecretStr
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
@@ -362,3 +364,47 @@ async def test_webhook_needs_an_endpoint(app_engine: AsyncEngine) -> None:
     body = _webhook() | {"config": {}}
     resp = _call(app_engine, "POST", "/integrations", await _who(app_engine), json=body)
     assert (resp.status_code, resp.json()["code"]) == (422, "request.invalid")
+
+
+async def test_testing_a_webhook_sends_a_signed_sample(app_engine: AsyncEngine) -> None:
+    who = await _who(app_engine)
+    created = _call(app_engine, "POST", "/integrations", who, json=_webhook()).json()
+    seen: list[httpx.Request] = []
+
+    def receiver(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(204)
+
+    path = f"/integrations/{created['integration_id']}/test"
+    report = _call(app_engine, "POST", path, who, receiver).json()
+    assert report["ok"] is True, report
+    assert {"name": "delivered", "ok": True, "detail": "webhook accepted the sample"} in (
+        report["checks"]
+    )
+    [request] = seen
+    assert (request.method, request.url.host, request.url.path) == (
+        "POST",
+        "93.184.216.34",
+        "/hooks/opsteam",
+    )
+    stamp = request.headers["x-opsteam-timestamp"]
+    secret = SecretStr(created["webhook_secret"])
+    assert request.headers["x-opsteam-signature"] == signature(secret, stamp, request.content)
+    assert json.loads(request.content)["type"] == "test"
+    assert created["webhook_secret"] not in json.dumps(report)
+
+
+async def test_a_refusing_webhook_fails_the_test(app_engine: AsyncEngine) -> None:
+    who = await _who(app_engine)
+    created = _call(app_engine, "POST", "/integrations", who, json=_webhook()).json()
+
+    def receiver(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(500, text="stack trace with secrets")
+
+    path = f"/integrations/{created['integration_id']}/test"
+    report = _call(app_engine, "POST", path, who, receiver).json()
+    assert report["ok"] is False
+    assert {"name": "delivered", "ok": False, "detail": "webhook returned HTTP 500"} in (
+        report["checks"]
+    )
+    assert "stack trace" not in json.dumps(report)
