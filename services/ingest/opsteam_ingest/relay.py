@@ -20,18 +20,20 @@ log = structlog.get_logger()
 
 MAX_ATTEMPTS = 10
 MAX_BACKOFF_S = 300
+# A resolution handled before its firing would be lost, so a tenant's events keep their order.
+# Other topics retry on their own: one dead webhook must not hold back the next incident.
+ORDERED = "event.received"
 
-# A row waits while an older row of the same tenant and topic is backing off, so each
-# tenant's events stay in order without one tenant's failures holding up anyone else.
+# An ordered row waits while an older one of its tenant is backing off.
 _CLAIM = text("""
     select o.outbox_id, o.tenant_id, o.topic, o.payload, o.attempts from outbox o
     where o.published_at is null
       and (o.next_attempt_at is null or o.next_attempt_at <= now())
-      and not exists (
+      and (o.topic <> :ordered or not exists (
         select 1 from outbox b
-        where b.published_at is null and b.tenant_id = o.tenant_id and b.topic = o.topic
+        where b.published_at is null and b.tenant_id = o.tenant_id and b.topic = :ordered
           and b.outbox_id < o.outbox_id and b.next_attempt_at > now()
-      )
+      ))
     order by o.outbox_id
     for update skip locked
     limit :limit
@@ -50,10 +52,11 @@ _DEAD = text(
 async def relay_once(engine: AsyncEngine, publisher: EventPublisher, limit: int = BATCH) -> int:
     """Publish up to `limit` rows and return how many; a failing row backs off and retries."""
     published = 0
-    blocked: set[tuple[str, str]] = set()
+    blocked: set[str] = set()
     async with engine.begin() as conn:
-        for row in (await conn.execute(_CLAIM, {"limit": limit})).all():
-            if (row.tenant_id, row.topic) in blocked:
+        rows = await conn.execute(_CLAIM, {"limit": limit, "ordered": ORDERED})
+        for row in rows.all():
+            if row.topic == ORDERED and row.tenant_id in blocked:
                 continue
             ctx = RequestContext(
                 tenant_id=row.tenant_id, principal=PRINCIPAL, roles=(), scopes=frozenset()
@@ -61,7 +64,8 @@ async def relay_once(engine: AsyncEngine, publisher: EventPublisher, limit: int 
             try:
                 await publisher.publish(ctx, row.topic, row.payload)
             except (OpsteamError, SQLAlchemyError, OSError) as exc:
-                blocked.add((row.tenant_id, row.topic))
+                if row.topic == ORDERED:
+                    blocked.add(row.tenant_id)
                 if row.attempts + 1 >= MAX_ATTEMPTS:
                     log.error("outbox.dead_letter", outbox_id=row.outbox_id, topic=row.topic)
                     await conn.execute(_DEAD, {"id": row.outbox_id})

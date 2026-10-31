@@ -17,7 +17,9 @@ from tests.api_helpers import system_ctx
 pytestmark = pytest.mark.integration
 
 
-async def _queue(app_engine: AsyncEngine, count: int) -> tuple[str, list[str]]:
+async def _queue(
+    app_engine: AsyncEngine, count: int, topic: str = "event.received"
+) -> tuple[str, list[str]]:
     """A new tenant with `count` unpublished outbox rows; return it and the event ids."""
     tenant, ids = new_id("tnt"), [new_id("evt") for _ in range(count)]
     async with tenant_session(app_engine, system_ctx(tenant)) as s:
@@ -28,9 +30,9 @@ async def _queue(app_engine: AsyncEngine, count: int) -> tuple[str, list[str]]:
             await s.execute(
                 text(
                     "insert into outbox (tenant_id, topic, payload)"
-                    " values (:t, 'event.received', cast(:p as jsonb))"
+                    " values (:t, :topic, cast(:p as jsonb))"
                 ),
-                {"t": tenant, "p": json.dumps({"event_id": event_id})},
+                {"t": tenant, "topic": topic, "p": json.dumps({"event_id": event_id})},
             )
     return tenant, ids
 
@@ -140,6 +142,19 @@ async def test_a_failing_row_backs_off_and_holds_only_its_tenants_later_rows(
     async with tenant_session(app_engine, system_ctx(tenant)) as s:
         attempts = (await s.execute(text("select attempts from outbox order by outbox_id"))).all()
     assert [a for (a,) in attempts] == [0, 1, 0]
+
+
+async def test_only_events_wait_in_line_a_failing_notification_holds_nothing_back(
+    app_engine: AsyncEngine, system_engine: AsyncEngine
+) -> None:
+    tenant, ids = await _queue(app_engine, 3, topic="incident.opened")
+    fake = Flaky({ids[0]})
+    await _drain(system_engine, fake)
+    assert _mine(fake, tenant) == ids[1:]
+    assert await _pending(app_engine, tenant) == 1
+    await _due_now(system_engine, tenant)
+    await _drain(system_engine, fake)
+    assert _mine(fake, tenant) == [*ids[1:], ids[0]]
 
 
 async def test_a_row_that_keeps_failing_is_dead_lettered(

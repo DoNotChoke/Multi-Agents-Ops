@@ -197,3 +197,20 @@ async def test_detect_and_notify_times_are_measured_once(
     assert delta["time_to_detect_seconds_count"] == 1
     assert delta["time_to_detect_seconds_sum"] == 30
     assert delta["time_to_notify_seconds_count"] == 1
+
+
+async def test_a_dead_channel_does_not_delay_the_next_incident(
+    app_engine: AsyncEngine, system_engine: AsyncEngine, redis: Redis
+) -> None:
+    notice = Notice(await Shop.create(app_engine), redis)
+    alive, dead = await notice.channel(), await notice.channel(signed=False)
+    notice.fake.failing.add(dead)
+    for service in ("checkout", "auth"):
+        await notice.shop.process(await notice.shop.event(service))
+    publisher = InProcessPublisher(
+        {"event.received": notice.shop.consume, "incident.opened": notice.consume}
+    )
+    while await relay_once(system_engine, publisher):
+        pass
+    assert [i.status for i in await notice.shop.incidents()] == ["TRIAGED", "TRIAGED"]
+    assert notice.sent_to() == [alive, alive]
