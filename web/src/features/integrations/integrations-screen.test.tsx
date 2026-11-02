@@ -181,7 +181,6 @@ test("an Alertmanager shows its webhook secret once, in a ready-to-paste receive
   const dialog = within(
     screen.getByRole("dialog", { name: "Add Alertmanager" }),
   );
-  expect(dialog.queryByLabelText("Endpoint")).toBeNull();
   fireEvent.change(dialog.getByLabelText("Name"), {
     target: { value: "lab-alertmanager" },
   });
@@ -195,7 +194,12 @@ test("an Alertmanager shows its webhook secret once, in a ready-to-paste receive
   expect(
     calls.find((c) => c.method === "POST" && c.path === "/api/v1/integrations")
       ?.body,
-  ).toEqual({ type: "alertmanager", mode: "direct", name: "lab-alertmanager" });
+  ).toEqual({
+    type: "alertmanager",
+    mode: "direct",
+    name: "lab-alertmanager",
+    config: { collapse_replica_labels: true, watchdog_interval_seconds: 300 },
+  });
   expect(calls.some((c) => c.path.endsWith("/test"))).toBe(false);
   fireEvent.click(shown.getByRole("button", { name: "Done" }));
   expect(screen.queryByText(SECRET, { exact: false })).toBeNull();
@@ -335,4 +339,102 @@ test("an Alertmanager shows when its Watchdog last arrived", async () => {
   });
   renderWithQuery(<IntegrationsScreen />);
   expect(await screen.findByText(/No Watchdog heartbeat yet/)).toBeDefined();
+});
+
+test("an Alertmanager can be read back, and its secret comes with the Watchdog to paste", async () => {
+  const endpoint = "https://alertmanager.example.com:9093";
+  const calls = mockApi({
+    "GET /api/v1/integrations": { items: [] },
+    "POST /api/v1/integrations": {
+      ...AM,
+      config: { endpoint, watchdog_interval_seconds: 120 },
+      webhook_secret: SECRET,
+    },
+  });
+  renderWithQuery(<IntegrationsScreen />);
+  fireEvent.click(
+    (await screen.findAllByRole("button", { name: "Add integration" }))[0],
+  );
+  fireEvent.click(screen.getByLabelText("Alertmanager"));
+  const dialog = within(
+    screen.getByRole("dialog", { name: "Add Alertmanager" }),
+  );
+  fireEvent.change(dialog.getByLabelText("Name"), {
+    target: { value: "am" },
+  });
+  fireEvent.change(dialog.getByLabelText("Endpoint (optional)"), {
+    target: { value: endpoint },
+  });
+  fireEvent.change(dialog.getByLabelText("Watchdog interval (seconds)"), {
+    target: { value: "120" },
+  });
+  fireEvent.click(dialog.getByRole("button", { name: "Create webhook" }));
+  const shown = within(
+    await screen.findByRole("dialog", { name: "Webhook secret" }),
+  );
+  expect(
+    calls.find((c) => c.method === "POST" && c.path === "/api/v1/integrations")
+      ?.body,
+  ).toEqual({
+    type: "alertmanager",
+    mode: "direct",
+    name: "am",
+    config: {
+      endpoint,
+      collapse_replica_labels: true,
+      watchdog_interval_seconds: 120,
+    },
+  });
+  const watchdog = shown.getByLabelText("Watchdog").textContent;
+  expect(watchdog).toContain("alert: Watchdog");
+  expect(watchdog).toContain("expr: vector(1)");
+  expect(watchdog).toContain("repeat_interval: 120s");
+  expect(watchdog).toContain("receiver: opsteam");
+  expect(watchdog).not.toContain(SECRET);
+});
+
+test("a blocked Alertmanager endpoint is explained", async () => {
+  mockApi({
+    "GET /api/v1/integrations": { items: [] },
+    "POST /api/v1/integrations": problem(422, "netguard.blocked"),
+  });
+  renderWithQuery(<IntegrationsScreen />);
+  fireEvent.click(
+    (await screen.findAllByRole("button", { name: "Add integration" }))[0],
+  );
+  fireEvent.click(screen.getByLabelText("Alertmanager"));
+  const dialog = within(screen.getByRole("dialog"));
+  fireEvent.change(dialog.getByLabelText("Name"), {
+    target: { value: "am" },
+  });
+  fireEvent.change(dialog.getByLabelText("Endpoint (optional)"), {
+    target: { value: "http://10.0.0.1:9093" },
+  });
+  fireEvent.click(dialog.getByRole("button", { name: "Create webhook" }));
+  expect((await dialog.findByRole("alert")).textContent).toContain(
+    "Private and cloud metadata addresses are blocked",
+  );
+});
+
+test("a signing secret gets no Watchdog to paste", async () => {
+  mockApi({
+    "GET /api/v1/integrations": { items: [HOOK] },
+    "POST /api/v1/integrations/int_01HOOK/webhook-secret/rotate": {
+      webhook_url: HOOK.config.endpoint,
+      webhook_secret: SECRET,
+    },
+  });
+  renderWithQuery(<IntegrationsScreen />);
+  const channel = within(
+    await screen.findByRole("region", { name: "Notification channel" }),
+  );
+  fireEvent.click(channel.getByRole("button", { name: "Rotate secret" }));
+  const confirm = within(
+    screen.getByRole("dialog", { name: "Rotate webhook secret" }),
+  );
+  fireEvent.click(confirm.getByRole("button", { name: "Rotate secret" }));
+  const shown = within(
+    await screen.findByRole("dialog", { name: "Signing secret" }),
+  );
+  expect(shown.queryByLabelText("Watchdog")).toBeNull();
 });

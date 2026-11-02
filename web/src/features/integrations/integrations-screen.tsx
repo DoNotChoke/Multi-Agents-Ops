@@ -16,7 +16,10 @@ type Integration = components["schemas"]["Integration"];
 type TestReport = components["schemas"]["TestReport"];
 type Created = components["schemas"]["CreatedIntegration"];
 // The integration type decides how the secret is explained: inbound bearer or outbound signing.
-type Revealed = components["schemas"]["WebhookSecret"] & { type: string };
+type Revealed = components["schemas"]["WebhookSecret"] & {
+  type: string;
+  watchdogSeconds?: unknown;
+};
 type Kind = "prometheus" | "alertmanager" | "webhook";
 
 const KIND_LABELS: Record<Kind, string> = {
@@ -24,6 +27,8 @@ const KIND_LABELS: Record<Kind, string> = {
   alertmanager: "Alertmanager",
   webhook: "Webhook",
 };
+
+const DEFAULT_WATCHDOG_SECONDS = 300;
 
 const CHECK_LABELS: Record<string, string> = {
   endpoint_allowed: "Endpoint allowed",
@@ -152,6 +157,7 @@ export function IntegrationsScreen() {
             if (created.webhook_secret)
               setRevealed({
                 type: created.type,
+                watchdogSeconds: created.config.watchdog_interval_seconds,
                 webhook_url: created.webhook_url ?? "",
                 webhook_secret: created.webhook_secret,
               });
@@ -165,7 +171,11 @@ export function IntegrationsScreen() {
           onClose={() => setRotating(null)}
           onRotated={(webhook) => {
             setRotating(null);
-            setRevealed({ ...webhook, type: rotating.type });
+            setRevealed({
+              ...webhook,
+              type: rotating.type,
+              watchdogSeconds: rotating.config.watchdog_interval_seconds,
+            });
           }}
         />
       )}
@@ -323,7 +333,16 @@ function AddIntegration({
       return;
     }
     if (kind === "alertmanager") {
-      create.mutate({ type: "alertmanager", mode: "direct", name });
+      create.mutate({
+        type: "alertmanager",
+        mode: "direct",
+        name,
+        config: {
+          ...(endpoint ? { endpoint } : {}),
+          collapse_replica_labels: true,
+          watchdog_interval_seconds: Number(form.get("watchdog")),
+        },
+      });
       return;
     }
     const raw = String(form.get("mapping") ?? "").trim();
@@ -396,10 +415,31 @@ function AddIntegration({
               </p>
             </>
           ) : kind === "alertmanager" ? (
-            <p className="text-[12.5px] text-muted">
-              You get a webhook URL and secret to put in your Alertmanager
-              config.
-            </p>
+            <>
+              <Field label="Endpoint (optional)">
+                <Input
+                  name="endpoint"
+                  placeholder="https://alertmanager.example.com:9093"
+                  className="font-mono text-[13px]"
+                />
+              </Field>
+              <Field label="Watchdog interval (seconds)">
+                <Input
+                  name="watchdog"
+                  type="number"
+                  required
+                  min={30}
+                  max={3600}
+                  defaultValue={DEFAULT_WATCHDOG_SECONDS}
+                />
+              </Field>
+              <p className="text-[12.5px] text-muted">
+                You get a webhook URL and secret to put in your Alertmanager
+                config. With an endpoint, we also read its alerts back to catch
+                any webhook that got lost. The interval must match the
+                Watchdog&apos;s repeat_interval.
+              </p>
+            </>
           ) : (
             <>
               <Field label="Endpoint">
@@ -527,6 +567,21 @@ function RevealSecret({
           authorization:
             credentials: ${webhook.webhook_secret}`;
   const label = signing ? "Signing secret" : "Alertmanager receiver";
+  const seconds = webhook.watchdogSeconds ?? DEFAULT_WATCHDOG_SECONDS;
+  const watchdog = `# Prometheus rule: always firing, so silence means trouble
+groups:
+  - name: meta
+    rules:
+      - alert: Watchdog
+        expr: vector(1)
+        labels: { severity: none }
+
+# Alertmanager route, under route.routes
+- matchers: ['alertname="Watchdog"']
+  receiver: opsteam
+  group_wait: 0s
+  group_interval: 30s
+  repeat_interval: ${seconds}s`;
   return (
     <Dialog
       title={signing ? "Signing secret" : "Webhook secret"}
@@ -543,6 +598,22 @@ function RevealSecret({
         >
           {config}
         </pre>
+        {!signing && (
+          <>
+            <h3 className="mt-3 mb-1.5 text-[13px] font-medium">
+              Watchdog (recommended)
+            </h3>
+            <p className="mb-1.5 text-[12.5px] text-muted">
+              Without it, a silent Alertmanager goes unnoticed.
+            </p>
+            <pre
+              aria-label="Watchdog"
+              className="overflow-x-auto rounded-md border border-line bg-wash px-3 py-2 font-mono text-xs"
+            >
+              {watchdog}
+            </pre>
+          </>
+        )}
         {signing && (
           <p className="mt-2 text-[12.5px] text-muted">
             Each request carries <code>X-Opsteam-Timestamp</code> and{" "}
@@ -552,7 +623,17 @@ function RevealSecret({
         )}
       </div>
       <div className="flex justify-between rounded-b-[10px] border-t border-line-2 bg-[#fbfcfd] px-[18px] py-3">
-        <Button onClick={() => navigator.clipboard.writeText(config)}>
+        <Button
+          onClick={() =>
+            navigator.clipboard.writeText(
+              signing
+                ? config
+                : `${config}
+
+${watchdog}`,
+            )
+          }
+        >
           Copy
         </Button>
         <Button variant="primary" onClick={onClose}>
