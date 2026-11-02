@@ -20,11 +20,13 @@ test("a new incident appears live, without a reload", async ({
   await page.getByRole("button", { name: "Continue with email" }).click();
   await page.getByLabel(/username or email/i).fill("dev-admin");
   await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
+  // A stream starts at "now": only an alert sent after it opens can reach it.
+  const streaming = page.waitForResponse(
+    (r) => r.url().endsWith("/api/v1/stream") && r.status() === 200,
+  );
   await page.getByRole("button", { name: /sign in/i }).click();
   await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: /new incident|No new incidents/ }),
-  ).toBeVisible();
+  await streaming;
 
   // The alert arrives after the page has loaded, so only the stream can show it.
   const service = `live-${Date.now()}`;
@@ -48,7 +50,8 @@ test("a new incident appears live, without a reload", async ({
     .getByRole("link", { name: `${service} returns 5xx` });
   await expect(toast).toBeVisible({ timeout: 15_000 });
   await expect(
-    page.getByRole("link", { name: "1 new incident" }),
+    // Other specs share this tenant and may raise it further.
+    page.getByRole("link", { name: /^\d+ new incidents?$/ }),
   ).toBeVisible();
   await toast.click();
   await expect(
