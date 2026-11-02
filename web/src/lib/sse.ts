@@ -19,6 +19,9 @@ const TYPES = [
 // The API ends streams when the token expires and the browser reconnects within seconds;
 // only an outage that outlasts this is worth a banner.
 const GRACE_MS = 10_000;
+const RETRY_MS = 3000;
+// Signed out or no access: retrying only repeats the answer.
+const REFUSED = [401, 403, 404];
 
 export type StreamState = "live" | "reconnecting" | "stopped";
 
@@ -34,9 +37,13 @@ export function useEventStream(
   });
 
   useEffect(() => {
-    const source = new EventSource(path);
+    let source: EventSource;
+    let lastId = "";
     let grace: ReturnType<typeof setTimeout> | undefined;
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    const url = () => (lastId ? `${path}?last_event_id=${lastId}` : path);
     const receive = (message: MessageEvent<string>) => {
+      lastId = message.lastEventId;
       try {
         handler.current({
           id: message.lastEventId,
@@ -46,19 +53,43 @@ export function useEventStream(
         // A malformed message is skipped; the next one carries on.
       }
     };
-    for (const type of TYPES) source.addEventListener(type, receive);
-    source.onopen = () => {
-      clearTimeout(grace);
-      setState("live");
+    const connect = () => {
+      source?.close();
+      source = new EventSource(url());
+      source.addEventListener("ready", (message) => {
+        lastId = (message as MessageEvent<string>).lastEventId;
+      });
+      for (const type of TYPES) source.addEventListener(type, receive);
+      source.onopen = () => {
+        clearTimeout(grace);
+        grace = undefined;
+        setState("live");
+      };
+      source.onerror = () => {
+        grace ??= setTimeout(() => setState("reconnecting"), GRACE_MS);
+        // CLOSED: a failed response ended the browser's own retries, so they are ours now.
+        if (source.readyState === EventSource.CLOSED)
+          retry = setTimeout(probe, RETRY_MS);
+      };
     };
-    source.onerror = () => {
-      clearTimeout(grace);
-      // CLOSED means the server refused (signed out, no access): the browser will not retry.
-      if (source.readyState === EventSource.CLOSED) setState("stopped");
-      else grace = setTimeout(() => setState("reconnecting"), GRACE_MS);
+    // EventSource hides the status of a failed response; this request shows it.
+    const probe = async () => {
+      const status = await fetch(url())
+        .then((response) => {
+          void response.body?.cancel();
+          return response.status;
+        })
+        .catch(() => 0);
+      if (REFUSED.includes(status)) {
+        clearTimeout(grace);
+        setState("stopped");
+      } else if (status === 200) connect();
+      else retry = setTimeout(probe, RETRY_MS);
     };
+    connect();
     return () => {
       clearTimeout(grace);
+      clearTimeout(retry);
       source.close();
     };
   }, [path]);

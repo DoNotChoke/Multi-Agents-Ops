@@ -111,6 +111,8 @@ async def _events(
     beat = time.monotonic()
     try:
         yield f"retry: {RETRY_MS}\n\n"
+        # Clients need a resume point even if nothing happens before the connection drops.
+        yield f"id: {after}\nevent: ready\ndata: {{}}\n\n"
         while time.time() < expires and not await request.is_disconnected():
             async with tenant_session(state.engine, ctx) as session:
                 rows = (

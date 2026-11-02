@@ -127,13 +127,51 @@ test("a hidden tab gets a desktop notification once allowed", async () => {
   });
 });
 
-test("a stream that cannot come back says so", async () => {
-  renderWithQuery(<LiveIncidents />);
-  expect(screen.queryByRole("alert")).toBeNull();
-  act(() => FakeEventSource.last.fail(FakeEventSource.CLOSED));
-  expect((await screen.findByRole("alert")).textContent).toContain(
-    "Live updates stopped",
+test("a refused stream stops and says so", async () => {
+  const seen: string[] = [];
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => new Response(null, { status: 401 })),
   );
+  renderWithQuery(<LiveIncidents />);
+  seen.push(FakeEventSource.last.url);
+  expect(screen.queryByRole("alert")).toBeNull();
+  vi.useFakeTimers({ shouldAdvanceTime: true });
+  try {
+    act(() => FakeEventSource.last.fail(FakeEventSource.CLOSED));
+    await act(() => vi.advanceTimersByTimeAsync(3000));
+    expect(screen.getByRole("alert").textContent).toContain(
+      "Live updates stopped",
+    );
+    await act(() => vi.advanceTimersByTimeAsync(30_000));
+    expect(FakeEventSource.last.url).toBe(seen[0]); // never reopened
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+test("a stream the server dropped comes back and resumes where it left off", async () => {
+  let status = 503;
+  const fetcher = vi.fn(async () => new Response(null, { status }));
+  vi.stubGlobal("fetch", fetcher);
+  vi.useFakeTimers({ shouldAdvanceTime: true });
+  try {
+    renderWithQuery(<LiveIncidents />);
+    const first = FakeEventSource.last;
+    act(() => first.emit("ready", {}, "41"));
+    act(() => first.fail(FakeEventSource.CLOSED));
+    await act(() => vi.advanceTimersByTimeAsync(12_000));
+    expect(screen.getByRole("alert").textContent).toContain("Reconnecting");
+    expect(FakeEventSource.last).toBe(first); // still down: nothing reopened
+    status = 200;
+    await act(() => vi.advanceTimersByTimeAsync(3000));
+    expect(first.closed).toBe(true);
+    expect(FakeEventSource.last.url).toBe("/api/v1/stream?last_event_id=41");
+    act(() => FakeEventSource.last.onopen?.());
+    expect(screen.queryByRole("alert")).toBeNull();
+  } finally {
+    vi.useRealTimers();
+  }
 });
 
 test("a dropped stream shows reconnecting only if it stays down", async () => {

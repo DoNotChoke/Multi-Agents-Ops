@@ -35,7 +35,7 @@ def _read(client: Any, path: str, headers: dict[str, str]) -> tuple[int, list[di
         message: dict[str, Any] = {}
         for line in resp.iter_lines():
             if line == "":
-                if message.get("event") not in (None, "heartbeat"):
+                if message.get("event") not in (None, "heartbeat", "ready"):
                     events.append(message)
                 message = {}
             elif ":" in line and not line.startswith(":"):
@@ -90,6 +90,19 @@ async def test_the_tenant_stream_sees_only_its_own_tenant(app_engine: AsyncEngin
     assert fresh == []
     assert {e["data"]["incident_id"] for e in replay} == {mine}
     assert [e["event"] for e in replay][:1] == ["incident.opened"]
+
+
+async def test_a_stream_announces_where_it_starts(app_engine: AsyncEngine) -> None:
+    tenant, subject, _ = await _tenant(app_engine)
+    incident_id = await _incident(app_engine, tenant)
+    async with tenant_session(app_engine, system_ctx(tenant)) as s:
+        newest = await s.scalar(text("select max(seq) from incident_activity"))
+    with _fast(api_client(app_engine)) as client:
+        headers = _headers(subject, tenant, ttl_s=1)
+        with client.stream("GET", "/api/v1/stream", headers=headers) as resp:
+            lines = [line for line in resp.iter_lines() if line]
+    assert lines[1:3] == [f"id: {newest}", "event: ready"]
+    assert incident_id
 
 
 async def test_another_tenants_incident_is_not_found(app_engine: AsyncEngine) -> None:

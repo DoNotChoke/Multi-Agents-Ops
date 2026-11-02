@@ -113,7 +113,8 @@ run-api dev-seed: export OPSTEAM_OIDC_JWKS_URL ?= http://localhost:8080/realms/o
 run-api dev-seed: export OPSTEAM_SECRETS_KEY ?= $(shell printf 'dev-only-secrets-key-32-bytes!!!' | base64)
 run-api dev-seed: export OPSTEAM_NETGUARD_DEV_ALLOW ?= ["127.0.0.1:30090","127.0.0.1:30093"]
 run-api:
-	uv run uvicorn --factory opsteam_api.main:create_app --host 127.0.0.1 --port 8000
+	# Open event streams never finish by themselves, so shutdown must not wait for them.
+	uv run uvicorn --factory opsteam_api.main:create_app --host 127.0.0.1 --port 8000 --timeout-graceful-shutdown 5
 
 # One metrics.query_range through the full Gateway (dev only), e.g.
 # make toolcall ARGS="--tenant tnt_… --integration int_… --service checkout --environment shop"

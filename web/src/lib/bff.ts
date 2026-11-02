@@ -72,7 +72,10 @@ export async function forward(req: NextRequest): Promise<Response> {
     accept: stream ? "text/event-stream" : "application/json",
   });
   if (tenant) headers.set("x-tenant-id", tenant);
-  const resume = req.headers.get("last-event-id");
+  // A connection the page reopens cannot set this header, so it asks in the query instead.
+  const resume =
+    req.headers.get("last-event-id") ??
+    req.nextUrl.searchParams.get("last_event_id");
   if (stream && resume) headers.set("last-event-id", resume);
   const type = req.headers.get("content-type");
   if (type) headers.set("content-type", type);

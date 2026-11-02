@@ -134,6 +134,15 @@ test("an event stream passes through with its resume point, unbuffered", async (
   expect(await response.text()).toContain("event: incident.opened");
 });
 
+test("a reopened stream resumes from the query, as new connections cannot set the header", async () => {
+  await forward(
+    request("/api/v1/stream?last_event_id=9", {
+      headers: { cookie: "opsteam_tenant=tnt_a", accept: "text/event-stream" },
+    }),
+  );
+  expect(fetch.mock.calls[0][1].headers.get("last-event-id")).toBe("9");
+});
+
 test("an ordinary call still asks for JSON and sends no resume point", async () => {
   await forward(
     request("/api/v1/incidents", {
