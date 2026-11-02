@@ -195,7 +195,7 @@ async def test_detect_and_notify_times_are_measured_once(
     delta = {n: sample(n) - before[n] for n in DURATIONS}
     # The alert started at T0 and was received 30 s later.
     assert delta["time_to_detect_seconds_count"] == 1
-    assert delta["time_to_detect_seconds_sum"] == 30
+    assert delta["time_to_detect_seconds_sum"] == pytest.approx(30)
     assert delta["time_to_notify_seconds_count"] == 1
 
 
