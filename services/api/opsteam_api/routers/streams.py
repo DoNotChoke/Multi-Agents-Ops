@@ -4,8 +4,8 @@ import asyncio
 import json
 import time
 from collections import Counter
-from collections.abc import AsyncIterator
-from typing import Annotated
+from collections.abc import AsyncIterator, Awaitable, Coroutine
+from typing import Annotated, Any
 
 import structlog
 from fastapi import APIRouter, Depends, Header, Path, Request
@@ -16,6 +16,7 @@ from opsteam_core.errors import OpsteamError
 from opsteam_db import tenant_session
 from opsteam_incidents.state import IncidentNotFound
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from opsteam_api.deps import require_scope
 
@@ -30,6 +31,8 @@ BATCH = 100
 RETRY_MS = 3000
 
 log = structlog.get_logger()
+# Strong references: the event loop alone would let a shielded task be collected.
+_running: set[asyncio.Future[Any]] = set()
 
 _FEED = text("""
     select seq, incident_id, type, ref_id, at from incident_activity
@@ -114,12 +117,7 @@ async def _events(
         # Clients need a resume point even if nothing happens before the connection drops.
         yield f"id: {after}\nevent: ready\ndata: {{}}\n\n"
         while time.time() < expires and not await request.is_disconnected():
-            async with tenant_session(state.engine, ctx) as session:
-                rows = (
-                    await session.execute(
-                        _FEED, {"after": after, "incident": incident_id, "limit": BATCH}
-                    )
-                ).all()
+            rows = await _finishing(_read(state.engine, ctx, after, incident_id))
             for row in rows:
                 after = row.seq
                 data = {
@@ -130,7 +128,7 @@ async def _events(
                 }
                 yield f"id: {row.seq}\nevent: {row.type}\ndata: {json.dumps(data)}\n\n"
             if time.monotonic() - beat >= state.stream_heartbeat_s:
-                if not await _still_allowed(request, ctx):
+                if not await _finishing(_still_allowed(request, ctx)):
                     return
                 beat = time.monotonic()
                 yield "event: heartbeat\ndata: {}\n\n"
@@ -138,6 +136,27 @@ async def _events(
                 await asyncio.sleep(state.stream_poll_s)
     finally:
         state.streams[key] -= 1
+
+
+def _finishing[T](work: Coroutine[Any, Any, T]) -> Awaitable[T]:
+    """Run `work` to its end even if the response is cancelled by the client leaving.
+
+    Cancelling a query mid-flight makes the pool abandon the connection, noisily.
+    """
+    task = asyncio.ensure_future(work)
+    _running.add(task)
+    task.add_done_callback(_running.discard)
+    return asyncio.shield(task)
+
+
+async def _read(
+    engine: AsyncEngine, ctx: RequestContext, after: int, incident_id: str | None
+) -> list[Any]:
+    async with tenant_session(engine, ctx) as session:
+        rows = await session.execute(
+            _FEED, {"after": after, "incident": incident_id, "limit": BATCH}
+        )
+        return list(rows.all())
 
 
 async def _still_allowed(request: Request, ctx: RequestContext) -> bool:
