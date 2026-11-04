@@ -17,6 +17,8 @@ from opsteam_db import audit, tenant_session
 from opsteam_db.secrets import SecretNotFound, SecretUnreadable
 from opsteam_notify.webhook import Channel, DeliveryFailed, Message, WebhookNotifier
 from opsteam_tools.connectors.alertmanager import ALERTMANAGER_PORTS, AlertmanagerConnector
+from opsteam_tools.connectors.kubernetes import KUBERNETES_PORTS, KubernetesConnector, trust
+from opsteam_tools.connectors.loki import LOKI_PORTS, LokiConnector
 from opsteam_tools.connectors.prometheus import (
     PROMETHEUS_PORTS,
     ConnectorError,
@@ -87,16 +89,41 @@ class WebhookConfig(BaseModel):
     endpoint: str = Field(max_length=2048)
 
 
-Config = PrometheusConfig | AlertmanagerConfig | WebhookConfig
+class LokiConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    endpoint: str = Field(max_length=2048)
+
+
+class KubernetesConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    endpoint: str = Field(max_length=2048)
+    # The cluster's own CA (public, PEM); TLS to the API server trusts nothing else.
+    ca_cert: str = Field(max_length=16384)
+
+    @field_validator("ca_cert")
+    @classmethod
+    def _pem(cls, ca_cert: str) -> str:
+        try:
+            trust(ca_cert)
+        except ConnectorError as exc:
+            raise ValueError(str(exc)) from exc
+        return ca_cert
+
+
+Config = PrometheusConfig | AlertmanagerConfig | WebhookConfig | LokiConfig | KubernetesConfig
 CONFIGS: dict[str, type[Config]] = {
     "prometheus": PrometheusConfig,
     "alertmanager": AlertmanagerConfig,
     "webhook": WebhookConfig,
+    "loki": LokiConfig,
+    "kubernetes": KubernetesConfig,
 }
 PORTS = {
     "prometheus": PROMETHEUS_PORTS,
     "alertmanager": ALERTMANAGER_PORTS,
     "webhook": frozenset(),
+    "loki": LOKI_PORTS,
+    "kubernetes": KUBERNETES_PORTS,
 }
 SIGNED = ("alertmanager", "webhook")
 
@@ -128,8 +155,29 @@ class NewWebhook(BaseModel):
     config: WebhookConfig
 
 
+class NewLoki(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["loki"]
+    name: Name
+    mode: Literal["direct"]
+    config: LokiConfig
+    credentials: Annotated[SecretStr, Field(max_length=4096)] | None = None
+
+
+class NewKubernetes(BaseModel):
+    """`credentials` is a read-only service account token."""
+
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["kubernetes"]
+    name: Name
+    mode: Literal["direct"]
+    config: KubernetesConfig
+    credentials: Annotated[SecretStr, Field(min_length=1, max_length=8192)]
+
+
 NewIntegration = Annotated[
-    NewPrometheus | NewAlertmanager | NewWebhook, Field(discriminator="type")
+    NewPrometheus | NewAlertmanager | NewWebhook | NewLoki | NewKubernetes,
+    Field(discriminator="type"),
 ]
 
 
@@ -236,7 +284,7 @@ async def create_integration(
     await _vet(request, body.type, body.config.endpoint)
     store = request.app.state.secrets
     webhook_secret = None
-    if isinstance(body, NewPrometheus):
+    if isinstance(body, NewPrometheus | NewLoki | NewKubernetes):
         ref = await store.put(ctx, body.credentials) if body.credentials else None
     else:
         webhook_secret = secrets.token_urlsafe(32)
@@ -407,7 +455,7 @@ async def test_integration(
         row = (
             await session.execute(
                 text(
-                    "select name, type, endpoint, credentials_ref from integrations"
+                    "select name, type, endpoint, config, credentials_ref from integrations"
                     " where integration_id = :id"
                 ),
                 {"id": integration_id},
@@ -433,6 +481,10 @@ async def test_integration(
         checks += await _live_checks(request, row.endpoint, token)
     if row.type == "webhook" and all(c.ok for c in checks):
         checks.append(await _send_sample(request, integration_id, row.endpoint, token))
+    if row.type == "loki" and all(c.ok for c in checks):
+        checks.append(await _read_labels(request, row.endpoint, token))
+    if row.type == "kubernetes" and all(c.ok for c in checks):
+        checks += await _read_cluster(request, row.endpoint, token, row.config.get("ca_cert", ""))
     report = TestReport(ok=all(c.ok for c in checks), checks=checks)
     async with tenant_session(request.app.state.engine, ctx) as session:
         await session.execute(
@@ -488,6 +540,47 @@ async def _read_alerts(request: Request, endpoint: str) -> Check:
     except (ConnectorError, NetguardBlocked) as exc:
         return Check(name="reachable", ok=False, detail=str(exc))
     return Check(name="reachable", ok=True, detail=f"{len(alerts)} active alerts")
+
+
+async def _read_labels(request: Request, endpoint: str, token: SecretStr | None) -> Check:
+    loki = LokiConnector(
+        endpoint,
+        token,
+        dev_allow=request.app.state.dev_allow,
+        transport=request.app.state.http_transport,
+    )
+    try:
+        labels = await loki.labels()
+    except (ConnectorError, NetguardBlocked) as exc:
+        return Check(name="reachable", ok=False, detail=str(exc))
+    return Check(name="reachable", ok=True, detail=f"{len(labels)} log labels")
+
+
+async def _read_cluster(
+    request: Request, endpoint: str, token: SecretStr | None, ca_cert: str
+) -> list[Check]:
+    """Build info, then a one-pod list: the read the token must be allowed to make."""
+    if token is None:
+        return [Check(name="reachable", ok=False, detail="no service account token")]
+    k8s = KubernetesConnector(
+        endpoint,
+        token,
+        ca_cert,
+        dev_allow=request.app.state.dev_allow,
+        transport=request.app.state.http_transport,
+    )
+    try:
+        info = await k8s.version()
+    except (ConnectorError, NetguardBlocked) as exc:
+        return [Check(name="reachable", ok=False, detail=str(exc))]
+    # Untrusted string from the customer's server: short, and only shown as text.
+    version = str(info.get("gitVersion", "unknown"))[:40]
+    checks = [Check(name="reachable", ok=True, detail=f"Kubernetes {version}")]
+    try:
+        await k8s.pods(limit=1)
+    except (ConnectorError, NetguardBlocked) as exc:
+        return [*checks, Check(name="read_pods", ok=False, detail=str(exc))]
+    return [*checks, Check(name="read_pods", ok=True, detail="token can list pods")]
 
 
 async def _send_sample(

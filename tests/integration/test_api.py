@@ -7,7 +7,7 @@ from opsteam_db.secrets import DbSecretStore
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from tests.api_helpers import SECRETS_KEY, api_client, auth, member, system_ctx
+from tests.api_helpers import SECRETS_KEY, api_client, auth, cluster_ca, member, system_ctx
 from tests.jwt_helpers import ISSUER
 
 pytestmark = pytest.mark.integration
@@ -77,8 +77,9 @@ async def test_unknown_role_is_forbidden(app_engine: AsyncEngine) -> None:
 
 async def test_dev_seed_is_idempotent(app_engine: AsyncEngine) -> None:
     store = DbSecretStore(app_engine, SECRETS_KEY)
+    cluster = ("dev-only-lab-k8s-token", cluster_ca())
     for _ in range(2):
-        await devseed.seed(app_engine, ISSUER, store, "dev-only-lab-webhook")
+        await devseed.seed(app_engine, ISSUER, store, "dev-only-lab-webhook", cluster)
     admin = await identify(app_engine, ISSUER, "00000000-0000-4000-8000-000000000004", None)
     assert admin.memberships == {devseed.DEV_TENANT: ("admin",)}
     # The lab Alertmanager posts to a fixed integration with a known dev secret.
@@ -93,7 +94,16 @@ async def test_dev_seed_is_idempotent(app_engine: AsyncEngine) -> None:
                 {"i": devseed.LAB_ALERTMANAGER},
             )
         ).one()
-        assert await s.scalar(text("select count(*) from secrets")) == 1
+        assert await s.scalar(text("select count(*) from secrets")) == 2
+        lab = {
+            r.type: r
+            for r in await s.execute(
+                text(
+                    "select type, endpoint, config, credentials_ref from integrations"
+                    " where type in ('loki', 'kubernetes')"
+                )
+            )
+        }
         assert row.config["watchdog_interval_seconds"] == 60
         assert row.endpoint == "http://127.0.0.1:30093"
         edges = (
@@ -110,6 +120,10 @@ async def test_dev_seed_is_idempotent(app_engine: AsyncEngine) -> None:
     assert (row.type, row.name) == ("alertmanager", "lab-alertmanager")
     assert [tuple(e) for e in edges] == [("checkout", "payment"), ("frontend", "checkout")]
     assert (await store.get(ctx, row.credentials_ref)).get_secret_value() == "dev-only-lab-webhook"
+    assert lab["loki"].endpoint == "http://127.0.0.1:30100"
+    assert lab["kubernetes"].config == {"ca_cert": cluster_ca()}
+    token = await store.get(ctx, lab["kubernetes"].credentials_ref)
+    assert token.get_secret_value() == "dev-only-lab-k8s-token"
 
 
 EVERYONE = dict.fromkeys(["viewer", "responder", "approver", "admin", "owner"], 200)

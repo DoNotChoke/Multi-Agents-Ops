@@ -1,4 +1,4 @@
-.PHONY: setup codegen dev-up dev-down dev-reset dev-seed migrate lab-up lab-down lab-fault lab-heal lab-verify \
+.PHONY: setup codegen dev-up dev-down dev-reset dev-seed migrate lab-up lab-down lab-fault lab-heal lab-token lab-verify \
 	lint test test-integration test-security test-e2e eval \
 	run-api run-worker run-ingest run-web run-runner toolcall
 
@@ -76,6 +76,10 @@ lab-fault:
 lab-heal:
 	bash deploy/lab/lab.sh heal
 
+# A one-year token for the lab's read-only opsteam-reader service account.
+lab-token:
+	@bash deploy/lab/lab.sh token
+
 # Same as `make eval LAB=1`: every scenario's fault on the lab, alerts timed, then healed.
 lab-verify:
 	uv run python -m evals.run --lab $(SCENARIO)
@@ -109,9 +113,9 @@ run-api dev-seed: export OPSTEAM_ENV ?= dev
 run-api dev-seed: export OPSTEAM_DATABASE_URL ?= $(call DB_URL,opsteam_app,$(OPSTEAM_APP_DB_PASSWORD))
 run-api dev-seed: export OPSTEAM_OIDC_ISSUER ?= http://localhost:8080/realms/opsteam
 run-api dev-seed: export OPSTEAM_OIDC_JWKS_URL ?= http://localhost:8080/realms/opsteam/protocol/openid-connect/certs
-# Fake 32-byte key built at run time; the lab Prometheus is the only SSRF exception.
+# Fake 32-byte key built at run time; the lab's own addresses are the only SSRF exceptions.
 run-api dev-seed: export OPSTEAM_SECRETS_KEY ?= $(shell printf 'dev-only-secrets-key-32-bytes!!!' | base64)
-run-api dev-seed: export OPSTEAM_NETGUARD_DEV_ALLOW ?= ["127.0.0.1:30090","127.0.0.1:30093","127.0.0.1:9599"]
+run-api dev-seed: export OPSTEAM_NETGUARD_DEV_ALLOW ?= ["127.0.0.1:30090","127.0.0.1:30093","127.0.0.1:30100","127.0.0.1:36443","127.0.0.1:9599"]
 run-api:
 	# Open event streams never finish by themselves, so shutdown must not wait for them.
 	uv run uvicorn --factory opsteam_api.main:create_app --host 127.0.0.1 --port 8000 --timeout-graceful-shutdown 5
@@ -139,6 +143,9 @@ run-web:
 
 # Dev tenant acme-dev with the four realm users; needs `make dev-up migrate`.
 dev-seed: export OPSTEAM_LAB_WEBHOOK_SECRET ?= $(LAB_WEBHOOK_SECRET)
+# Empty when the lab is down; dev-seed then skips the kubernetes integration.
+dev-seed: export OPSTEAM_LAB_K8S_TOKEN ?= $(shell bash deploy/lab/lab.sh token 2>/dev/null)
+dev-seed: export OPSTEAM_LAB_K8S_CA ?= $(shell bash deploy/lab/lab.sh ca 2>/dev/null)
 dev-seed:
 	uv run python -m opsteam_api.devseed
 

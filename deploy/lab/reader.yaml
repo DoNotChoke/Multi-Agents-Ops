@@ -1,0 +1,38 @@
+# What opsteam may see in the lab: list and read workloads and events, nothing else.
+# No secrets, configmaps, pods/exec, pods/log or any write verb.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: opsteam-reader
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: opsteam-reader
+rules:
+  - apiGroups: [""]
+    resources: [pods, nodes, services, events, namespaces]
+    verbs: [get, list, watch]
+  - apiGroups: [apps]
+    resources: [deployments, replicasets]
+    verbs: [get, list, watch]
+  - apiGroups: [autoscaling]
+    resources: [horizontalpodautoscalers]
+    verbs: [get, list, watch]
+  - apiGroups: [events.k8s.io]
+    resources: [events]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: opsteam-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: opsteam-reader
+subjects:
+  - kind: ServiceAccount
+    name: opsteam-reader
+    namespace: monitoring

@@ -18,8 +18,18 @@ make lab-down                   # delete the cluster
 | Prometheus | http://127.0.0.1:30090 |
 | Alertmanager | http://127.0.0.1:30093 |
 | Loki (LogQL API) | http://127.0.0.1:30100 |
+| Kubernetes API | https://127.0.0.1:36443 |
 
 All ports bind 127.0.0.1. Every `kubectl`/`helm` call pins the `kind-opsteam-lab` context.
+
+## What opsteam may read (`reader.yaml`)
+
+Service account `monitoring/opsteam-reader` can `get/list/watch` pods, nodes, services,
+events, namespaces, deployments, replicasets and HPAs; nothing else (no secrets, configmaps,
+`pods/exec`, `pods/log`, no write verb). `make lab-token` prints a one-year token for it;
+`make dev-seed` stores that token and the cluster CA as the `lab-kubernetes` integration, and
+creates `lab-loki`. A cluster made before the API server port was pinned needs
+`make lab-down lab-up` once.
 
 ## Shop (namespace `shop`)
 

@@ -708,6 +708,12 @@
                 "$ref": "#/components/schemas/WebhookConfig"
               },
               {
+                "$ref": "#/components/schemas/LokiConfig"
+              },
+              {
+                "$ref": "#/components/schemas/KubernetesConfig"
+              },
+              {
                 "type": "null"
               }
             ],
@@ -758,6 +764,42 @@
           "items"
         ],
         "title": "IntegrationList",
+        "type": "object"
+      },
+      "KubernetesConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "ca_cert": {
+            "maxLength": 16384,
+            "title": "Ca Cert",
+            "type": "string"
+          },
+          "endpoint": {
+            "maxLength": 2048,
+            "title": "Endpoint",
+            "type": "string"
+          }
+        },
+        "required": [
+          "endpoint",
+          "ca_cert"
+        ],
+        "title": "KubernetesConfig",
+        "type": "object"
+      },
+      "LokiConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "endpoint": {
+            "maxLength": 2048,
+            "title": "Endpoint",
+            "type": "string"
+          }
+        },
+        "required": [
+          "endpoint"
+        ],
+        "title": "LokiConfig",
         "type": "object"
       },
       "Mapping": {
@@ -947,6 +989,92 @@
           "depends_on_service_id"
         ],
         "title": "NewDependency",
+        "type": "object"
+      },
+      "NewKubernetes": {
+        "additionalProperties": false,
+        "description": "`credentials` is a read-only service account token.",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/KubernetesConfig"
+          },
+          "credentials": {
+            "format": "password",
+            "maxLength": 8192,
+            "minLength": 1,
+            "title": "Credentials",
+            "type": "string",
+            "writeOnly": true
+          },
+          "mode": {
+            "const": "direct",
+            "title": "Mode",
+            "type": "string"
+          },
+          "name": {
+            "pattern": "^[A-Za-z0-9_.\\-]{1,100}$",
+            "title": "Name",
+            "type": "string"
+          },
+          "type": {
+            "const": "kubernetes",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "mode",
+          "config",
+          "credentials"
+        ],
+        "title": "NewKubernetes",
+        "type": "object"
+      },
+      "NewLoki": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/LokiConfig"
+          },
+          "credentials": {
+            "anyOf": [
+              {
+                "format": "password",
+                "maxLength": 4096,
+                "type": "string",
+                "writeOnly": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credentials"
+          },
+          "mode": {
+            "const": "direct",
+            "title": "Mode",
+            "type": "string"
+          },
+          "name": {
+            "pattern": "^[A-Za-z0-9_.\\-]{1,100}$",
+            "title": "Name",
+            "type": "string"
+          },
+          "type": {
+            "const": "loki",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "mode",
+          "config"
+        ],
+        "title": "NewLoki",
         "type": "object"
       },
       "NewMapping": {
@@ -2231,6 +2359,8 @@
                 "discriminator": {
                   "mapping": {
                     "alertmanager": "#/components/schemas/NewAlertmanager",
+                    "kubernetes": "#/components/schemas/NewKubernetes",
+                    "loki": "#/components/schemas/NewLoki",
                     "prometheus": "#/components/schemas/NewPrometheus",
                     "webhook": "#/components/schemas/NewWebhook"
                   },
@@ -2245,6 +2375,12 @@
                   },
                   {
                     "$ref": "#/components/schemas/NewWebhook"
+                  },
+                  {
+                    "$ref": "#/components/schemas/NewLoki"
+                  },
+                  {
+                    "$ref": "#/components/schemas/NewKubernetes"
                   }
                 ],
                 "title": "Body"

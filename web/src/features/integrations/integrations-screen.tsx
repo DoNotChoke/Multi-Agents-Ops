@@ -36,6 +36,7 @@ const CHECK_LABELS: Record<string, string> = {
   reachable: "Reachable",
   query_up: "Query up",
   delivered: "Sample sent",
+  read_pods: "Read pods",
 };
 
 export function useIntegrations() {

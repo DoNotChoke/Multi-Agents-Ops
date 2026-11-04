@@ -13,13 +13,22 @@ from pydantic import SecretStr
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from tests.api_helpers import SECRETS_KEY, api_client, auth, fake_prometheus, member, system_ctx
+from tests.api_helpers import (
+    SECRETS_KEY,
+    api_client,
+    auth,
+    cluster_ca,
+    fake_prometheus,
+    member,
+    system_ctx,
+)
 
 pytestmark = pytest.mark.integration
 
 FAKE_TOKEN = "dev-only-prometheus-bearer-xyz"
 PUBLIC = "https://93.184.216.34"  # an IP literal, so no DNS lookup happens in tests
 LAB = "http://127.0.0.1:30090"
+DEV_ALLOW = frozenset({"127.0.0.1:30090", "127.0.0.1:30100"})
 LAB_MAPPING = json.loads(Path("deploy/lab/metric_mapping.json").read_text(encoding="utf-8"))
 
 
@@ -37,7 +46,7 @@ def _call(
     **kw: Any,
 ) -> Any:
     tenant, subject = who
-    with api_client(engine, frozenset({"127.0.0.1:30090"}), prometheus) as client:
+    with api_client(engine, DEV_ALLOW, prometheus) as client:
         return client.request(method, f"/api/v1{path}", headers=auth(subject, tenant), **kw)
 
 
@@ -190,7 +199,7 @@ async def test_permissions_and_isolation(app_engine: AsyncEngine) -> None:
     "extra",
     [
         {"mode": "runner"},
-        {"type": "loki"},
+        {"type": "elasticsearch"},
         {"tenant_id": "tnt_x"},
         {"credentials": "x" * 5000},
         {"config": {"endpoint": PUBLIC, "metric_mapping": {"raw": "up"}}},
@@ -444,3 +453,120 @@ async def test_testing_an_alertmanager_reads_its_alerts(app_engine: AsyncEngine)
     assert {"name": "reachable", "ok": False, "detail": "alertmanager could not be reached"} in (
         report["checks"]
     )
+
+
+K8S_TOKEN = "dev-only-k8s-reader-token"
+
+
+def _loki(endpoint: str = PUBLIC) -> dict[str, Any]:
+    return {"type": "loki", "name": "logs", "mode": "direct", "config": {"endpoint": endpoint}}
+
+
+def _kubernetes(endpoint: str = f"{PUBLIC}:6443", **extra: Any) -> dict[str, Any]:
+    config = {"endpoint": endpoint, "ca_cert": cluster_ca()}
+    body = {"type": "kubernetes", "name": "cluster", "mode": "direct", "config": config}
+    return body | {"credentials": K8S_TOKEN} | extra
+
+
+def _cluster(request: httpx.Request) -> httpx.Response:
+    if request.url.path == "/loki/api/v1/labels":
+        return httpx.Response(200, json={"status": "success", "data": ["app", "pod"]})
+    if request.url.path == "/version":
+        return httpx.Response(200, json={"gitVersion": "v1.35.0"})
+    if request.url.path == "/api/v1/pods":
+        return httpx.Response(200, json={"items": [{"metadata": {"name": "p"}}]})
+    return httpx.Response(404)
+
+
+async def test_loki_and_kubernetes_tests_only_read(app_engine: AsyncEngine) -> None:
+    who = await _who(app_engine)
+    seen: list[httpx.Request] = []
+
+    def cluster(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return _cluster(request)
+
+    loki = _call(app_engine, "POST", "/integrations", who, json=_loki()).json()
+    k8s = _call(app_engine, "POST", "/integrations", who, json=_kubernetes())
+    assert k8s.status_code == 201, k8s.text
+    assert k8s.json()["has_credentials"] is True
+    reports = [
+        _call(app_engine, "POST", f"/integrations/{iid}/test", who, cluster)
+        for iid in (loki["integration_id"], k8s.json()["integration_id"])
+    ]
+    checks = [{c["name"]: c["detail"] for c in r.json()["checks"] if c["ok"]} for r in reports]
+    assert checks[0]["reachable"] == "2 log labels"
+    assert checks[1]["reachable"] == "Kubernetes v1.35.0"
+    assert checks[1]["read_pods"] == "token can list pods"
+    assert all(r.json()["ok"] for r in reports)
+    assert {(r.method, r.url.path) for r in seen} == {
+        ("GET", "/loki/api/v1/labels"),
+        ("GET", "/version"),
+        ("GET", "/api/v1/pods"),
+    }
+    assert all(r.headers["authorization"] == f"Bearer {K8S_TOKEN}" for r in seen[1:])
+    for r in (k8s, *reports, _call(app_engine, "GET", "/integrations", who)):
+        assert K8S_TOKEN not in r.text and "credentials_ref" not in r.text
+
+
+async def test_a_token_without_rights_fails_the_kubernetes_test(app_engine: AsyncEngine) -> None:
+    who = await _who(app_engine)
+    iid = _call(app_engine, "POST", "/integrations", who, json=_kubernetes()).json()[
+        "integration_id"
+    ]
+
+    def forbidden(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/version":
+            return _cluster(request)
+        return httpx.Response(403)
+
+    report = _call(app_engine, "POST", f"/integrations/{iid}/test", who, forbidden).json()
+    assert report["ok"] is False
+    assert {"name": "read_pods", "ok": False, "detail": "kubernetes returned HTTP 403"} in (
+        report["checks"]
+    )
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        _loki("http://127.0.0.1:30101"),  # next to the dev-allowed Loki
+        _loki("https://10.0.0.5:3100"),
+        _kubernetes("https://127.0.0.1:6443"),
+        _kubernetes("https://169.254.169.254:6443"),
+    ],
+)
+async def test_internal_cluster_urls_outside_the_allowlist_are_refused(
+    app_engine: AsyncEngine, body: dict[str, Any]
+) -> None:
+    resp = _call(app_engine, "POST", "/integrations", await _who(app_engine), json=body)
+    assert (resp.status_code, resp.json()["code"]) == (422, "netguard.blocked")
+
+
+async def test_lab_loki_is_allowed_in_dev(app_engine: AsyncEngine) -> None:
+    resp = _call(
+        app_engine,
+        "POST",
+        "/integrations",
+        await _who(app_engine),
+        json=_loki("http://127.0.0.1:30100"),
+    )
+    assert resp.status_code == 201, resp.text
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        {"credentials": None},
+        {"credentials": ""},
+        {"config": {"endpoint": f"{PUBLIC}:6443"}},
+        {"config": {"endpoint": f"{PUBLIC}:6443", "ca_cert": ""}},
+        {"config": {"endpoint": f"{PUBLIC}:6443", "ca_cert": "not a certificate"}},
+    ],
+)
+async def test_kubernetes_needs_a_token_and_a_real_ca(
+    app_engine: AsyncEngine, extra: dict[str, Any]
+) -> None:
+    body = _kubernetes() | extra
+    resp = _call(app_engine, "POST", "/integrations", await _who(app_engine), json=body)
+    assert (resp.status_code, resp.json()["code"]) == (422, "request.invalid")

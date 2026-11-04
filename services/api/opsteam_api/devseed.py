@@ -1,6 +1,7 @@
 """Create the dev tenant and give each dev realm user a role in it; refuses to run in production."""
 
 import asyncio
+import base64
 import json
 import os
 import sys
@@ -21,6 +22,9 @@ LAB_ALERTMANAGER = "int_01JDEVSEED00000000000000AM"
 LAB_WATCHDOG = {"watchdog_interval_seconds": 60}
 # kind's NodePort for the lab Alertmanager, read back by reconciliation.
 LAB_ALERTMANAGER_URL = "http://127.0.0.1:30093"
+# kind's NodePort for the lab Loki and the API server port pinned in deploy/lab/kind.yaml.
+LAB_LOKI_URL = "http://127.0.0.1:30100"
+LAB_KUBERNETES_URL = "https://127.0.0.1:36443"
 # The demo app in deploy/lab, filed the way the Prometheus import files them.
 LAB_SERVICES = ("frontend", "checkout", "payment")
 # Keycloak user ids fixed in deploy/compose/keycloak/opsteam-realm.json.
@@ -37,8 +41,12 @@ async def seed(
     issuer: str,
     secrets: SecretStore | None = None,
     webhook_secret: str | None = None,
+    lab_cluster: tuple[str, str] | None = None,
 ) -> None:
-    """Idempotently create the dev tenant, its memberships and the lab Alertmanager webhook."""
+    """Idempotently create the dev tenant, its members and the lab integrations.
+
+    `lab_cluster` is the lab's read-only (token, CA PEM); without it no kubernetes integration.
+    """
     roles_by_user = {}
     for subject, (email, role) in DEV_USERS.items():
         roles_by_user[(await identify(engine, issuer, subject, email)).user_id] = [role]
@@ -87,6 +95,17 @@ async def seed(
             """),
             {"t": DEV_TENANT},
         )
+        await session.execute(
+            text("""
+                insert into integrations (integration_id, tenant_id, type, name, mode, endpoint)
+                values (:i, :t, 'loki', 'lab-loki', 'direct', :e)
+                on conflict (tenant_id, name) do nothing
+            """),
+            {"i": new_id("int"), "t": DEV_TENANT, "e": LAB_LOKI_URL},
+        )
+        has_cluster = await session.scalar(
+            text("select 1 from integrations where name = 'lab-kubernetes'")
+        )
         # The lab repeats its Watchdog every minute; older seeds get the newer settings too.
         exists = await session.scalar(
             text(
@@ -95,6 +114,25 @@ async def seed(
             ),
             {"i": LAB_ALERTMANAGER, "c": json.dumps(LAB_WATCHDOG), "e": LAB_ALERTMANAGER_URL},
         )
+    if secrets is not None and lab_cluster is not None and not has_cluster:
+        token, ca_cert = lab_cluster
+        ref = await secrets.put(ctx, SecretStr(token))
+        async with tenant_session(engine, ctx) as session:
+            await session.execute(
+                text("""
+                    insert into integrations (integration_id, tenant_id, type, name, mode,
+                                              endpoint, config, credentials_ref)
+                    values (:i, :t, 'kubernetes', 'lab-kubernetes', 'direct', :e,
+                            cast(:config as jsonb), :ref)
+                """),
+                {
+                    "i": new_id("int"),
+                    "t": DEV_TENANT,
+                    "e": LAB_KUBERNETES_URL,
+                    "config": json.dumps({"ca_cert": ca_cert}),
+                    "ref": ref,
+                },
+            )
     if exists or secrets is None or webhook_secret is None:
         return
     ref = await secrets.put(ctx, SecretStr(webhook_secret))
@@ -123,7 +161,10 @@ def main() -> None:
     engine = create_engine(settings.database_url.get_secret_value())
     secrets = DbSecretStore(engine, settings.secrets_key)
     webhook = os.environ.get("OPSTEAM_LAB_WEBHOOK_SECRET")
-    asyncio.run(seed(engine, settings.oidc_issuer, secrets, webhook))
+    token, ca = os.environ.get("OPSTEAM_LAB_K8S_TOKEN"), os.environ.get("OPSTEAM_LAB_K8S_CA")
+    # Both come from `deploy/lab/lab.sh token|ca`; empty when the lab is not up.
+    cluster = (token, base64.b64decode(ca).decode()) if token and ca else None
+    asyncio.run(seed(engine, settings.oidc_issuer, secrets, webhook, cluster))
 
 
 if __name__ == "__main__":

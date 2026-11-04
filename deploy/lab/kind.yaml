@@ -2,6 +2,10 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: opsteam-lab
+# A fixed API server port, so the dev SSRF allowlist and the seeded integration can name it.
+networking:
+  apiServerAddress: 127.0.0.1
+  apiServerPort: 36443
 nodes:
   - role: control-plane
     extraPortMappings:

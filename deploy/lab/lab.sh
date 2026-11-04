@@ -32,6 +32,7 @@ up() {
   chart loki https://grafana.github.io/helm-charts loki "$LOKI_CHART" loki-values.yaml
   chart alloy https://grafana.github.io/helm-charts alloy "$ALLOY_CHART" alloy-values.yaml
   kubectl --context "$CTX" apply -k base
+  kubectl --context "$CTX" apply -f reader.yaml
   # Pods built from a new local image keep the same tag, so restart them to pick it up.
   kubectl --context "$CTX" -n shop rollout restart deployment frontend checkout payment loadgen
   kubectl --context "$CTX" -n shop rollout status deployment --timeout 5m
@@ -54,6 +55,17 @@ heal() {
   kubectl --context "$CTX" -n shop rollout status deployment --timeout 5m
 }
 
+# The read-only token and cluster CA (base64 PEM) that dev-seed stores for the kubernetes integration.
+token() {
+  need kubectl
+  kubectl --context "$CTX" -n monitoring create token opsteam-reader --duration 8760h
+}
+
+ca() {
+  need kubectl
+  kubectl config view --raw -o jsonpath="{.clusters[?(@.name==\"$CTX\")].cluster.certificate-authority-data}"
+}
+
 down() {
   need kind
   kind delete cluster --name "$CLUSTER"
@@ -64,5 +76,7 @@ case "${1:-}" in
   down) down ;;
   fault) fault "${2:-}" ;;
   heal) heal ;;
-  *) echo "usage: $0 up|down|fault <name>|heal" >&2; exit 2 ;;
+  token) token ;;
+  ca) ca ;;
+  *) echo "usage: $0 up|down|fault <name>|heal|token|ca" >&2; exit 2 ;;
 esac

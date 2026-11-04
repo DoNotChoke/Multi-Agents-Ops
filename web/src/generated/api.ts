@@ -634,7 +634,7 @@ export interface components {
         /** IntegrationChange */
         IntegrationChange: {
             /** Config */
-            config?: components["schemas"]["PrometheusConfig"] | components["schemas"]["AlertmanagerConfig"] | components["schemas"]["WebhookConfig"] | null;
+            config?: components["schemas"]["PrometheusConfig"] | components["schemas"]["AlertmanagerConfig"] | components["schemas"]["WebhookConfig"] | components["schemas"]["LokiConfig"] | components["schemas"]["KubernetesConfig"] | null;
             /** Name */
             name?: string | null;
             /** Status */
@@ -644,6 +644,18 @@ export interface components {
         IntegrationList: {
             /** Items */
             items: components["schemas"]["Integration"][];
+        };
+        /** KubernetesConfig */
+        KubernetesConfig: {
+            /** Ca Cert */
+            ca_cert: string;
+            /** Endpoint */
+            endpoint: string;
+        };
+        /** LokiConfig */
+        LokiConfig: {
+            /** Endpoint */
+            endpoint: string;
         };
         /** Mapping */
         Mapping: {
@@ -718,6 +730,48 @@ export interface components {
         NewDependency: {
             /** Depends On Service Id */
             depends_on_service_id: string;
+        };
+        /**
+         * NewKubernetes
+         * @description `credentials` is a read-only service account token.
+         */
+        NewKubernetes: {
+            config: components["schemas"]["KubernetesConfig"];
+            /**
+             * Credentials
+             * Format: password
+             */
+            credentials: string;
+            /**
+             * Mode
+             * @constant
+             */
+            mode: "direct";
+            /** Name */
+            name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "kubernetes";
+        };
+        /** NewLoki */
+        NewLoki: {
+            config: components["schemas"]["LokiConfig"];
+            /** Credentials */
+            credentials?: string | null;
+            /**
+             * Mode
+             * @constant
+             */
+            mode: "direct";
+            /** Name */
+            name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "loki";
         };
         /** NewMapping */
         NewMapping: {
@@ -960,6 +1014,8 @@ export type SchemaIncidentSummary = components['schemas']['IncidentSummary'];
 export type SchemaIntegration = components['schemas']['Integration'];
 export type SchemaIntegrationChange = components['schemas']['IntegrationChange'];
 export type SchemaIntegrationList = components['schemas']['IntegrationList'];
+export type SchemaKubernetesConfig = components['schemas']['KubernetesConfig'];
+export type SchemaLokiConfig = components['schemas']['LokiConfig'];
 export type SchemaMapping = components['schemas']['Mapping'];
 export type SchemaMappingList = components['schemas']['MappingList'];
 export type SchemaMe = components['schemas']['Me'];
@@ -968,6 +1024,8 @@ export type SchemaMemberList = components['schemas']['MemberList'];
 export type SchemaMembership = components['schemas']['Membership'];
 export type SchemaNewAlertmanager = components['schemas']['NewAlertmanager'];
 export type SchemaNewDependency = components['schemas']['NewDependency'];
+export type SchemaNewKubernetes = components['schemas']['NewKubernetes'];
+export type SchemaNewLoki = components['schemas']['NewLoki'];
 export type SchemaNewMapping = components['schemas']['NewMapping'];
 export type SchemaNewMember = components['schemas']['NewMember'];
 export type SchemaNewPrometheus = components['schemas']['NewPrometheus'];
@@ -1177,7 +1235,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["NewPrometheus"] | components["schemas"]["NewAlertmanager"] | components["schemas"]["NewWebhook"];
+                "application/json": components["schemas"]["NewPrometheus"] | components["schemas"]["NewAlertmanager"] | components["schemas"]["NewWebhook"] | components["schemas"]["NewLoki"] | components["schemas"]["NewKubernetes"];
             };
         };
         responses: {
