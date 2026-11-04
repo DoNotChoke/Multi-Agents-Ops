@@ -20,7 +20,6 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from opsteam_tools.backends import IntegrationTarget
 from opsteam_tools.executors import Denied, check_request
-from opsteam_tools.registry.metrics import QueryRangeArgs
 from opsteam_tools.registry.spec import ToolSpec
 
 POLICY_PATH = "opsteam/tool_access/decision"
@@ -76,6 +75,7 @@ class Gateway:
             endpoint=integration["endpoint"],
             credentials=await self._credentials(ctx, integration["credentials_ref"]),
             metric_mapping=integration["config"].get("metric_mapping", {}),
+            ca_cert=integration["config"].get("ca_cert"),
         )
         return Admitted(
             spec=spec,
@@ -200,12 +200,14 @@ class Gateway:
 
 
 def _clamp(spec: ToolSpec, args: BaseModel, decision: Decision) -> BaseModel:
-    if not isinstance(args, QueryRangeArgs):
+    window_seconds = getattr(args, "window_seconds", None)
+    if not isinstance(window_seconds, int):
         return args
-    ceilings = [spec.limits.max_window_s, args.window_seconds]
+    ceilings = [spec.limits.max_window_s, window_seconds]
     obligation = decision.obligations.get("max_window_seconds")
     if isinstance(obligation, int) and not isinstance(obligation, bool) and obligation > 0:
         ceilings.append(obligation)
-    window = min(c for c in ceilings if c > 0)
-    step = max(args.step_seconds, spec.limits.min_step_s)
-    return args.model_copy(update={"window_seconds": window, "step_seconds": step})
+    update = {"window_seconds": min(c for c in ceilings if c > 0)}
+    if isinstance(step := getattr(args, "step_seconds", None), int):
+        update["step_seconds"] = max(step, spec.limits.min_step_s)
+    return args.model_copy(update=update)

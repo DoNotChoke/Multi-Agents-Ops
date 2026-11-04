@@ -18,7 +18,7 @@ from opsteam_tools.backends import IntegrationBackend, IntegrationTarget
 from opsteam_tools.compress import compress_series
 from opsteam_tools.connectors.prometheus import ConnectorError, ConnectorTimeout, ResponseTooLarge
 from opsteam_tools.registry import TOOLS
-from opsteam_tools.registry.metrics import QueryInstantArgs, QueryRangeArgs
+from opsteam_tools.registry.metrics import QueryInstantArgs, QueryRangeArgs, TemplateParams
 from opsteam_tools.registry.spec import ToolSpec
 from opsteam_tools.registry.templates import TemplateError
 
@@ -43,9 +43,10 @@ def check_request(request: ToolRequest, agent: str) -> tuple[ToolSpec, BaseModel
     except ValidationError:
         # The message names no values: arguments come from the LLM and may carry injected text.
         raise Denied("tool.invalid_arguments", "arguments do not match the tool schema") from None
-    if isinstance(args, QueryRangeArgs | QueryInstantArgs) and (
-        args.params.service != request.resource.service
-        or args.params.environment != request.resource.environment
+    params = getattr(args, "params", None)
+    if isinstance(params, TemplateParams) and (
+        params.service != request.resource.service
+        or params.environment != request.resource.environment
     ):
         raise Denied("tool.invalid_arguments", "params must name the requested resource")
     return spec, args
@@ -74,7 +75,7 @@ def result(
             "usage": {
                 "duration_ms": elapsed,
                 "bytes": len(body),
-                "rows": len((data or {}).get("alerts", [])),
+                "rows": _rows(data or {}),
                 "series": len((data or {}).get("series", [])),
             },
         }
@@ -173,9 +174,18 @@ class ReplayToolExecutor:
         return result("ok", data=compress_series(series, spec.limits))
 
 
+def _rows(data: dict[str, Any]) -> int:
+    rows = data.get("alerts", data.get("lines", data.get("items", [])))
+    return rows if isinstance(rows, int) else len(rows)
+
+
 def _summary(data: dict[str, Any] | None) -> str | None:
     if data is None:
         return None
+    if "patterns" in data:
+        return f"{data['lines']} log lines, {len(data['patterns'])} patterns"
+    if "lines" in data:
+        return f"{len(data['lines'])} log lines around the anchor"
     if "series" in data:
         flagged = sum(1 for s in data["series"] if s["anomalies"])
         return f"{len(data['series'])} series, {flagged} with anomalies"

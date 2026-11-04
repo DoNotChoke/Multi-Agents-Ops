@@ -1,6 +1,7 @@
-"""Summarise Prometheus series for an LLM: a few statistics and the intervals that look abnormal."""
+"""Summarise data for an LLM: series as stats and abnormal intervals, logs as pattern counts."""
 
 import math
+import re
 from datetime import UTC, datetime
 from statistics import median
 from typing import Any
@@ -90,3 +91,71 @@ def _compress_one(series: dict[str, Any], max_points: int) -> dict[str, Any]:
 
 def _iso(ts: float) -> str:
     return datetime.fromtimestamp(ts, UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+MAX_PATTERNS, MAX_EXEMPLARS, MAX_LINE = 20, 5, 500
+# Order matters: a UUID or IP must be folded before its digits are.
+_UUID = r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+_VARIABLE = [
+    (re.compile(_UUID, re.I), "<uuid>"),
+    (re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?\b"), "<ip>"),
+    (re.compile(r"\b(?=[0-9a-f]*\d)[0-9a-f]{8,}\b", re.I), "<hex>"),
+    (re.compile(r"\d+(?:\.\d+)?"), "<num>"),
+]
+
+
+def log_pattern(line: str) -> str:
+    """`line` with its numbers, UUIDs, IPs and hex ids replaced, so alike lines group together."""
+    for regex, placeholder in _VARIABLE:
+        line = regex.sub(placeholder, line)
+    return line.strip()[:MAX_LINE]
+
+
+def log_lines(streams: list[dict[str, Any]]) -> list[tuple[int, str, str]]:
+    """(nanosecond timestamp, line, pod) of every entry in Loki `streams`, oldest first."""
+    entries = [
+        (int(ts), str(line).rstrip("\n"), str(s.get("stream", {}).get("pod", ""))[:MAX_LABEL_VALUE])
+        for s in streams
+        for ts, line in s.get("values", [])
+    ]
+    return sorted(entries)
+
+
+def compress_logs(streams: list[dict[str, Any]], limit: int) -> dict[str, Any]:
+    """Pattern counts with first and last seen, and exemplars of the most frequent patterns."""
+    entries = log_lines(streams)
+    groups: dict[str, dict[str, Any]] = {}
+    for ts, line, pod in entries:
+        group = groups.setdefault(log_pattern(line), {"count": 0, "first": ts, "sample": None})
+        group["count"] += 1
+        group["last"] = ts
+        group["sample"] = group["sample"] or (ts, line, pod)
+    ranked = sorted(groups.items(), key=lambda kv: kv[1]["count"], reverse=True)
+    patterns = [
+        {
+            "pattern": pattern,
+            "count": g["count"],
+            "first_at": _iso_ns(g["first"]),
+            "last_at": _iso_ns(g["last"]),
+        }
+        for pattern, g in ranked[:MAX_PATTERNS]
+    ]
+    exemplars = [
+        {"at": _iso_ns(ts), "anchor_ts": str(ts), "pod": pod, "line": line[:MAX_LINE]}
+        for _, g in ranked[:MAX_EXEMPLARS]
+        for ts, line, pod in [g["sample"]]
+    ]
+    return {
+        "lines": len(entries),
+        "first_at": _iso_ns(entries[0][0]) if entries else None,
+        "last_at": _iso_ns(entries[-1][0]) if entries else None,
+        "patterns": patterns,
+        "dropped_patterns": max(0, len(ranked) - MAX_PATTERNS),
+        "exemplars": exemplars,
+        # Loki stops at `limit`, so a full page means older lines were left out.
+        "truncated": len(entries) >= limit,
+    }
+
+
+def _iso_ns(ts: int) -> str:
+    return _iso(ts / 1e9)

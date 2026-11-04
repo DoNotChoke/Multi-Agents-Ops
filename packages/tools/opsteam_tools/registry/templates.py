@@ -51,10 +51,10 @@ class TemplateError(OpsteamError):
     code = "tool.invalid_arguments"
 
 
-def validate_mapping(mapping: Mapping[str, str]) -> None:
+def validate_mapping(mapping: Mapping[str, str], templates: Mapping[str, str] = TEMPLATES) -> None:
     """Check an integration's metric_mapping: known names, only ${service}/${environment}."""
     for name, expression in mapping.items():
-        if name not in TEMPLATES:
+        if name not in templates:
             raise TemplateError(f"unknown template {name!r}")
         if len(expression) > MAX_EXPRESSION:
             raise TemplateError(f"mapping for {name!r} is longer than {MAX_EXPRESSION} characters")
@@ -71,9 +71,10 @@ def render(
     *,
     mapping: Mapping[str, str],
     catalog: Set[tuple[str, str]],
+    templates: Mapping[str, str] = TEMPLATES,
 ) -> str:
-    """Build the PromQL for `name`; values must be well-formed and the service in the catalog."""
-    if name not in TEMPLATES:
+    """Build the query for `name`; values must be well-formed and the service in the catalog."""
+    if name not in templates:
         raise TemplateError(f"unknown template {name!r}")
     if set(params) != PARAMS:
         raise TemplateError(f"parameters must be exactly {sorted(PARAMS)}")
@@ -82,6 +83,6 @@ def render(
             raise TemplateError(f"parameter {key!r} has a disallowed value")
     if (params["service"], params["environment"]) not in catalog:
         raise TemplateError("service is not in the tenant's catalog")
-    expression = mapping.get(name, TEMPLATES[name])
-    validate_mapping({name: expression})
+    expression = mapping.get(name, templates[name])
+    validate_mapping({name: expression}, templates)
     return Template(expression).substitute(params)

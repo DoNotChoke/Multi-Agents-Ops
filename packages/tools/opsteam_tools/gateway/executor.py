@@ -4,7 +4,7 @@ import contextlib
 import hashlib
 import json
 import time
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from opsteam_contracts.common import TimeWindow
@@ -26,11 +26,13 @@ from sqlalchemy import text
 from opsteam_tools.backends import IntegrationBackend
 from opsteam_tools.executors import Denied, result, run_checked
 from opsteam_tools.gateway.pipeline import Admitted, Gateway
-from opsteam_tools.registry.metrics import QueryInstantArgs, QueryRangeArgs
+from opsteam_tools.registry.logs import LogsContextArgs
+from opsteam_tools.registry.metrics import QueryInstantArgs
 
 # Seconds a result stays fresh; range windows are bucketed so close-in-time calls share a hit.
 CACHE_TTL = {"metrics.query_range": 60, "metrics.query_instant": 15, "alerts.list": 15}
 WITHHELD = ("redaction.failed", "the result could not be redacted, so it is withheld")
+SOURCES = {"prometheus": SourceType.metrics, "loki": SourceType.logs, "kubernetes": SourceType.k8s}
 
 
 class GatewayToolExecutor:
@@ -161,15 +163,17 @@ class GatewayToolExecutor:
     ) -> Provenance:
         end = self.clock.now()
         args = admitted.args
-        if isinstance(args, QueryRangeArgs):
-            window = TimeWindow(start_at=end - timedelta(seconds=args.window_seconds), end_at=end)
+        if isinstance(seconds := getattr(args, "window_seconds", None), int):
+            window = TimeWindow(start_at=end - timedelta(seconds=seconds), end_at=end)
         else:
             at = args.at if isinstance(args, QueryInstantArgs) and args.at else end
+            if isinstance(args, LogsContextArgs):
+                at = datetime.fromtimestamp(int(args.anchor_ts) / 1e9, UTC)
             window = TimeWindow(start_at=at, end_at=at)
         return Provenance(
             tool_call_id=answer.tool_call_id,
             tool=admitted.spec.name,
-            source_type=SourceType.metrics,
+            source_type=SOURCES[admitted.spec.integration_type],
             integration_id=admitted.integration_id,
             incident_id=ctx.incident_id,
             source_query=args.model_dump(mode="json"),

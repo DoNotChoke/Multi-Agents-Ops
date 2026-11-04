@@ -7,14 +7,14 @@ from opsteam_tools.registry.templates import TEMPLATES
 from pydantic import ValidationError
 
 PARAMS = {"service": "checkout", "environment": "prod"}
+SPECIALIST = {"prometheus": "metrics", "loki": "logs", "kubernetes": "infrastructure"}
 
 
-def test_metrics_tools_are_registered_read_only_for_the_metrics_agent() -> None:
+def test_every_tool_is_read_only_for_one_specialist() -> None:
     assert {"metrics.query_range", "metrics.query_instant", "alerts.list"} <= set(TOOLS)
     for spec in TOOLS.values():
         assert spec.permission == "READ"
-        assert spec.allowed_agents == frozenset({"metrics"})
-        assert spec.integration_type == "prometheus"
+        assert spec.allowed_agents == frozenset({SPECIALIST[spec.integration_type]})
 
 
 def test_template_enum_matches_the_templates() -> None:
