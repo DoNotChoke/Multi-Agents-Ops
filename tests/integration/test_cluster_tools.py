@@ -1,4 +1,5 @@
 import gzip
+import json
 from collections.abc import AsyncIterator, Callable
 from typing import Any
 
@@ -13,11 +14,13 @@ from opsteam_policy.client import PolicyClient
 from opsteam_tools.backends import DirectBackend
 from opsteam_tools.gateway.executor import GatewayToolExecutor
 from opsteam_tools.gateway.pipeline import Gateway
+from pydantic import SecretStr
 from redis.asyncio import Redis
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from tests.api_helpers import system_ctx
+from tests.certs import cluster_ca
 from tests.integration.test_gateway import REDIS_URL, _tenant
 from tests.integration.test_policy_opa import OPA_URL
 
@@ -130,3 +133,66 @@ async def test_logs_tools_refuse_other_agents_and_other_integration_types(
     )
     assert wrong.error is not None and wrong.error.code == "integration.wrong_type"
     assert await _evidence(app_engine, tenant) == []
+
+
+POD = {
+    "metadata": {"name": "checkout-1", "namespace": "shop", "annotations": {"x": FAKE_PASSWORD}},
+    "spec": {"containers": [{"name": "app", "env": [{"name": "DB", "value": FAKE_PASSWORD}]}]},
+    "status": {"phase": "Running"},
+}
+
+
+async def _cluster(engine: AsyncEngine, tenant: str, secrets: FakeSecretStore) -> str:
+    ref = await secrets.put(system_ctx(tenant), SecretStr("dev-only-k8s-reader-token"))
+    config = json.dumps({"ca_cert": cluster_ca()})
+    return await _integration(
+        engine, tenant, "kubernetes", endpoint="https://93.184.216.34:6443", config=config, ref=ref
+    )
+
+
+async def test_k8s_answers_and_evidence_carry_no_env_or_annotations(
+    app_engine: AsyncEngine, redis: Redis
+) -> None:
+    tenant, _ = await _tenant(app_engine)
+    secrets = FakeSecretStore()
+    cluster = await _cluster(app_engine, tenant, secrets)
+    seen: list[httpx.Request] = []
+
+    def api_server(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={"items": [POD]})
+
+    run, objects = _executor(app_engine, redis, api_server, secrets)
+    request = _request("k8s.get_resources", cluster, {"kind": "pods", "namespace": "shop"})
+    answer = await run.execute(system_ctx(tenant), request, agent="infrastructure")
+    assert answer.status == "ok", answer.error
+    assert answer.summary == "1 pods"
+    assert FAKE_PASSWORD not in answer.model_dump_json()
+    assert seen[0].headers["authorization"] == "Bearer dev-only-k8s-reader-token"
+    [evidence] = await _evidence(app_engine, tenant)
+    assert evidence["source_type"] == "k8s"
+    stored = gzip.decompress(objects.objects[evidence["payload_reference"]][0])
+    assert b"checkout-1" in stored and FAKE_PASSWORD.encode() not in stored
+    assert b'"env"' not in stored and b"annotations" not in stored
+
+
+@pytest.mark.parametrize(
+    ("arguments", "agent", "code"),
+    [
+        ({"kind": "secrets", "namespace": "shop"}, "infrastructure", "tool.invalid_arguments"),
+        ({"kind": "pods", "namespace": "kube-system"}, "infrastructure", "tool.invalid_arguments"),
+        ({"kind": "pods", "namespace": "shop"}, "logs", "tool.not_allowed"),
+    ],
+)
+async def test_k8s_requests_outside_the_rules_never_reach_the_cluster(
+    app_engine: AsyncEngine, redis: Redis, arguments: dict[str, Any], agent: str, code: str
+) -> None:
+    tenant, _ = await _tenant(app_engine)
+    secrets = FakeSecretStore()
+    cluster = await _cluster(app_engine, tenant, secrets)
+    seen: list[httpx.Request] = []
+    run, _ = _executor(app_engine, redis, lambda r: seen.append(r) or httpx.Response(500), secrets)
+    request = _request("k8s.get_resources", cluster, arguments)
+    answer = await run.execute(system_ctx(tenant), request, agent=agent)
+    assert (answer.status, answer.error and answer.error.code) == ("denied", code)
+    assert seen == []

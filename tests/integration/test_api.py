@@ -7,7 +7,8 @@ from opsteam_db.secrets import DbSecretStore
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from tests.api_helpers import SECRETS_KEY, api_client, auth, cluster_ca, member, system_ctx
+from tests.api_helpers import SECRETS_KEY, api_client, auth, member, system_ctx
+from tests.certs import cluster_ca
 from tests.jwt_helpers import ISSUER
 
 pytestmark = pytest.mark.integration

@@ -10,9 +10,20 @@ from opsteam_core.canonical import JsonValue
 from opsteam_core.clock import Clock, SystemClock
 from pydantic import BaseModel, SecretStr
 
+from opsteam_tools import k8s_view
 from opsteam_tools.compress import MAX_LINE, compress_logs, compress_series, log_lines
+from opsteam_tools.connectors.http import ConnectorError
+from opsteam_tools.connectors.kubernetes import KubernetesConnector
 from opsteam_tools.connectors.loki import LokiConnector
 from opsteam_tools.connectors.prometheus import PrometheusConnector
+from opsteam_tools.registry.k8s import (
+    MAX_OBJECTS,
+    MAX_REVISIONS,
+    PATHS,
+    K8sEventsArgs,
+    K8sResourcesArgs,
+    K8sRolloutsArgs,
+)
 from opsteam_tools.registry.logs import LogsAggregateArgs, LogsContextArgs, LogsSearchArgs, selector
 from opsteam_tools.registry.metrics import AlertsListArgs, QueryInstantArgs, QueryRangeArgs
 from opsteam_tools.registry.spec import ToolSpec
@@ -66,6 +77,8 @@ class DirectBackend:
     ) -> Fetched:
         if spec.integration_type == "loki":
             return await self._logs(spec, args, target, catalog)
+        if spec.integration_type == "kubernetes":
+            return await self._k8s(spec, args, target)
         prometheus = PrometheusConnector(
             target.endpoint,
             target.credentials,
@@ -120,6 +133,84 @@ class DirectBackend:
         if isinstance(args, LogsContextArgs):
             return await _context(loki, args, selector(args, catalog))
         raise TypeError(f"no direct handler for {spec.name}")
+
+    async def _k8s(self, spec: ToolSpec, args: BaseModel, target: IntegrationTarget) -> Fetched:
+        """Only allowlisted views leave this method; they are also all that evidence keeps."""
+        if target.credentials is None or not target.ca_cert:
+            raise ConnectorError("kubernetes integration has no token or CA")
+        k8s = KubernetesConnector(
+            target.endpoint,
+            target.credentials,
+            target.ca_cert,
+            dev_allow=self.dev_allow,
+            timeout_s=spec.timeout_ms / 1000,
+            max_bytes=spec.limits.max_bytes,
+            transport=self.transport,
+        )
+        if isinstance(args, K8sResourcesArgs):
+            params = {"limit": str(MAX_OBJECTS)}
+            if args.name is not None:
+                params["fieldSelector"] = f"metadata.name={args.name}"
+            if args.label_selector is not None:
+                params["labelSelector"] = args.label_selector
+            found, more = await k8s.items(PATHS[args.kind].format(namespace=args.namespace), params)
+            items = [k8s_view.VIEWS[args.kind](o) for o in found]
+            return _fetched({"kind": args.kind, "items": items, "truncated": more})
+        if isinstance(args, K8sEventsArgs):
+            return _fetched(await self._events(k8s, args))
+        if isinstance(args, K8sRolloutsArgs):
+            return _fetched(await _rollouts(k8s, args))
+        raise TypeError(f"no direct handler for {spec.name}")
+
+    async def _events(self, k8s: KubernetesConnector, args: K8sEventsArgs) -> dict[str, Any]:
+        params = {}
+        if args.involved_object is not None:
+            params["fieldSelector"] = f"involvedObject.name={args.involved_object}"
+        # shortcut: one unpaged list bounded by max_bytes; page with `continue` if a namespace
+        # ever keeps thousands of live events.
+        found, more = await k8s.items(PATHS["events"].format(namespace=args.namespace), params)
+        since = self.clock.now() - timedelta(seconds=args.window_seconds)
+        events = [
+            e
+            for e in map(k8s_view.event, found)
+            if (args.reasons is None or e["reason"] in args.reasons)
+            and e["last_at"] is not None
+            and _parse_time(e["last_at"]) >= since
+        ]
+        events.sort(key=lambda e: _parse_time(e["last_at"]), reverse=True)
+        return {"items": events[:MAX_OBJECTS], "truncated": more or len(events) > MAX_OBJECTS}
+
+
+def _fetched(view: dict[str, Any]) -> Fetched:
+    return Fetched(view, view)
+
+
+async def _rollouts(k8s: KubernetesConnector, args: K8sRolloutsArgs) -> dict[str, Any]:
+    """The deployment and the replicasets it owns, newest revision first."""
+    path = PATHS["deployments"].format(namespace=args.namespace)
+    found, _ = await k8s.items(path, {"fieldSelector": f"metadata.name={args.name}"})
+    if not found:
+        return {"deployment": None, "revisions": [], "truncated": False}
+    match = found[0].get("spec", {}).get("selector", {}).get("matchLabels")
+    labels = ",".join(f"{k}={v}" for k, v in match.items()) if isinstance(match, dict) else ""
+    path = PATHS["replicasets"].format(namespace=args.namespace)
+    sets, _ = await k8s.items(path, {"labelSelector": labels} if labels else {})
+    owned = [r for r in map(k8s_view.replicaset, sets) if r["deployment"] == args.name]
+    owned.sort(key=lambda r: int(r["revision"]) if (r["revision"] or "").isdigit() else 0)
+    owned.reverse()
+    return {
+        "deployment": k8s_view.deployment(found[0]),
+        "revisions": owned[:MAX_REVISIONS],
+        "truncated": len(owned) > MAX_REVISIONS,
+    }
+
+
+def _parse_time(value: str) -> datetime:
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return datetime.min.replace(tzinfo=UTC)
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=UTC)
 
 
 async def _context(loki: LokiConnector, args: LogsContextArgs, logql: str) -> Fetched:

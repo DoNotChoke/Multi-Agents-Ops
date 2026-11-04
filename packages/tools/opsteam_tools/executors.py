@@ -49,6 +49,10 @@ def check_request(request: ToolRequest, agent: str) -> tuple[ToolSpec, BaseModel
         or params.environment != request.resource.environment
     ):
         raise Denied("tool.invalid_arguments", "params must name the requested resource")
+    # Catalog environments are namespaces, so a namespace outside the resource is refused.
+    namespace = getattr(args, "namespace", None)
+    if isinstance(namespace, str) and namespace != request.resource.environment:
+        raise Denied("tool.invalid_arguments", "namespace must be the requested environment")
     return spec, args
 
 
@@ -175,7 +179,7 @@ class ReplayToolExecutor:
 
 
 def _rows(data: dict[str, Any]) -> int:
-    rows = data.get("alerts", data.get("lines", data.get("items", [])))
+    rows = data.get("alerts", data.get("lines", data.get("items", data.get("revisions", []))))
     return rows if isinstance(rows, int) else len(rows)
 
 
@@ -186,6 +190,10 @@ def _summary(data: dict[str, Any] | None) -> str | None:
         return f"{data['lines']} log lines, {len(data['patterns'])} patterns"
     if "lines" in data:
         return f"{len(data['lines'])} log lines around the anchor"
+    if "items" in data:
+        return f"{len(data['items'])} {data.get('kind', 'events')}"
+    if "revisions" in data:
+        return f"{len(data['revisions'])} revisions"
     if "series" in data:
         flagged = sum(1 for s in data["series"] if s["anomalies"])
         return f"{len(data['series'])} series, {flagged} with anomalies"

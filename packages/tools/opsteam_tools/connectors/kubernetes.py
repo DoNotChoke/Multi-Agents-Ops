@@ -43,10 +43,18 @@ class KubernetesConnector:
 
     async def pods(self, limit: int) -> list[dict[str, Any]]:
         """Pods across namespaces, at most `limit`; needs the token's list right."""
-        items = (await self._get("/api/v1/pods", {"limit": str(limit)})).get("items")
+        items, _ = await self.items("/api/v1/pods", {"limit": str(limit)})
+        return items
+
+    async def items(self, path: str, params: dict[str, str]) -> tuple[list[dict[str, Any]], bool]:
+        """A list call's objects, and whether the server holds more than it returned."""
+        payload = await self._get(path, params)
+        items = payload.get("items")
         if not isinstance(items, list):
             raise ConnectorError("kubernetes returned an unexpected shape")
-        return [i for i in items if isinstance(i, dict)]
+        meta = payload.get("metadata")
+        more = isinstance(meta, dict) and bool(meta.get("continue"))
+        return [i for i in items if isinstance(i, dict)], more
 
     async def _get(self, path: str, params: dict[str, str]) -> dict[str, Any]:
         target = await check_url(

@@ -17,11 +17,11 @@ from tests.api_helpers import (
     SECRETS_KEY,
     api_client,
     auth,
-    cluster_ca,
     fake_prometheus,
     member,
     system_ctx,
 )
+from tests.certs import cluster_ca
 
 pytestmark = pytest.mark.integration
 

@@ -1,17 +1,14 @@
-import datetime as dt
 from collections.abc import Callable
 
 import httpx
 import pytest
-from cryptography import x509
-from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.x509.oid import NameOID
 from opsteam_core.errors import NetguardBlocked
 from opsteam_tools.connectors.http import ConnectorError
 from opsteam_tools.connectors.kubernetes import KubernetesConnector, trust
 from opsteam_tools.connectors.loki import LokiConnector
 from pydantic import SecretStr
+
+from tests.certs import cluster_ca as _ca
 
 PUBLIC_IP = "93.184.216.34"
 TOKEN = SecretStr("dev-only-k8s-reader-token")
@@ -20,24 +17,6 @@ TOKEN = SecretStr("dev-only-k8s-reader-token")
 class Resolver:
     async def resolve(self, host: str, port: int) -> list[str]:
         return [PUBLIC_IP]
-
-
-def _ca() -> str:
-    key = ec.generate_private_key(ec.SECP256R1())
-    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "kubernetes")])
-    now = dt.datetime.now(dt.UTC)
-    cert = (
-        x509.CertificateBuilder()
-        .subject_name(name)
-        .issuer_name(name)
-        .public_key(key.public_key())
-        .serial_number(x509.random_serial_number())
-        .not_valid_before(now)
-        .not_valid_after(now + dt.timedelta(hours=1))
-        .add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
-        .sign(key, hashes.SHA256())
-    )
-    return cert.public_bytes(serialization.Encoding.PEM).decode()
 
 
 def _recording(
