@@ -7,6 +7,7 @@ dependencies = [
     "opsteam-contracts",
     "opsteam-db",
     "opsteam-evidence",
+    "opsteam-llm",
     "opsteam-policy",
     "opsteam-tools",
 ]

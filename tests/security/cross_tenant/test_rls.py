@@ -184,6 +184,73 @@ async def _service_mappings(s: AsyncSession, t: str) -> Row:
     )
 
 
+async def _agent_runs(s: AsyncSession, t: str) -> Row:
+    return (
+        "insert into agent_runs (run_id, tenant_id, incident_id, agent, prompt_version,"
+        " model_alias) values (:id, :t, :inc, 'metrics', 'metrics@1', 'tier2')",
+        {"id": new_id("run"), "t": t, "inc": await _own_incident(s, t)},
+    )
+
+
+async def _own_run(s: AsyncSession, t: str) -> tuple[str, str]:
+    sql, params = await _agent_runs(s, t)
+    await s.execute(text(sql), params)
+    return str(params["id"]), str(params["inc"])
+
+
+async def _llm_calls(s: AsyncSession, t: str) -> Row:
+    run, _ = await _own_run(s, t)
+    return (
+        "insert into llm_calls (llm_id, tenant_id, run_id, model_id, tier, tokens_in,"
+        " tokens_out, cached, cost_usd, latency_ms)"
+        " values (:id, :t, :run, 'fake', 'tier2', 1, 1, false, 0, 1)",
+        {"id": new_id("llm"), "t": t, "run": run},
+    )
+
+
+async def _findings(s: AsyncSession, t: str) -> Row:
+    run, incident = await _own_run(s, t)
+    return (
+        "insert into findings (finding_id, tenant_id, incident_id, run_id, agent, claim,"
+        " severity) values (:id, :t, :inc, :run, 'metrics', 'x', 'high')",
+        {"id": new_id("fnd"), "t": t, "inc": incident, "run": run},
+    )
+
+
+async def _own_evidence(s: AsyncSession, t: str) -> str:
+    sql, params = await _evidence(s, t)
+    await s.execute(text(sql), params)
+    return str(params["id"])
+
+
+async def _finding_evidence(s: AsyncSession, t: str) -> Row:
+    sql, params = await _findings(s, t)
+    await s.execute(text(sql), params)
+    return (
+        "insert into finding_evidence (finding_id, evidence_id, tenant_id) values (:f, :e, :t)",
+        {"f": params["id"], "e": await _own_evidence(s, t), "t": t},
+    )
+
+
+async def _hypotheses(s: AsyncSession, t: str) -> Row:
+    run, incident = await _own_run(s, t)
+    return (
+        "insert into hypotheses (hypothesis_id, tenant_id, incident_id, run_id, agent,"
+        " description, category) values (:id, :t, :inc, :run, 'logs', 'x', 'unknown')",
+        {"id": new_id("hyp"), "t": t, "inc": incident, "run": run},
+    )
+
+
+async def _hypothesis_evidence(s: AsyncSession, t: str) -> Row:
+    sql, params = await _hypotheses(s, t)
+    await s.execute(text(sql), params)
+    return (
+        "insert into hypothesis_evidence (hypothesis_id, evidence_id, tenant_id, kind)"
+        " values (:h, :e, :t, 'support')",
+        {"h": params["id"], "e": await _own_evidence(s, t), "t": t},
+    )
+
+
 FACTORIES: dict[str, Factory] = {
     "tenants": _tenants,
     "memberships": _memberships,
@@ -202,6 +269,12 @@ FACTORIES: dict[str, Factory] = {
     "incident_transitions": _incident_transitions,
     "incident_activity": _incident_activity,
     "service_mappings": _service_mappings,
+    "agent_runs": _agent_runs,
+    "llm_calls": _llm_calls,
+    "findings": _findings,
+    "finding_evidence": _finding_evidence,
+    "hypotheses": _hypotheses,
+    "hypothesis_evidence": _hypothesis_evidence,
 }
 
 

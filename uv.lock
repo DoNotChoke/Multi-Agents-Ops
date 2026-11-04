@@ -1624,6 +1624,7 @@ dependencies = [
     { name = "opsteam-core" },
     { name = "opsteam-db" },
     { name = "opsteam-evidence" },
+    { name = "opsteam-llm" },
     { name = "opsteam-policy" },
     { name = "opsteam-tools" },
 ]
@@ -1634,6 +1635,7 @@ requires-dist = [
     { name = "opsteam-core", editable = "packages/core" },
     { name = "opsteam-db", editable = "packages/db" },
     { name = "opsteam-evidence", editable = "packages/evidence" },
+    { name = "opsteam-llm", editable = "packages/llm" },
     { name = "opsteam-policy", editable = "packages/policy" },
     { name = "opsteam-tools", editable = "packages/tools" },
 ]
