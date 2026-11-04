@@ -13,20 +13,17 @@ test("map an unmapped incident to a catalog service", async ({
   request,
 }) => {
   const service = `cart-${Date.now()}`;
-  const sent = await request.post(WEBHOOK, {
-    headers: { authorization: `Bearer ${WEBHOOK_SECRET}` },
-    data: {
-      alerts: [
-        {
-          status: "firing",
-          labels: { alertname: "HighErrorRate", service, namespace: "shop" },
-          annotations: { summary: `${service} returns 5xx` },
-          startsAt: new Date().toISOString(),
-        },
-      ],
-    },
-  });
-  expect(sent.status()).toBe(200);
+  const alert = {
+    labels: { alertname: "HighErrorRate", service, namespace: "shop" },
+    annotations: { summary: `${service} returns 5xx` },
+    startsAt: new Date().toISOString(),
+  };
+  const send = (status: string) =>
+    request.post(WEBHOOK, {
+      headers: { authorization: `Bearer ${WEBHOOK_SECRET}` },
+      data: { alerts: [{ ...alert, status }] },
+    });
+  expect((await send("firing")).status()).toBe(200);
 
   await page.goto("/incidents");
   await page.getByRole("button", { name: "Continue with email" }).click();
@@ -72,4 +69,6 @@ test("map an unmapped incident to a catalog service", async ({
     { headers: { origin: "http://localhost:3000" } },
   );
   expect(removed.status()).toBe(204);
+  // The incident now belongs to checkout: left open, it would swallow real checkout alerts.
+  expect((await send("resolved")).status()).toBe(200);
 });
