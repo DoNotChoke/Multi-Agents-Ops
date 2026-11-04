@@ -15,6 +15,7 @@ const TYPES = [
   "incident.event_attached",
   "incident.transition",
   "incident.updated",
+  "incident.notified",
 ];
 // The API ends streams when the token expires and the browser reconnects within seconds;
 // only an outage that outlasts this is worth a banner.

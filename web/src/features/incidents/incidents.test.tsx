@@ -237,3 +237,21 @@ test("a visibility_lost incident is not offered for mapping", async () => {
   expect(screen.queryByText(/is not in the catalog/)).toBeNull();
   expect(screen.queryByRole("button", { name: "Map to service…" })).toBeNull();
 });
+
+test("the header says when the first notification went out", async () => {
+  mockApi({
+    "GET /api/v1/incidents/inc_01CHECKOUT": {
+      ...DETAIL,
+      first_notified_at: "2026-10-26T09:00:47Z",
+    },
+  });
+  renderWithQuery(<IncidentScreen incidentId="inc_01CHECKOUT" />);
+  expect(
+    await screen.findByText(/notified 2026-10-26 09:00:47 UTC/),
+  ).toBeDefined();
+  cleanup();
+  mockApi({ "GET /api/v1/incidents/inc_01CHECKOUT": DETAIL });
+  renderWithQuery(<IncidentScreen incidentId="inc_01CHECKOUT" />);
+  await screen.findByRole("heading", { name: DETAIL.title });
+  expect(screen.queryByText(/notified/)).toBeNull();
+});

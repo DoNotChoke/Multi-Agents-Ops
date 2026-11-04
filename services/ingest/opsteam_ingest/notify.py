@@ -9,7 +9,7 @@ from opsteam_core.errors import NetguardBlocked
 from opsteam_core.events import Handler
 from opsteam_db import tenant_session
 from opsteam_db.secrets import SecretNotFound, SecretStore, SecretUnreadable
-from opsteam_incidents.state import transition
+from opsteam_incidents.state import record_activity, transition
 from opsteam_notify.throttle import Throttle
 from opsteam_notify.webhook import Channel, DeliveryFailed, Message, Notifier
 from opsteam_obs.metrics import TIME_TO_DETECT, TIME_TO_NOTIFY
@@ -98,6 +98,8 @@ def opened_consumer(
                     ),
                     {"at": now, "id": incident_id},
                 )
+                if first is not None:
+                    await record_activity(session, ctx, incident_id, "incident.notified", None, now)
             if first is not None:
                 TIME_TO_NOTIFY.observe(max((now - incident.detected_at).total_seconds(), 0.0))
         if failed:

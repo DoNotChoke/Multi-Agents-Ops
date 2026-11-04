@@ -68,6 +68,8 @@ export function IncidentScreen({ incidentId }: { incidentId: string }) {
             {` · opened ${utc(i.opened_at, true)}`}
             {i.time_to_detect_seconds != null &&
               ` · detected in ${Math.round(i.time_to_detect_seconds)} s`}
+            {i.first_notified_at &&
+              ` · notified ${utc(i.first_notified_at, true)}`}
           </p>
         </div>
         <StatusBadge status={i.status} />

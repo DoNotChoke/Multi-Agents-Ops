@@ -107,6 +107,9 @@ async def test_a_new_incident_is_triaged_and_every_active_channel_told(
     [move] = await notice.shop.rows("select from_status, to_status from incident_transitions"
                                     " where to_status = 'TRIAGED'")  # fmt: skip
     assert tuple(move) == ("NEW", "TRIAGED")
+    # Open pages refresh when the notification is recorded.
+    feed = await notice.shop.rows("select type from incident_activity order by seq")
+    assert [f.type for f in feed][-1] == "incident.notified"
 
 
 async def test_a_failed_channel_is_retried_without_repeating_the_others(
