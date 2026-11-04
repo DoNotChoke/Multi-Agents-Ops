@@ -1400,6 +1400,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "python-ulid" },
+    { name = "redis" },
     { name = "rfc8785" },
     { name = "structlog" },
 ]
@@ -1409,6 +1410,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.14.1" },
     { name = "pydantic-settings", specifier = ">=2.16.1" },
     { name = "python-ulid", specifier = ">=4.0.1" },
+    { name = "redis", specifier = ">=8.1.0" },
     { name = "rfc8785", specifier = ">=0.1.4" },
     { name = "structlog", specifier = ">=26.1.0" },
 ]

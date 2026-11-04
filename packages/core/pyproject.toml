@@ -8,6 +8,7 @@ dependencies = [
     "python-ulid>=4.0.1",
     "rfc8785>=0.1.4",
     "structlog>=26.1.0",
+    "redis>=8.1.0",
 ]
 
 [build-system]
