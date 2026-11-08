@@ -3,6 +3,7 @@ name = "opsteam-worker"
 version = "0.0.0"
 requires-python = ">=3.12"
 dependencies = [
+    "opsteam-agents",
     "opsteam-core",
     "opsteam-contracts",
     "opsteam-db",

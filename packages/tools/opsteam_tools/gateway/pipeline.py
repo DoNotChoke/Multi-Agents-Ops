@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from opsteam_contracts.tool_request import ToolRequest
+from opsteam_core.budget import BudgetCaps, BudgetExceeded, RedisBudget, budget_key
 from opsteam_core.context import RequestContext
 from opsteam_db import tenant_session
 from opsteam_db.secrets import SecretNotFound, SecretStore, SecretUnreadable
@@ -60,6 +61,8 @@ class Gateway:
         self.policy = policy
         self.redis = redis
         self.quotas = quotas
+        # The same per-incident counters the LLM Gateway draws on, so agents share one budget.
+        self.budget = RedisBudget(redis, BudgetCaps(tool_calls=quotas.calls_per_incident))
 
     async def admit(self, ctx: RequestContext, request: ToolRequest, *, agent: str) -> Admitted:
         """Run steps 1-8 for `ctx`'s tenant or raise Denied; identity never comes from `request`."""
@@ -171,22 +174,24 @@ class Gateway:
     async def _quota(self, ctx: RequestContext) -> None:
         minute = int(time.time() // 60)
         # shortcut: fixed one-minute windows allow a 2x burst at the boundary; fine for MVP.
-        counters = [(f"t:{ctx.tenant_id}:rate:tools:{minute}", 120, self.quotas.calls_per_minute)]
-        if ctx.incident_id is not None:
-            key = f"t:{ctx.tenant_id}:inc:{ctx.incident_id}:tool_calls"
-            counters.append((key, 7 * 86400, self.quotas.calls_per_incident))
+        key = f"t:{ctx.tenant_id}:rate:tools:{minute}"
         try:
             async with self.redis.pipeline(transaction=True) as pipe:
-                for key, ttl, _ in counters:
-                    pipe.incr(key)
-                    pipe.expire(key, ttl)
-                counts = (await pipe.execute())[::2]
+                pipe.incr(key)
+                pipe.expire(key, 120)
+                count = (await pipe.execute())[0]
+            if count > self.quotas.calls_per_minute:
+                raise Denied("quota.rate_limited", "tool call rate limit reached")
+            if ctx.incident_id is not None:
+                await self.budget.reserve(
+                    budget_key(ctx.tenant_id, ctx.incident_id), {"tool_calls": 1}
+                )
         except RedisError as exc:
             raise Denied("quota.unavailable", "quota store unavailable") from exc
-        if counts[0] > counters[0][2]:
-            raise Denied("quota.rate_limited", "tool call rate limit reached")
-        if len(counts) > 1 and counts[1] > counters[1][2]:
-            raise Denied("quota.incident_budget", "the incident's tool call budget is spent")
+        except BudgetExceeded as exc:
+            raise Denied(
+                "quota.incident_budget", "the incident's tool call budget is spent"
+            ) from exc
 
     async def _credentials(self, ctx: RequestContext, ref: str | None) -> SecretStr | None:
         if ref is None:

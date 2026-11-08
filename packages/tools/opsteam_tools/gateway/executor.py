@@ -116,10 +116,11 @@ class GatewayToolExecutor:
         async with tenant_session(self.gateway.engine, ctx) as session:
             await session.execute(
                 text("""
-                    insert into tool_calls (tool_call_id, tenant_id, incident_id, tool,
+                    insert into tool_calls (tool_call_id, tenant_id, incident_id, run_id, tool,
                                             integration_id, request, status, duration_ms, bytes,
                                             truncated, policy_decision)
-                    values (:id, :tenant, :incident, :tool, :integration, cast(:request as jsonb),
+                    values (:id, :tenant, :incident, :run, :tool, :integration,
+                            cast(:request as jsonb),
                             :status, :duration, :bytes, :truncated,
                             cast(:decision as jsonb))
                 """),
@@ -127,6 +128,7 @@ class GatewayToolExecutor:
                     "id": answer.tool_call_id,
                     "tenant": ctx.tenant_id,
                     "incident": ctx.incident_id,
+                    "run": ctx.run_id,
                     "tool": request.tool,
                     # Only an admitted id is surely the tenant's own; denied ids stay in request.
                     "integration": admitted.integration_id if admitted else None,

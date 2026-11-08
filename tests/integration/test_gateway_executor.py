@@ -5,6 +5,7 @@ from typing import Any
 
 import httpx
 import pytest
+from opsteam_core.ids import new_id
 from opsteam_db import tenant_session
 from opsteam_db.secrets import FakeSecretStore
 from opsteam_evidence.objects import FakeObjectStore
@@ -74,7 +75,8 @@ async def test_ok_call_is_evidenced_recorded_and_redacted(
 ) -> None:
     tenant, integration = await _tenant(app_engine)
     run, objects = executor(Prometheus())
-    answer = await run.execute(system_ctx(tenant), _request(integration), agent="metrics")
+    ctx = system_ctx(tenant).model_copy(update={"run_id": new_id("run")})
+    answer = await run.execute(ctx, _request(integration), agent="metrics")
     assert answer.status == "ok", answer.error
     assert FAKE_TOKEN not in answer.model_dump_json()
     [evidence] = await _rows(app_engine, tenant, "select * from evidence")
@@ -84,6 +86,7 @@ async def test_ok_call_is_evidenced_recorded_and_redacted(
     assert b'"values"' in stored and FAKE_TOKEN.encode() not in stored  # raw series, redacted
     [call] = await _rows(app_engine, tenant, "select * from tool_calls")
     assert (call["tool_call_id"], call["status"]) == (answer.tool_call_id, "ok")
+    assert call["run_id"] == ctx.run_id
     assert call["integration_id"] == integration
     assert call["policy_decision"]["policy_version"] == "v-test"
     [event] = await _rows(app_engine, tenant, "select * from audit_events")

@@ -36,3 +36,5 @@ class RequestContext(BaseModel):
     scopes: frozenset[str]
     request_id: str = Field(default_factory=lambda: str(ULID()))
     incident_id: Annotated[str, AfterValidator(lambda v: parse_id(v, "inc"))] | None = None
+    # Set by the agent loop for one run, so every LLM and tool call it makes is filed under it.
+    run_id: Annotated[str, AfterValidator(lambda v: parse_id(v, "run"))] | None = None
