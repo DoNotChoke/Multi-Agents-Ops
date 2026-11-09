@@ -8,9 +8,11 @@ dependencies = [
     "opsteam-contracts",
     "opsteam-db",
     "opsteam-evidence",
+    "opsteam-incidents",
     "opsteam-llm",
     "opsteam-policy",
     "opsteam-tools",
+    "temporalio>=1.35.0",
 ]
 
 [build-system]

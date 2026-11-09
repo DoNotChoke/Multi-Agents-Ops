@@ -255,6 +255,18 @@ forbidden_modules = ["boto3", "kubernetes", "subprocess", "httpx"]
 allow_indirect_imports = true
 
 [[tool.importlinter.contracts]]
+# Workflow code must replay identically: no I/O, clocks or randomness, only activities do that.
+name = "Workflow code does no I/O"
+type = "forbidden"
+source_modules = ["opsteam_worker.workflows"]
+forbidden_modules = [
+    "opsteam_db", "opsteam_tools", "opsteam_incidents", "opsteam_evidence", "opsteam_llm.gateway",
+    "opsteam_worker.activities", "opsteam_worker.recording",
+    "sqlalchemy", "redis", "httpx", "random", "time", "uuid",
+]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
 name = "Executor has no path to agents/LLM"
 type = "forbidden"
 source_modules = ["opsteam_executor"]
