@@ -8,16 +8,19 @@ from typing import Any
 
 from opsteam_contracts.tool_request import ToolRequest
 from opsteam_contracts.tool_result import ToolResult
-from opsteam_core.canonical import JsonValue
+from opsteam_core.canonical import JsonValue, canonical_json
 from opsteam_core.context import RequestContext
 from opsteam_core.errors import NetguardBlocked, OpsteamError
-from opsteam_core.ids import new_id
+from opsteam_core.ids import derived_id, new_id
 from pydantic import BaseModel, ValidationError
 
+from opsteam_tools import k8s_view
 from opsteam_tools.backends import IntegrationBackend, IntegrationTarget
-from opsteam_tools.compress import compress_series
+from opsteam_tools.compress import MAX_LINE, compress_logs, compress_series, log_lines
 from opsteam_tools.connectors.prometheus import ConnectorError, ConnectorTimeout, ResponseTooLarge
 from opsteam_tools.registry import TOOLS
+from opsteam_tools.registry.k8s import MAX_OBJECTS, K8sEventsArgs
+from opsteam_tools.registry.logs import LogsAggregateArgs, LogsContextArgs, LogsSearchArgs
 from opsteam_tools.registry.metrics import QueryInstantArgs, QueryRangeArgs, TemplateParams
 from opsteam_tools.registry.spec import ToolSpec
 from opsteam_tools.registry.templates import TemplateError
@@ -149,33 +152,116 @@ class FakeToolExecutor:
 
 
 class ReplayToolExecutor:
-    """Answers metrics tools from a recorded replay file, so evals run without a cluster."""
+    """Answers tools from a recorded replay file, so agents and evals run without a cluster."""
 
     def __init__(self, path: Path) -> None:
         doc = json.loads(path.read_text(encoding="utf-8"))
         self.metrics: dict[str, list[dict[str, Any]]] = {
             m["query_id"]: m["result"] for m in doc["metrics"]
         }
+        self.logs: list[dict[str, Any]] = [s for q in doc.get("logs", []) for s in q["result"]]
+        self.events: list[dict[str, Any]] = doc.get("k8s_events", [])
 
     async def execute(self, ctx: RequestContext, request: ToolRequest, *, agent: str) -> ToolResult:
         try:
             spec, args = check_request(request, agent)
         except Denied as exc:
             return result("denied", error=(exc.reason, str(exc)))
-        if not isinstance(args, QueryRangeArgs | QueryInstantArgs):
+        data = self._answer(spec, args)
+        if data is None:
             return result("error", error=("replay.missing", f"{spec.name} was not recorded"))
-        recorded = self.metrics.get(args.query_template)
-        if recorded is None:
-            return result("error", error=("replay.missing", f"{args.query_template} not recorded"))
+        # The same call always cites the same evidence, so scripted agents can quote it.
+        evidence = derived_id("ev", canonical_json([spec.name, args.model_dump(mode="json")]))
+        return result("ok", data=data).model_copy(update={"evidence_ids": [evidence]})
+
+    def _answer(self, spec: ToolSpec, args: BaseModel) -> dict[str, Any] | None:
         # shortcut: replays the recorded window whatever window_seconds asks; fine for evals.
-        service = args.params.service
+        if isinstance(args, QueryRangeArgs | QueryInstantArgs):
+            recorded = self.metrics.get(args.query_template)
+            if recorded is None:
+                return None
+            series = [s for s in recorded if _of_service(s.get("metric", {}), args.params.service)]
+            return compress_series(series, spec.limits)
+        if isinstance(args, LogsSearchArgs | LogsAggregateArgs | LogsContextArgs):
+            # shortcut: only error lines are recorded, so app_logs and error_logs replay the same.
+            streams = [
+                s for s in self.logs if _of_service(s.get("stream", {}), args.params.service)
+            ]
+            if not streams:
+                return None
+            return _replay_logs(spec, args, streams)
+        if isinstance(args, K8sEventsArgs) and self.events:
+            events = [_recorded_event(e) for e in self.events]
+            return {
+                "items": [
+                    e
+                    for e in events
+                    if (args.reasons is None or e["reason"] in args.reasons)
+                    and (args.involved_object in (None, e["object"]["name"]))
+                ][:MAX_OBJECTS],
+                "truncated": False,
+            }
+        return None
+
+
+def _of_service(labels: dict[str, Any], service: str) -> bool:
+    return labels.get("service") == service or str(labels.get("pod", "")).startswith(f"{service}-")
+
+
+def _replay_logs(
+    spec: ToolSpec,
+    args: LogsSearchArgs | LogsAggregateArgs | LogsContextArgs,
+    streams: list[dict[str, Any]],
+) -> dict[str, Any]:
+    if isinstance(args, LogsSearchArgs):
+        if args.pattern is not None:
+            streams = [
+                s | {"values": [v for v in s["values"] if args.pattern in v[1]]} for s in streams
+            ]
+        return compress_logs(streams, args.limit)
+    if isinstance(args, LogsAggregateArgs):
+        counts: dict[tuple[str, int], int] = {}
+        for s in streams:
+            group = str(s.get("stream", {}).get(args.group_by, ""))
+            for ts, _ in s["values"]:
+                bucket = int(ts) // 10**9 // args.step_seconds * args.step_seconds
+                counts[(group, bucket)] = counts.get((group, bucket), 0) + 1
+        groups = sorted({g for g, _ in counts})
         series = [
-            s
-            for s in recorded
-            if s["metric"].get("service") == service
-            or s["metric"].get("pod", "").startswith(f"{service}-")
+            {
+                "metric": {args.group_by: g},
+                "values": [[b, str(n)] for (gg, b), n in sorted(counts.items()) if gg == g],
+            }
+            for g in groups
         ]
-        return result("ok", data=compress_series(series, spec.limits))
+        return compress_series(series, spec.limits)
+    lines = log_lines(streams)
+    anchor = int(args.anchor_ts)
+    before = [e for e in lines if e[0] <= anchor][-(args.before + 1) :]
+    after = [e for e in lines if e[0] > anchor][: args.after]
+    return {
+        "lines": [
+            {"at": str(ts), "pod": pod, "line": line[:MAX_LINE], "anchor": ts == anchor}
+            for ts, line, pod in before + after
+        ],
+        "truncated": False,
+    }
+
+
+def _recorded_event(event: dict[str, Any]) -> dict[str, Any]:
+    """Recorded events name their object as `Kind/name`; the live view splits it."""
+    kind, _, name = str(event.get("object", "")).partition("/")
+    return k8s_view.event(
+        {
+            "type": event.get("type"),
+            "reason": event.get("reason"),
+            "message": event.get("message"),
+            "involvedObject": {"kind": kind, "name": name},
+            "count": event.get("count"),
+            "firstTimestamp": event.get("first_at"),
+            "lastTimestamp": event.get("last_at"),
+        }
+    )
 
 
 def _rows(data: dict[str, Any]) -> int:

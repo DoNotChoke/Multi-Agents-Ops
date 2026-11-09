@@ -1,15 +1,22 @@
 import gzip
 import json
 from collections.abc import AsyncIterator, Callable
+from dataclasses import replace
 from typing import Any
 
 import httpx
 import pytest
+from opsteam_agents.loop import run_agent
+from opsteam_agents.models import AgentTask
+from opsteam_agents.specs import specialist
 from opsteam_contracts.tool_request import ToolRequest
+from opsteam_core.budget import BudgetCaps, MemoryBudget
 from opsteam_core.ids import new_id
 from opsteam_db import tenant_session
 from opsteam_db.secrets import FakeSecretStore
 from opsteam_evidence.objects import FakeObjectStore
+from opsteam_llm.fake import FakeLLM
+from opsteam_llm.gateway import LLMGateway, Models, ModelSpec
 from opsteam_policy.client import PolicyClient
 from opsteam_tools.backends import DirectBackend
 from opsteam_tools.gateway.executor import GatewayToolExecutor
@@ -196,3 +203,67 @@ async def test_k8s_requests_outside_the_rules_never_reach_the_cluster(
     answer = await run.execute(system_ctx(tenant), request, agent=agent)
     assert (answer.status, answer.error and answer.error.code) == ("denied", code)
     assert seen == []
+
+
+class _Runs:
+    async def started(self, ctx: Any, **fields: Any) -> None: ...
+
+    async def finished(self, ctx: Any, result: Any, model_id: str | None) -> None: ...
+
+
+@pytest.mark.parametrize(
+    ("agent", "tool", "arguments"),
+    [
+        ("metrics", "k8s.events", {"namespace": "shop"}),
+        ("logs", "k8s.get_resources", {"kind": "pods", "namespace": "shop"}),
+        (
+            "infrastructure",
+            "logs.search",
+            {"selector_template": "app_logs", "params": PARAMS, "window_seconds": 600},
+        ),
+    ],
+)
+async def test_the_gateway_refuses_another_agents_tool_even_if_a_prompt_lists_it(
+    app_engine: AsyncEngine, redis: Redis, agent: str, tool: str, arguments: dict[str, Any]
+) -> None:
+    tenant, _ = await _tenant(app_engine)
+    secrets = FakeSecretStore()
+    kind = "loki" if tool.startswith("logs.") else "kubernetes"
+    integration = (
+        await _cluster(app_engine, tenant, secrets)
+        if kind == "kubernetes"
+        else await _integration(app_engine, tenant, "loki")
+    )
+    seen: list[httpx.Request] = []
+    run, _ = _executor(app_engine, redis, lambda r: seen.append(r) or httpx.Response(500), secrets)
+    # A misconfigured prompt that lists a tool the agent was never granted.
+    spec = specialist(agent)
+    prompt = replace(spec.prompt, allowed_tools=spec.prompt.allowed_tools | {tool})
+    request = _request(tool, integration, arguments).model_dump()
+    fake = FakeLLM(
+        [
+            {"content": {"action": "tool_call", "request": request}},
+            {"content": {"action": "final", "result": {"missing_data": ["refused"]}}},
+        ]
+    )
+    task = AgentTask.model_validate(
+        {
+            "goal": "look around",
+            "resource": {"service": "checkout", "environment": "shop"},
+            "time_window": {"start_at": "2026-11-09T08:00:00Z", "end_at": "2026-11-09T09:00:00Z"},
+        }
+    )
+    ctx = system_ctx(tenant).model_copy(update={"incident_id": new_id("inc")})
+    llm = LLMGateway(
+        Models(tiers={"tier2": ["f"]}, specs={"f": ModelSpec("fake", "f", 0.0, 0.0)}),
+        {"fake": fake},
+        budget=MemoryBudget(BudgetCaps()),
+    )
+    out = await run_agent(
+        ctx, replace(spec, prompt=prompt), task, tools=run, llm=llm, recorder=_Runs()
+    )
+    assert out.status == "completed" and seen == []
+    assert "tool.not_allowed" in fake.seen[1][-1].content
+    async with tenant_session(app_engine, system_ctx(tenant)) as s:
+        [call] = (await s.execute(text("select tool, status, run_id from tool_calls"))).all()
+    assert (call.tool, call.status, call.run_id) == (tool, "denied", out.run_id)
